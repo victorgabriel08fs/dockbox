@@ -50,6 +50,9 @@ internal sealed class WindowPreview : Window
     public event Action<IntPtr>? CloseRequested;
 
     public int CardCount => _cards.Count;
+    /// <summary>True entre ShowFor e HidePanel (não depende do IsVisible do WPF, que pode demorar a mudar).</summary>
+    public bool IsOpen { get; private set; }
+    public IntPtr Handle => _hwnd;
     public IReadOnlyList<IntPtr> Handles => _cards.Select(c => c.Handle).ToList();
 
     public WindowPreview()
@@ -75,7 +78,7 @@ internal sealed class WindowPreview : Window
             HwndSource.FromHwnd(_hwnd)?.AddHook(WndProc);
         };
         // Ao cair num monitor com outra escala, o WPF redesenha em outro tamanho: refaz posição e miniaturas.
-        DpiChanged += (_, _) => Dispatcher.BeginInvoke(() => { if (IsVisible && _last != null) Place(_last); });
+        DpiChanged += (_, _) => Dispatcher.BeginInvoke(() => { if (IsOpen && _last != null) Place(_last); });
         Closed += (_, _) => ClearCards();
     }
 
@@ -115,7 +118,8 @@ internal sealed class WindowPreview : Window
         foreach (var c in _cards) _panel.Children.Add(c.Root);
 
         ApplyTheme();
-        if (!IsVisible) Show();
+        if (!IsOpen) Show();
+        IsOpen = true;
         var p = new Placement(x, y, edge, screen, scale, Math.Clamp(cornerRadius, 4, 16));
         Place(p);
     }
@@ -125,13 +129,14 @@ internal sealed class WindowPreview : Window
     {
         ClearCards();
         _last = null;
-        if (IsVisible) Hide();
+        if (IsOpen) Hide();
+        IsOpen = false;
     }
 
     /// <summary>True com o mouse em cima do painel.</summary>
     public bool ContainsCursor()
     {
-        if (!IsVisible || _hwnd == IntPtr.Zero || !GetCursorPos(out POINT pt) || !GetWindowRect(_hwnd, out RECT r)) return false;
+        if (!IsOpen || _hwnd == IntPtr.Zero || !GetCursorPos(out POINT pt) || !GetWindowRect(_hwnd, out RECT r)) return false;
         return pt.X >= r.Left && pt.X < r.Right && pt.Y >= r.Top && pt.Y < r.Bottom;
     }
 
