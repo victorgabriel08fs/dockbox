@@ -34,6 +34,11 @@ O Dock some sozinho durante vídeo, jogo ou apresentação em tela cheia e volta
 
 ### Arrastar e soltar
 
+- **Reordenar**: arraste um ícone do Dock para o lado; os vizinhos abrem espaço e ele entra onde você soltar.
+- **Remover**: arraste o ícone para longe do Dock até aparecer **Remover** e solte.
+- Um clique rápido continua abrindo o app; o arraste só começa depois que o mouse anda alguns pixels.
+- Os widgets ficam fixos depois dos apps; reordene-os em Gerenciar Dock → Widgets.
+
 - **Fixar um item**: arraste um `.exe`, atalho, pasta ou arquivo para um espaço vazio do Dock.
   Ele entra na posição em que você soltou.
 - **Abrir arquivos com um app**: solte documentos em cima do ícone de um app (por exemplo, um `.txt` no Bloco de Notas).

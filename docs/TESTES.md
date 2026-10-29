@@ -70,6 +70,12 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Solte arquivos na Lixeira: aparece a pergunta "Mover ... para a Lixeira?"; **Não** mantém o arquivo, **Sim** apaga.
 - [ ] Arraste texto ou imagem de um navegador: nada acontece, sem erro.
 - [ ] Arraste vários arquivos de uma vez: todos entram, na ordem.
+- [ ] Ao arrastar um arquivo de fora, os ícones abrem espaço mostrando onde ele vai entrar; sair do Dock fecha o espaço.
+- [ ] Arraste um ícone do Dock para o lado: os vizinhos abrem espaço e a nova ordem fica salva (feche e abra o Dockbox).
+- [ ] Arraste um ícone para longe do Dock: aparece "Remover"; soltar remove com uma nuvenzinha. Voltar antes de soltar cancela.
+- [ ] Clique rápido (sem mover) continua abrindo o app; apertar, sair do ícone e soltar fora não abre nada.
+- [ ] Widgets não arrastam, mas o clique neles continua funcionando.
+- [ ] Reordenar funciona com o Dock embaixo, em cima e nas laterais.
 
 ### 6. Menus
 - [ ] Botão direito num app: cabeçalho com o nome, Abrir/Mostrar, Nova janela (só se aberto),

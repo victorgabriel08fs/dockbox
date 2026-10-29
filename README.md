@@ -9,7 +9,9 @@ Um clone do Dock do macOS para Windows, feito em C# + WPF (.NET 8).
 - Ampliação suave ao passar o mouse e animação de "pulo" ao abrir um app.
 - Ponto embaixo dos apps abertos; clique num app aberto traz a janela para frente, clique de novo minimiza.
   Ctrl + clique abre uma nova janela.
-- Arraste um app, atalho, pasta ou arquivo para o Dock para fixá-lo; solte arquivos sobre um app para abri-los com ele.
+- Arraste um app, atalho, pasta ou arquivo para o Dock para fixá-lo (os ícones abrem espaço mostrando onde ele entra);
+  solte arquivos sobre um app para abri-los com ele.
+- Arraste um ícone do Dock para o lado para reordenar, ou para fora do Dock para remover.
 - **Gerenciar Dock** (botão direito no Dock): adicionar apps do Menu Iniciar, arquivos e pastas; remover, reordenar e editar.
 - **Widgets**: relógio, calendário, clima (Open-Meteo), CPU/RAM, bateria, mídia tocando agora e Lixeira.
 - **Estilo**: tema automático/claro/escuro/personalizado, cor de fundo, cor de destaque, opacidade,

@@ -22,6 +22,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Opção de iniciar junto com o Windows.
 - Reservar espaço na tela: as janelas maximizadas param antes do Dock em qualquer borda; opção em Comportamento (#4).
 - Ocultar automaticamente: o Dock sai da tela e volta ao encostar o mouse na borda, com tempo configurável (#5).
+- Reordenar arrastando um ícone no Dock e remover arrastando para fora, com indicador de onde o item entra, também ao arrastar arquivos de fora (#6).
 
 ### Alterado
 
