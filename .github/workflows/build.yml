@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: windows-latest
@@ -16,6 +19,9 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Testes
+        run: dotnet test tests/Dockbox.Tests/Dockbox.Tests.csproj -c Release --logger "trx;LogFileName=testes.trx"
+
       - name: Publicar executável único
         run: dotnet publish src/Dockbox/Dockbox.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o out
 
@@ -23,3 +29,9 @@ jobs:
         with:
           name: Dockbox-win-x64
           path: out/Dockbox.exe
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: resultados-dos-testes
+          path: tests/Dockbox.Tests/TestResults/*.trx

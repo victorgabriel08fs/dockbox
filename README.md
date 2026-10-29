@@ -56,6 +56,12 @@ Um `pinned.json` da versão anterior é importado automaticamente.
 
 Esses pontos estão previstos nas fases 2 e 3.
 
+## Documentação e testes
+
+- [Guia do usuário](docs/GUIA-DO-USUARIO.md): instalar, usar, Gerenciar Dock, widgets, privacidade do clima e problemas comuns.
+- [Arquitetura](docs/ARQUITETURA.md): como o código está organizado e como criar um widget.
+- [Testes](docs/TESTES.md): testes automáticos (`dotnet test tests/Dockbox.Tests`, só no Windows) e checklist de teste manual.
+
 ## Versões
 
 O Dockbox usa [Versionamento Semântico](https://semver.org/lang/pt-BR/) com tags `vX.Y.Z`.

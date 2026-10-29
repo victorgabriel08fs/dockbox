@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FA4F589D-9AC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dockbox", "src\Dockbox\Dockbox.csproj", "{2980F337-CC6A-49A1-A9E3-6C558790BE95}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F10469A7-E2DB-4852-8FB6-316BAF5D008F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dockbox.Tests", "tests\Dockbox.Tests\Dockbox.Tests.csproj", "{7B762407-00EA-4827-9EB6-473B99662BE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,13 @@ Global
 		{2980F337-CC6A-49A1-A9E3-6C558790BE95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2980F337-CC6A-49A1-A9E3-6C558790BE95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2980F337-CC6A-49A1-A9E3-6C558790BE95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B762407-00EA-4827-9EB6-473B99662BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B762407-00EA-4827-9EB6-473B99662BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B762407-00EA-4827-9EB6-473B99662BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B762407-00EA-4827-9EB6-473B99662BE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2980F337-CC6A-49A1-A9E3-6C558790BE95} = {FA4F589D-9AC4-4F15-83FF-2A0FEABD82A6}
+		{7B762407-00EA-4827-9EB6-473B99662BE5} = {F10469A7-E2DB-4852-8FB6-316BAF5D008F}
 	EndGlobalSection
 EndGlobal
