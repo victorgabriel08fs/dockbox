@@ -119,9 +119,9 @@
                                 </ListBox.ItemTemplate>
                             </ListBox>
                             <StackPanel Grid.Column="1" Margin="8,4,4,4">
-                                <Button x:Name="MoveUpButton" Style="{StaticResource UiIconButton}" Content="&#xE70E;" Click="MoveUp_Click" Margin="0,0,0,6"/>
-                                <Button x:Name="MoveDownButton" Style="{StaticResource UiIconButton}" Content="&#xE70D;" Click="MoveDown_Click" Margin="0,0,0,6"/>
-                                <Button Style="{StaticResource UiIconButton}" Content="&#xE74D;" ToolTip="Remover do Dock" Click="Remove_Click"/>
+                                <Button x:Name="MoveUpButton" AutomationProperties.Name="Mover para cima" Style="{StaticResource UiIconButton}" Content="&#xE70E;" Click="MoveUp_Click" Margin="0,0,0,6"/>
+                                <Button x:Name="MoveDownButton" AutomationProperties.Name="Mover para baixo" Style="{StaticResource UiIconButton}" Content="&#xE70D;" Click="MoveDown_Click" Margin="0,0,0,6"/>
+                                <Button Style="{StaticResource UiIconButton}" Content="&#xE74D;" ToolTip="Remover do Dock" AutomationProperties.Name="Remover do Dock" Click="Remove_Click"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -142,14 +142,14 @@
                             <TextBlock Text="Item selecionado" Style="{StaticResource UiH2}" Grid.ColumnSpan="3" Margin="0,0,0,12"/>
 
                             <TextBlock Grid.Row="1" Text="Nome" VerticalAlignment="Center" Foreground="{DynamicResource UiSubFg}"/>
-                            <TextBox x:Name="EditName" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource UiTextBox}" Margin="0,0,0,8" TextChanged="Edit_TextChanged"/>
+                            <TextBox x:Name="EditName" AutomationProperties.Name="Nome do item" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource UiTextBox}" Margin="0,0,0,8" TextChanged="Edit_TextChanged"/>
 
                             <TextBlock Grid.Row="2" Text="Caminho" VerticalAlignment="Center" Foreground="{DynamicResource UiSubFg}"/>
-                            <TextBox x:Name="EditPath" Grid.Row="2" Grid.Column="1" Style="{StaticResource UiTextBox}" Margin="0,0,8,8" LostFocus="EditPath_Commit" KeyDown="EditPath_KeyDown"/>
+                            <TextBox x:Name="EditPath" AutomationProperties.Name="Caminho do item" Grid.Row="2" Grid.Column="1" Style="{StaticResource UiTextBox}" Margin="0,0,8,8" LostFocus="EditPath_Commit" KeyDown="EditPath_KeyDown"/>
                             <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource UiButton}" Content="Procurar..." Click="BrowsePath_Click" Margin="0,0,0,8"/>
 
                             <TextBlock Grid.Row="3" Text="Argumentos" VerticalAlignment="Center" Foreground="{DynamicResource UiSubFg}"/>
-                            <TextBox x:Name="EditArgs" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource UiTextBox}" TextChanged="Edit_TextChanged"/>
+                            <TextBox x:Name="EditArgs" AutomationProperties.Name="Argumentos do item" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource UiTextBox}" TextChanged="Edit_TextChanged"/>
                         </Grid>
                     </Border>
                 </StackPanel>
@@ -170,7 +170,7 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="WeatherCity" Style="{StaticResource UiTextBox}" Margin="0,0,8,0"/>
+                                <TextBox x:Name="WeatherCity" AutomationProperties.Name="Cidade do clima" Style="{StaticResource UiTextBox}" Margin="0,0,8,0"/>
                                 <Button Grid.Column="1" Style="{StaticResource UiButton}" Content="Aplicar" Click="WeatherApply_Click"/>
                             </Grid>
                             <CheckBox x:Name="WeatherAuto" Style="{StaticResource UiToggle}" Click="WeatherAuto_Click" Margin="0,0,0,14"
@@ -201,14 +201,14 @@
                                 <TextBlock Text="Cor do fundo" Style="{StaticResource UiSub}" Margin="0,0,0,6"/>
                                 <StackPanel Orientation="Horizontal">
                                     <WrapPanel x:Name="BgSwatches"/>
-                                    <TextBox x:Name="BgHex" Style="{StaticResource UiTextBox}" Width="96" Margin="8,0,0,0" LostFocus="BgHex_LostFocus" KeyDown="Hex_KeyDown"/>
+                                    <TextBox x:Name="BgHex" AutomationProperties.Name="Cor do fundo em hexadecimal" Style="{StaticResource UiTextBox}" Width="96" Margin="8,0,0,0" LostFocus="BgHex_LostFocus" KeyDown="Hex_KeyDown"/>
                                 </StackPanel>
                             </StackPanel>
 
                             <TextBlock Text="Cor de destaque (anéis, seleção, botões)" Style="{StaticResource UiSub}" Margin="0,14,0,6"/>
                             <StackPanel Orientation="Horizontal">
                                 <WrapPanel x:Name="AccentSwatches"/>
-                                <TextBox x:Name="AccentHex" Style="{StaticResource UiTextBox}" Width="96" Margin="8,0,0,0" LostFocus="AccentHex_LostFocus" KeyDown="Hex_KeyDown"/>
+                                <TextBox x:Name="AccentHex" AutomationProperties.Name="Cor de destaque em hexadecimal" Style="{StaticResource UiTextBox}" Width="96" Margin="8,0,0,0" LostFocus="AccentHex_LostFocus" KeyDown="Hex_KeyDown"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -220,12 +220,12 @@
                                 <TextBlock x:Name="OpacityValue" DockPanel.Dock="Right" Foreground="{DynamicResource UiSubFg}"/>
                                 <TextBlock Text="Opacidade" Foreground="{DynamicResource UiSubFg}"/>
                             </DockPanel>
-                            <Slider x:Name="OpacitySlider" Style="{StaticResource UiSlider}" Minimum="0" Maximum="1" ValueChanged="Slider_Changed" Margin="0,0,0,12"/>
+                            <Slider x:Name="OpacitySlider" AutomationProperties.Name="Opacidade do fundo" Style="{StaticResource UiSlider}" Minimum="0" Maximum="1" ValueChanged="Slider_Changed" Margin="0,0,0,12"/>
                             <DockPanel Margin="0,0,0,4">
                                 <TextBlock x:Name="RadiusValue" DockPanel.Dock="Right" Foreground="{DynamicResource UiSubFg}"/>
                                 <TextBlock Text="Cantos arredondados" Foreground="{DynamicResource UiSubFg}"/>
                             </DockPanel>
-                            <Slider x:Name="RadiusSlider" Style="{StaticResource UiSlider}" Minimum="0" Maximum="32" ValueChanged="Slider_Changed"/>
+                            <Slider x:Name="RadiusSlider" AutomationProperties.Name="Cantos arredondados" Style="{StaticResource UiSlider}" Minimum="0" Maximum="32" ValueChanged="Slider_Changed"/>
                         </StackPanel>
                     </Border>
 
@@ -236,13 +236,13 @@
                                 <TextBlock x:Name="SizeValue" DockPanel.Dock="Right" Foreground="{DynamicResource UiSubFg}"/>
                                 <TextBlock Text="Tamanho dos ícones" Foreground="{DynamicResource UiSubFg}"/>
                             </DockPanel>
-                            <Slider x:Name="SizeSlider" Style="{StaticResource UiSlider}" Minimum="32" Maximum="96" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
+                            <Slider x:Name="SizeSlider" AutomationProperties.Name="Tamanho dos ícones" Style="{StaticResource UiSlider}" Minimum="32" Maximum="96" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
                             <CheckBox x:Name="MagnifyToggle" Style="{StaticResource UiToggle}" Content="Ampliação ao passar o mouse" Click="Toggle_Click" Margin="0,0,0,10"/>
                             <DockPanel Margin="0,0,0,4">
                                 <TextBlock x:Name="MagValue" DockPanel.Dock="Right" Foreground="{DynamicResource UiSubFg}"/>
                                 <TextBlock Text="Intensidade da ampliação" Foreground="{DynamicResource UiSubFg}"/>
                             </DockPanel>
-                            <Slider x:Name="MagSlider" Style="{StaticResource UiSlider}" Minimum="1.1" Maximum="2.6" ValueChanged="Slider_Changed"/>
+                            <Slider x:Name="MagSlider" AutomationProperties.Name="Intensidade da ampliação" Style="{StaticResource UiSlider}" Minimum="1.1" Maximum="2.6" ValueChanged="Slider_Changed"/>
                         </StackPanel>
                     </Border>
 
@@ -289,9 +289,22 @@
                                 <TextBlock x:Name="AutoHideDelayValue" DockPanel.Dock="Right" Foreground="{DynamicResource UiSubFg}"/>
                                 <TextBlock Text="Tempo com o mouse na borda até aparecer" Foreground="{DynamicResource UiSubFg}"/>
                             </DockPanel>
-                            <Slider x:Name="AutoHideDelaySlider" Style="{StaticResource UiSlider}" Minimum="0" Maximum="1.5" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
+                            <Slider x:Name="AutoHideDelaySlider" AutomationProperties.Name="Tempo até o Dock aparecer" Style="{StaticResource UiSlider}" Minimum="0" Maximum="1.5" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
                             <CheckBox x:Name="ReserveToggle" Style="{StaticResource UiToggle}" Content="Reservar espaço na tela (janelas maximizadas param antes do Dock)" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="AutostartToggle" Style="{StaticResource UiToggle}" Content="Iniciar o Dockbox junto com o Windows" Click="Autostart_Click"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource UiCard}">
+                        <StackPanel>
+                            <TextBlock Text="Teclado" Style="{StaticResource UiH2}" Margin="0,0,0,6"/>
+                            <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,0,0,10"
+                                       Text="Atalho para usar o Dock sem mouse. Depois dele: setas escolhem, Enter abre, Shift+F10 abre o menu e Esc volta para onde você estava."/>
+                            <Border Background="{DynamicResource UiInputBg}" CornerRadius="8" HorizontalAlignment="Left" Padding="2">
+                                <StackPanel x:Name="ShortcutChoices" Orientation="Horizontal"/>
+                            </Border>
+                            <TextBlock x:Name="ShortcutHint" Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="Collapsed"/>
+                            <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,10,0,0"
+                                       Text="Com &quot;Mostrar animações&quot; desligado no Windows, o Dock não amplia nem pula. Com alto contraste ligado, usa as cores do Windows."/>
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource UiCard}">

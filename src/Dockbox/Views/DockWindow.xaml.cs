@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -61,6 +62,7 @@ public partial class DockWindow : Window
     private bool _menuOpen;
     private double _dockStart, _dockLength; // no eixo principal
     private DockTheme _theme = DockTheme.From(new Appearance());
+    private Brush _focusBrush = Brushes.White;
     private AppBar? _appBar;
     private bool _positioning;
 
@@ -94,7 +96,9 @@ public partial class DockWindow : Window
 
     private Appearance A => SettingsStore.Current.Appearance;
     private double BaseSize => A.IconSize;
-    private double MaxScale => A.Magnify ? A.Magnification : 1.0;
+    private double MaxScale => A.Magnify && !ReduceMotion ? A.Magnification : 1.0;
+    /// <summary>"Mostrar animações" desligado no Windows: sem ampliação, pulo nem deslizes.</summary>
+    private static bool ReduceMotion => !SystemParameters.ClientAreaAnimation;
     private double InfluenceRadius => BaseSize * 3.0;
     private bool Horizontal => A.Edge is DockEdge.Bottom or DockEdge.Top;
     private double BackgroundThickness => BaseSize + Pad * 2;
@@ -103,6 +107,11 @@ public partial class DockWindow : Window
     {
         InitializeComponent();
         DockCanvas.RenderTransform = _slide;
+        Panel.SetZIndex(_focusRing, 50);
+        DockCanvas.Children.Add(_focusRing);
+        AutomationProperties.SetName(this, "Dock");
+        PreviewKeyDown += OnKeyboard;
+        Deactivated += (_, _) => { if (!_menuOpen) ExitKeyboard(restoreFocus: false); };
         PositionWindow();
 
         // Parado: confere o mouse 20x por segundo. Com o mouse no Dock: anima a cada frame.
@@ -147,8 +156,16 @@ public partial class DockWindow : Window
         {
             // Com a AppBar ativa, a reserva só é refeita se a borda ou a espessura mudaram (ver ReserveArea).
             if (e.PropertyName == nameof(SystemParameters.WorkArea)) Dispatcher.BeginInvoke(() => PositionWindow());
+            // Animações ou alto contraste ligados/desligados no Windows.
+            if (e.PropertyName is nameof(SystemParameters.ClientAreaAnimation) or nameof(SystemParameters.HighContrast))
+                Dispatcher.BeginInvoke(ApplySettings);
         };
-        Closed += (_, _) => ReleaseAppBar();
+        Closed += (_, _) =>
+        {
+            ReleaseAppBar();
+            var h = new WindowInteropHelper(this).Handle;
+            if (h != IntPtr.Zero) UnregisterHotKey(h, HotkeyId);
+        };
         // Se o processo cair, devolve a área de trabalho inteira.
         AppDomain.CurrentDomain.UnhandledException += (_, _) => ReleaseAppBar();
         AppDomain.CurrentDomain.ProcessExit += (_, _) => ReleaseAppBar();
@@ -171,11 +188,18 @@ public partial class DockWindow : Window
         HwndSource.FromHwnd(hwnd)?.AddHook(WndProc);
         _appBar = new AppBar(hwnd);
         PositionWindow();
+        RegisterShortcut();
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (msg == WM_DISPLAYCHANGE) OnDisplayChanged();
+        if (msg == WM_HOTKEY && wParam.ToInt64() == HotkeyId)
+        {
+            Dispatcher.BeginInvoke(ToggleKeyboard);
+            handled = true;
+            return IntPtr.Zero;
+        }
         if (msg == WM_MOUSEACTIVATE)
         {
             handled = true;
@@ -335,12 +359,15 @@ public partial class DockWindow : Window
         string signature = TilesSignature();
         if (signature != _tilesSignature || _tiles.Count == 0) RebuildTiles();
         PositionWindow();
+        RegisterShortcut();
         StartAnimating();
     }
 
     private void ApplyTheme()
     {
-        _theme = DockTheme.From(A);
+        _theme = DockTheme.Current(A);
+        _focusBrush = ColorUtil.Brush(_theme.Accent);
+        _focusRing.BorderBrush = _focusBrush;
         App.ApplyUiTheme(_theme);
 
         DockBackground.Background = _theme.Background;
@@ -382,6 +409,7 @@ public partial class DockWindow : Window
     private void RebuildTiles()
     {
         _tilesSignature = TilesSignature();
+        var kbOld = _kbTile;
         var runningKeys = new HashSet<string>(_tiles.Where(t => t.Running && t.ExeKey != null).Select(t => t.ExeKey!));
         foreach (var t in _tiles)
         {
@@ -432,6 +460,16 @@ public partial class DockWindow : Window
             DockCanvas.Children.Add(t.Visual);
             if (t.Dot != null) DockCanvas.Children.Add(t.Dot);
         }
+        UpdateAutomationNames();
+        if (kbOld != null)
+        {
+            // Mantém o foco do teclado no mesmo item (ou no primeiro, se ele saiu do Dock).
+            var same = _tiles.FirstOrDefault(t => t.Kind != TileKind.Separator &&
+                (t.Entry != null && kbOld.Entry != null && t.Entry.Path == kbOld.Entry.Path || t.Widget != null && t.Widget == kbOld.Widget));
+            var next = same ?? FocusableTiles().FirstOrDefault();
+            if (next != null) FocusTile(next);
+            else ExitKeyboard(restoreFocus: true);
+        }
         Layout();
     }
 
@@ -449,7 +487,8 @@ public partial class DockWindow : Window
             _iconCache[entry.Path] = icon;
         }
 
-        var img = new Image { Source = icon, Stretch = Stretch.Uniform, Cursor = Cursors.Hand };
+        var img = new Image { Source = icon, Stretch = Stretch.Uniform, Cursor = Cursors.Hand, Focusable = true, FocusVisualStyle = null };
+        AutomationProperties.SetHelpText(img, "Enter abre. Shift+F10 abre o menu.");
         RenderOptions.SetBitmapScalingMode(img, BitmapScalingMode.HighQuality);
 
         var tile = new Tile
@@ -472,7 +511,8 @@ public partial class DockWindow : Window
             if (w == null) return null;
             w.SetTheme(_theme);
             w.AvailabilityChanged += () => Dispatcher.BeginInvoke(RebuildTiles);
-            var box = new Viewbox { Stretch = Stretch.Uniform, Child = w.Visual, Cursor = Cursors.Hand };
+            var box = new Viewbox { Stretch = Stretch.Uniform, Child = w.Visual, Cursor = Cursors.Hand, Focusable = true, FocusVisualStyle = null };
+            AutomationProperties.SetHelpText(box, "Enter abre. Shift+F10 abre o menu.");
             cached = (w, box);
             _widgetCache[kind] = cached;
         }
@@ -636,7 +676,7 @@ public partial class DockWindow : Window
     /// <summary>Nuvem rápida que some, no lugar onde um item foi removido.</summary>
     private void Puff((double main, double cross)? at)
     {
-        if (at is not (double m, double c)) return;
+        if (at is not (double m, double c) || ReduceMotion) return;
         double size = BaseSize;
         var scale = new ScaleTransform(0.4, 0.4);
         var puff = new Ellipse
@@ -670,7 +710,7 @@ public partial class DockWindow : Window
                 bool newInstance = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
                 if (!newInstance && tile.ExeKey != null && tile.Running && RunningApps.ToggleWindows(tile.ExeKey))
                     return;
-                if (AppLauncher.Launch(tile.Entry!) && A.BounceOnLaunch && !tile.Running)
+                if (AppLauncher.Launch(tile.Entry!) && A.BounceOnLaunch && !ReduceMotion && !tile.Running)
                     Bounce(tile);
                 break;
 
@@ -780,6 +820,7 @@ public partial class DockWindow : Window
             }
             if (changed && !_animating) Layout();
             UpdateUnpinned(windows);
+            if (changed) UpdateAutomationNames();
         }
         else if (_unpinned.Count > 0)
         {
@@ -798,6 +839,7 @@ public partial class DockWindow : Window
             catch { /* um widget com erro não derruba o Dock */ }
         }
         if (_hovering) UpdateLabel(GetMouseDock());
+        UpdateAutomationNames();
     }
 
     // ================= Animação =================
@@ -832,7 +874,12 @@ public partial class DockWindow : Window
 
         // Distâncias medidas nas posições "em repouso" para o efeito não oscilar.
         var restCenters = RestCenters();
-        double k = 1 - Math.Exp(-dt * Smoothing);
+        double k = ReduceMotion ? 1 : 1 - Math.Exp(-dt * Smoothing);
+
+        // Centro da ampliação: o mouse, ou o item com foco do teclado.
+        double? focusMain = null;
+        if (_hovering && mouse is (double hm, double)) focusMain = hm;
+        else if (_kbTile != null && _tiles.IndexOf(_kbTile) is int ki && ki >= 0) focusMain = restCenters[ki];
         bool settled = true;
 
         for (int i = 0; i < _tiles.Count; i++)
@@ -841,7 +888,7 @@ public partial class DockWindow : Window
             if (t.Kind == TileKind.Separator) continue;
 
             double target = 1;
-            if (_hovering && _dragTile == null && _externalSlot < 0 && mouse is (double main, double) && MaxScale > 1.001)
+            if (focusMain is double main && _dragTile == null && _externalSlot < 0 && MaxScale > 1.001)
             {
                 double d = Math.Abs(main - restCenters[i]) / InfluenceRadius;
                 if (d < 1) target = 1 + (MaxScale - 1) * (Math.Cos(Math.PI * d) + 1) / 2;
@@ -969,7 +1016,7 @@ public partial class DockWindow : Window
     {
         bool waiting = false;
         if (!A.AutoHide) _shown = true;
-        else if (_hovering || _menuOpen || UndoToast.Visibility == Visibility.Visible) _leaveSince = -1;
+        else if (_hovering || _menuOpen || _kbTile != null || UndoToast.Visibility == Visibility.Visible) _leaveSince = -1;
         else if (_shown)
         {
             if (_leaveSince < 0) _leaveSince = now;
@@ -978,7 +1025,7 @@ public partial class DockWindow : Window
         }
 
         double target = _shown ? 1 : 0;
-        _reveal += (target - _reveal) * (1 - Math.Exp(-dt * 14));
+        _reveal += (target - _reveal) * (ReduceMotion ? 1 : 1 - Math.Exp(-dt * 14));
         bool settled = Math.Abs(target - _reveal) < 0.003;
         if (settled) _reveal = target;
         ApplySlide();
@@ -1087,8 +1134,11 @@ public partial class DockWindow : Window
                 t.Dot.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
                 if (show) PlaceRect(t.Dot, x + size / 2 - DotSize / 2, EdgeMargin + 1.5, DotSize, DotSize);
             }
+            if (t == _kbTile)
+                PlaceRect(_focusRing, x - 3, baseCross + lift - 3, size + 6, size + 6);
             x += size + Gap;
         }
+        _focusRing.Visibility = _kbTile != null && _tiles.Contains(_kbTile) ? Visibility.Visible : Visibility.Collapsed;
         PlaceUndoToast();
     }
 
@@ -1121,6 +1171,7 @@ public partial class DockWindow : Window
     {
         Tile? hot = null;
         if (A.ShowLabels && _hovering && !_menuOpen && _pressTile == null && _externalSlot < 0 && mouse is (double main, double)) hot = TileAt(main);
+        if (hot == null && A.ShowLabels && _kbTile != null && !_hovering && !_menuOpen) hot = _kbTile;
         if (_dragTile != null) hot = _dragTile;
         string text = _dragTile != null && _dragRemove ? "Remover" : hot?.Label ?? "";
 
@@ -1177,6 +1228,143 @@ public partial class DockWindow : Window
         return main >= _dockStart && main <= _dockStart + _dockLength && cross >= -2 && cross <= depth;
     }
 
+    // ================= Teclado e leitor de tela =================
+
+    private const int HotkeyId = 0xD0C;
+    private string? _shortcutRegistered;
+    /// <summary>Por que o atalho não pôde ser registrado (já usado por outro programa), ou null.</summary>
+    public static string? ShortcutError { get; private set; }
+    public static event Action? ShortcutStatusChanged;
+
+    private Tile? _kbTile;          // item com o foco do teclado; null = fora do modo teclado
+    private IntPtr _kbPrevious;     // janela que tinha o foco antes do atalho
+    private readonly Border _focusRing = new()
+    {
+        BorderThickness = new Thickness(2.5),
+        CornerRadius = new CornerRadius(12),
+        IsHitTestVisible = false,
+        Visibility = Visibility.Collapsed,
+    };
+
+    private void RegisterShortcut()
+    {
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero) return;
+        string want = A.KeyboardShortcut ?? "";
+        if (want == _shortcutRegistered) return;
+
+        UnregisterHotKey(hwnd, HotkeyId);
+        _shortcutRegistered = want;
+        ShortcutError = null;
+        if (Hotkey.Parse(want) is (uint mods, uint vk) && !RegisterHotKey(hwnd, HotkeyId, mods | MOD_NOREPEAT, vk))
+            ShortcutError = $"O atalho {Hotkey.Display(want)} já é usado por outro programa. Escolha outro.";
+        ShortcutStatusChanged?.Invoke();
+    }
+
+    private List<Tile> FocusableTiles() => _tiles.Where(t => t.Kind != TileKind.Separator).ToList();
+
+    /// <summary>Atalho global: entra no modo teclado, ou sai se já estiver nele.</summary>
+    private void ToggleKeyboard()
+    {
+        if (_kbTile != null)
+        {
+            ExitKeyboard(restoreFocus: true);
+            return;
+        }
+        var tiles = FocusableTiles();
+        if (tiles.Count == 0 || !IsVisible) return;
+
+        var hwnd = new WindowInteropHelper(this).Handle;
+        _kbPrevious = GetForegroundWindow();
+        _shown = true; // com auto-ocultar, o Dock aparece
+        // O atalho global dá a este processo o direito de pegar o foco.
+        SetForegroundWindow(hwnd);
+        FocusTile(tiles[0]);
+    }
+
+    private void FocusTile(Tile t)
+    {
+        _kbTile = t;
+        t.Visual.Focus();
+        Keyboard.Focus(t.Visual);
+        StartAnimating();
+    }
+
+    private void ExitKeyboard(bool restoreFocus)
+    {
+        if (_kbTile == null) return;
+        _kbTile = null;
+        _focusRing.Visibility = Visibility.Collapsed;
+        Keyboard.ClearFocus();
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (restoreFocus && _kbPrevious != IntPtr.Zero && GetForegroundWindow() == hwnd) SetForegroundWindow(_kbPrevious);
+        _kbPrevious = IntPtr.Zero;
+        StartAnimating();
+    }
+
+    /// <summary>Setas/Tab escolhem, Enter/Espaço abrem, Shift+F10 ou tecla de menu abrem o menu, Esc sai.</summary>
+    private void OnKeyboard(object sender, KeyEventArgs e)
+    {
+        if (_kbTile == null || _menuOpen) return;
+        var tiles = FocusableTiles();
+        if (tiles.Count == 0) { ExitKeyboard(restoreFocus: true); return; }
+        int i = Math.Max(0, tiles.IndexOf(_kbTile));
+        int n = tiles.Count;
+        Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+        bool shift = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+
+        switch (key)
+        {
+            case Key.Left or Key.Up:
+                FocusTile(tiles[(i - 1 + n) % n]);
+                break;
+            case Key.Right or Key.Down:
+                FocusTile(tiles[(i + 1) % n]);
+                break;
+            case Key.Tab:
+                FocusTile(tiles[shift ? (i - 1 + n) % n : (i + 1) % n]);
+                break;
+            case Key.Home:
+                FocusTile(tiles[0]);
+                break;
+            case Key.End:
+                FocusTile(tiles[n - 1]);
+                break;
+            case Key.Enter or Key.Space:
+                var t = tiles[i];
+                ExitKeyboard(restoreFocus: false);
+                OnTileClicked(t); // Ctrl+Enter abre nova janela, como Ctrl+clique
+                break;
+            case Key.Apps:
+            case Key.F10 when shift:
+                ShowMenu(BuildMenu(tiles[i]), tiles[i]);
+                break;
+            case Key.Escape:
+                ExitKeyboard(restoreFocus: true);
+                break;
+            default:
+                return;
+        }
+        e.Handled = true;
+    }
+
+    /// <summary>Nomes para o Narrador/NVDA: nome do app e se está aberto; widget e o que ele mostra.</summary>
+    private void UpdateAutomationNames()
+    {
+        foreach (var t in _tiles)
+        {
+            string name = t.Kind switch
+            {
+                TileKind.App => t.Entry!.Name + (t.Running ? ", aberto" : ""),
+                TileKind.Running => t.Entry!.Name + ", aberto, não fixado",
+                TileKind.Widget => string.IsNullOrEmpty(t.Widget!.Label) ? t.Widget.DisplayName : $"{t.Widget.DisplayName}: {t.Widget.Label}",
+                _ => "",
+            };
+            if (name.Length > 0 && AutomationProperties.GetName(t.Visual) != name)
+                AutomationProperties.SetName(t.Visual, name);
+        }
+    }
+
     // ================= Menus =================
 
     private void OnRightClick(object sender, MouseButtonEventArgs e)
@@ -1184,7 +1372,12 @@ public partial class DockWindow : Window
         e.Handled = true;
         var mouse = GetMouseDock();
         var tile = mouse is (double main, double) ? TileAt(main) : null;
+        ShowMenu(BuildMenu(tile));
+    }
 
+    /// <summary>Menu do item (app, widget) ou, sem item, as opções gerais do Dock.</summary>
+    private ContextMenu BuildMenu(Tile? tile)
+    {
         var menu = new ContextMenu();
         if (tile?.Kind is TileKind.App or TileKind.Running)
         {
@@ -1207,7 +1400,7 @@ public partial class DockWindow : Window
             }
             AddDockItems(menu);
         }
-        ShowMenu(menu);
+        return menu;
     }
 
     /// <summary>Menu de um app: janelas abertas, nova janela, Explorador, fechar e remover.</summary>
@@ -1277,12 +1470,27 @@ public partial class DockWindow : Window
         menu.Items.Add(Item("Sair do Dockbox", Close));
     }
 
-    private void ShowMenu(ContextMenu menu)
+    private void ShowMenu(ContextMenu menu, Tile? at = null)
     {
         IntPtr previous = IntPtr.Zero;
         var hwnd = new WindowInteropHelper(this).Handle;
-        menu.PlacementTarget = this;
-        menu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+        if (at != null)
+        {
+            // Aberto pelo teclado: ao lado do item, do lado de dentro da tela.
+            menu.PlacementTarget = at.Visual;
+            menu.Placement = A.Edge switch
+            {
+                DockEdge.Top => System.Windows.Controls.Primitives.PlacementMode.Bottom,
+                DockEdge.Left => System.Windows.Controls.Primitives.PlacementMode.Right,
+                DockEdge.Right => System.Windows.Controls.Primitives.PlacementMode.Left,
+                _ => System.Windows.Controls.Primitives.PlacementMode.Top,
+            };
+        }
+        else
+        {
+            menu.PlacementTarget = this;
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+        }
         menu.Opened += (_, _) =>
         {
             _menuOpen = true;
@@ -1297,6 +1505,12 @@ public partial class DockWindow : Window
             _menuOpen = false;
             StartAnimating();
             // Devolve o foco para quem tinha, a não ser que a ação do menu tenha ativado outra janela.
+            if (_kbTile != null && GetForegroundWindow() == hwnd)
+            {
+                // Continua no modo teclado: o foco volta para o item.
+                FocusTile(_kbTile);
+                return;
+            }
             if (previous != IntPtr.Zero && GetForegroundWindow() == hwnd) SetForegroundWindow(previous);
         };
         menu.IsOpen = true;

@@ -55,6 +55,19 @@ O Dock some sozinho durante vídeo, jogo ou apresentação em tela cheia e volta
 - **Apagar arquivos**: solte arquivos na **Lixeira**. Eles vão para a Lixeira do Windows e podem ser restaurados de lá.
   O Dockbox pergunta antes de apagar.
 
+### Teclado e leitor de tela
+
+- Aperte **Win+Shift+D** em qualquer lugar: o Dock aparece (mesmo com ocultar automaticamente) e o primeiro item
+  fica com um contorno na cor de destaque.
+- **Setas** ou **Tab** escolhem o item; **Home** e **End** vão para o primeiro e o último.
+- **Enter** ou **Espaço** abre (Ctrl+Enter abre uma nova janela). **Shift+F10** ou a tecla de menu abrem o menu do item.
+- **Esc** sai e devolve o foco para a janela em que você estava.
+- O atalho pode ser trocado (ou desligado) em Gerenciar Dock → Comportamento → Teclado. Se outro programa já usa
+  o atalho escolhido, aparece um aviso ali.
+- O Narrador e o NVDA leem o nome de cada item, se o app está aberto e o que cada widget mostra.
+- Com **Mostrar animações** desligado no Windows (Configurações → Acessibilidade → Efeitos visuais), o Dock não
+  amplia, não pula e aparece/some sem deslizar. Com **alto contraste** ligado, o Dock usa as cores do Windows.
+
 ## Gerenciar Dock
 
 Abra pelo botão direito no Dock → **Gerenciar Dock...**. As mudanças aparecem no Dock na hora.
@@ -93,7 +106,7 @@ cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição
   de outro monitor e o Dock vai para lá. Bordas encostadas em outro monitor não contam.
 
 **Comportamento**: mostrar nome, ponto de app aberto, animação de pulo, separador, ocultar automaticamente
-(com o tempo até aparecer), reservar espaço na tela (janelas maximizadas param antes do Dock) e iniciar com o Windows.
+(com o tempo até aparecer), reservar espaço na tela (janelas maximizadas param antes do Dock), iniciar com o Windows e o atalho do teclado.
 
 Com **Ocultar e mostrar o Dock automaticamente**, o Dock sai da tela quando o mouse vai embora e volta quando
 você encosta o mouse na borda, na altura do Dock. Também dá para ligar e desligar pelo botão direito no Dock.

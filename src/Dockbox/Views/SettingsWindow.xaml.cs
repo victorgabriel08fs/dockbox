@@ -102,11 +102,14 @@ public partial class SettingsWindow : Window
         SettingsStore.SaveFailed += onFail;
         SettingsStore.SaveRecovered += onRecover;
         Loaded += (_, _) => UpdateSaveBanner();
+        Action onShortcut = () => Dispatcher.BeginInvoke(UpdateShortcutHint);
+        DockWindow.ShortcutStatusChanged += onShortcut;
         EventHandler onDisplay = (_, _) => Dispatcher.BeginInvoke(UpdateMonitorControls);
         Microsoft.Win32.SystemEvents.DisplaySettingsChanged += onDisplay;
         Closed += (_, _) =>
         {
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged -= onDisplay;
+            DockWindow.ShortcutStatusChanged -= onShortcut;
             SettingsStore.Changed -= OnExternalChange;
             SettingsStore.SaveFailed -= onFail;
             SettingsStore.SaveRecovered -= onRecover;
@@ -122,7 +125,7 @@ public partial class SettingsWindow : Window
         try
         {
             var hwnd = new WindowInteropHelper(this).Handle;
-            int dark = DockTheme.From(A).IsLight ? 0 : 1;
+            int dark = DockTheme.Current(A).IsLight ? 0 : 1;
             DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref dark, sizeof(int));
         }
         catch { }
@@ -236,6 +239,7 @@ public partial class SettingsWindow : Window
             AutoHideDelaySlider.Value = A.AutoHideDelay;
             UpdateAutoHideControls();
             AutostartToggle.IsChecked = Autostart.IsEnabled;
+            BuildShortcutChoices();
         }
         finally
         {
@@ -377,6 +381,8 @@ public partial class SettingsWindow : Window
         bool horizontal = A.Edge is DockEdge.Bottom or DockEdge.Top;
         MoveUpButton.ToolTip = horizontal ? "Mover para antes (mais à esquerda no Dock)" : "Mover para antes (mais acima no Dock)";
         MoveDownButton.ToolTip = horizontal ? "Mover para depois (mais à direita no Dock)" : "Mover para depois (mais abaixo no Dock)";
+        System.Windows.Automation.AutomationProperties.SetName(MoveUpButton, (string)MoveUpButton.ToolTip);
+        System.Windows.Automation.AutomationProperties.SetName(MoveDownButton, (string)MoveDownButton.ToolTip);
     }
 
     private void MoveUp_Click(object sender, RoutedEventArgs e) => Move(-1);
@@ -585,6 +591,37 @@ public partial class SettingsWindow : Window
                : DockEdge.Bottom;
         UpdateMonitorControls();
         Commit();
+    }
+
+    private void BuildShortcutChoices()
+    {
+        ShortcutChoices.Children.Clear();
+        var style = (Style)FindResource("UiSegment");
+        foreach (var choice in Hotkey.Choices)
+        {
+            var rb = new RadioButton
+            {
+                Style = style,
+                GroupName = "shortcut",
+                Content = Hotkey.Display(choice),
+                IsChecked = string.Equals(choice, A.KeyboardShortcut, StringComparison.OrdinalIgnoreCase),
+            };
+            System.Windows.Automation.AutomationProperties.SetName(rb, "Atalho do teclado: " + Hotkey.Display(choice));
+            rb.Checked += (_, _) =>
+            {
+                if (_loading || A.KeyboardShortcut == choice) return;
+                A.KeyboardShortcut = choice;
+                Commit();
+            };
+            ShortcutChoices.Children.Add(rb);
+        }
+        UpdateShortcutHint();
+    }
+
+    private void UpdateShortcutHint()
+    {
+        ShortcutHint.Text = DockWindow.ShortcutError ?? "";
+        ShortcutHint.Visibility = ShortcutHint.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void MonitorMode_Checked(object sender, RoutedEventArgs e)

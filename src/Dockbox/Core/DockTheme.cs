@@ -29,6 +29,39 @@ public sealed class DockTheme
         catch { return false; }
     }
 
+    /// <summary>Tema em uso: alto contraste do Windows, se ligado; senão, o das configurações.</summary>
+    public static DockTheme Current(Appearance a) =>
+        System.Windows.SystemParameters.HighContrast ? HighContrast() : From(a);
+
+    /// <summary>
+    /// Tema de alto contraste: usa as cores escolhidas no Windows (fundo e texto de janela, destaque),
+    /// sem transparência nem gradiente.
+    /// </summary>
+    public static DockTheme HighContrast() => HighContrast(
+        System.Windows.SystemColors.WindowColor,
+        System.Windows.SystemColors.WindowTextColor,
+        System.Windows.SystemColors.HighlightColor);
+
+    public static DockTheme HighContrast(Color window, Color text, Color highlight)
+    {
+        Brush Solid(Color c) => ColorUtil.Brush(Color.FromRgb(c.R, c.G, c.B));
+        return new DockTheme
+        {
+            IsLight = ColorUtil.Luminance(window) > 0.55,
+            Background = Solid(window),
+            Border = Solid(text),
+            InnerHighlight = Brushes.Transparent,
+            Separator = Solid(text),
+            LabelBackground = Solid(window),
+            LabelForeground = Solid(text),
+            LabelBorder = Solid(text),
+            Dot = Solid(text),
+            Accent = Color.FromRgb(highlight.R, highlight.G, highlight.B),
+            ShadowColor = Colors.Black,
+            ShadowOpacity = 0,
+        };
+    }
+
     public static DockTheme From(Appearance a)
     {
         Color baseColor = a.Theme switch

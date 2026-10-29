@@ -53,6 +53,8 @@ public sealed class Appearance
     public MonitorMode Monitor { get; set; } = MonitorMode.Primary;
     /// <summary>Monitor escolhido (ex.: \\.\DISPLAY2), usado quando <see cref="Monitor"/> é Choose.</summary>
     public string MonitorDevice { get; set; } = "";
+    /// <summary>Atalho global que leva o foco ao Dock (ex.: "Win+Shift+D"); vazio = desligado.</summary>
+    public string KeyboardShortcut { get; set; } = Hotkey.Default;
 }
 
 public sealed class DockSettings
@@ -218,7 +220,7 @@ public static class SettingsStore
     public static readonly string[] AllWidgetKinds =
         { "clock", "calendar", "weather", "system", "battery", "media", "trash" };
 
-    private static void Normalize(DockSettings s)
+    internal static void Normalize(DockSettings s)
     {
         s.Items ??= new();
         s.Items.RemoveAll(i => i == null || string.IsNullOrWhiteSpace(i.Path));
@@ -240,6 +242,8 @@ public static class SettingsStore
         if (!Enum.IsDefined(a.Theme)) a.Theme = ThemeMode.Auto;
         if (!Enum.IsDefined(a.Monitor)) a.Monitor = MonitorMode.Primary;
         a.MonitorDevice ??= "";
+        a.KeyboardShortcut ??= "";
+        if (a.KeyboardShortcut.Length > 0 && Hotkey.Parse(a.KeyboardShortcut) == null) a.KeyboardShortcut = Hotkey.Default;
         a.IconSize = Math.Clamp(a.IconSize, 32, 96);
         a.Magnification = Math.Clamp(a.Magnification, 1.0, 2.6);
         a.Opacity = Math.Clamp(a.Opacity, 0.0, 1.0);
