@@ -28,10 +28,11 @@ O Dock escuta `Changed` e se redesenha (`ApplyTheme` + `RebuildTiles` + `Positio
 | Pasta | Conteúdo | Depende de WPF? |
 |---|---|---|
 | `Core/` | `DockSettings` + `SettingsStore` (modelo e persistência), `DockTheme` (cores derivadas), `ColorUtil` | `ColorUtil`/`DockTheme` usam tipos de mídia |
-| `Services/` | Integração com o Windows: ícones, atalhos `.lnk`, janelas abertas, abrir apps, clima, mídia, lixeira, CPU/RAM, autostart | Alguns (ícones, mídia) |
+| `Services/` | Integração com o Windows: ícone da bandeja (`TrayIcon`, via WinForms `NotifyIcon`), ícones, atalhos `.lnk`, janelas abertas, abrir apps, clima, mídia, lixeira, CPU/RAM, autostart | Alguns (ícones, mídia) |
 | `Widgets/` | `DockWidget` (classe base) e um arquivo por widget; `WidgetFactory` cria por nome | Sim |
 | `Views/` | `DockWindow`, `SettingsWindow`, `AppPickerWindow` | Sim |
 | `Interop/` | `NativeMethods`: P/Invoke de user32, gdi32, shell32, dwmapi, kernel32 | Não |
+| `Assets/` | `Dockbox.ico` (exe, janelas, bandeja) e `Dockbox-128.png`; gerados de `assets/brand/` por `tools/build-icons.js` | — |
 | `tests/Dockbox.Tests` | Testes xUnit | — |
 
 ## Janela do Dock

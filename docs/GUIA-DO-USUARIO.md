@@ -15,7 +15,8 @@ Só roda um Dockbox por vez: abrir de novo não cria um segundo Dock.
 Para abrir junto com o Windows: botão direito no Dock → **Gerenciar Dock...** → **Comportamento** →
 **Iniciar o Dockbox junto com o Windows**. Se você mover o `Dockbox.exe` de pasta depois, ligue a opção de novo.
 
-Para fechar: botão direito no Dock → **Sair do Dockbox**.
+Para fechar: botão direito no Dock → **Sair do Dockbox**. O Dockbox também fica na área de notificação
+(perto do relógio do Windows): clique no ícone para abrir o **Gerenciar Dock** ou use o botão direito para sair.
 
 ## Usar o Dock
 
