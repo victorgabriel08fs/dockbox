@@ -37,6 +37,7 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] O Dock aparece embaixo, centralizado, com apps padrão e relógio, calendário, clima e lixeira.
 - [ ] `settings.json` foi criado. Com um `pinned.json` antigo na pasta, os apps dele foram importados.
 - [ ] Abrir o `Dockbox.exe` de novo não cria um segundo Dock.
+- [ ] O `Dockbox.exe` mostra o ícone do Dockbox no Explorador (ícones pequenos, médios e grandes).
 
 ### 2. Foco e janelas
 - [ ] Com o Bloco de Notas em foco, clique no fundo do Dock: o cursor continua piscando no Bloco de Notas.
@@ -83,6 +84,10 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Botão direito num widget: opções do widget e Remover widget.
 - [ ] Botão direito no fundo: Gerenciar Dock, ampliação, posição (marca a atual), Sair.
 - [ ] Com o menu aberto, o rótulo some e os ícones não ficam ampliados presos.
+- [ ] O ícone do Dockbox aparece na bandeja, nítido, com a dica "Dockbox".
+- [ ] Clique esquerdo no ícone da bandeja abre o Gerenciar Dock; abrir de novo não cria outra janela.
+- [ ] Botão direito na bandeja: Gerenciar Dock e Sair do Dockbox; Sair fecha o Dock e o ícone some da bandeja.
+- [ ] Gerenciar Dock e Adicionar apps mostram o ícone do Dockbox na barra de título e na barra de tarefas.
 
 ### 7. Gerenciar Dock
 - [ ] Abrir duas vezes pelo menu: só uma janela, que vem para a frente.
