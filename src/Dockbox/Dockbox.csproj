@@ -10,6 +10,11 @@
     <!-- Permite compilar também fora do Windows (CI/Linux). -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Dockbox.ico</ApplicationIcon>
+    <!-- WinForms só para o ícone da bandeja (NotifyIcon). -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- Aviso do WinForms sobre DPI no manifesto; o app é WPF e o manifesto está certo. -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
     <AssemblyName>Dockbox</AssemblyName>
     <RootNamespace>Dockbox</RootNamespace>
     <!-- Versão do app (SemVer). Atualize junto com o CHANGELOG.md. -->
@@ -17,7 +22,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <InternalsVisibleTo Include="Dockbox.Tests" />
+=======
+    <!-- Evita conflitos de nomes entre WPF e WinForms (Application, MessageBox, Color...). -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Dockbox.ico" />
+    <Resource Include="Assets\Dockbox-128.png" />
+>>>>>>> origin/main
   </ItemGroup>
 
 </Project>

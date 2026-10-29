@@ -1,6 +1,10 @@
-# Dockbox
+<p align="center">
+  <img src="assets/brand/png/dockbox-256.png" width="128" alt="Ícone do Dockbox">
+</p>
 
-Um clone do Dock do macOS para Windows, feito em C# + WPF (.NET 8).
+<h1 align="center">Dockbox</h1>
+
+<p align="center">Um clone do Dock do macOS para Windows, feito em C# + WPF (.NET 8).</p>
 
 ## O que já existe
 
@@ -14,7 +18,11 @@ Um clone do Dock do macOS para Windows, feito em C# + WPF (.NET 8).
 - **Widgets**: relógio, calendário, clima (Open-Meteo), CPU/RAM, bateria, mídia tocando agora e Lixeira.
 - **Estilo**: tema automático/claro/escuro/personalizado, cor de fundo, cor de destaque, opacidade,
   cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).
+<<<<<<< HEAD
 - Reserva espaço na tela: janelas maximizadas param antes do Dock, como na barra de tarefas (dá para desligar).
+=======
+- Ícone na área de notificação (bandeja) com atalhos para Gerenciar Dock e Sair.
+>>>>>>> origin/main
 - Iniciar junto com o Windows (opcional).
 
 ## Como rodar no Windows
@@ -79,3 +87,4 @@ onde também está o passo a passo para lançar uma versão nova.
 | `Widgets/` | Um arquivo por widget, todos derivados de `DockWidget` |
 | `Views/` | Janela do Dock, Gerenciar Dock e seletor de apps |
 | `Interop/` | Declarações Win32 |
+| `Assets/` | Ícone do app (`.ico`) e logo usados nas janelas; fontes em [`assets/brand/`](assets/brand/) |
