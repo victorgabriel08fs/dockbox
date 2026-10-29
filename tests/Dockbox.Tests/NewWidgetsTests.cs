@@ -199,11 +199,11 @@ public class ClipboardHistoryTests
     }
 
     [Theory]
-    [InlineData("curto", "curto")]
-    [InlineData("  várias\r\n  linhas\tcom   espaços ", "várias linhas com espaços")]
-    [InlineData("0123456789abcdefghij", "012345678…")]
-    public void Preview(string text, string expected) =>
-        Assert.Equal(expected, ClipboardHistory.Preview(text, 10));
+    [InlineData("curto", 10, "curto")]
+    [InlineData("  várias\r\n  linhas\tcom   espaços ", 60, "várias linhas com espaços")]
+    [InlineData("0123456789abcdefghij", 10, "012345678…")]
+    public void Preview(string text, int max, string expected) =>
+        Assert.Equal(expected, ClipboardHistory.Preview(text, max));
 }
 
 [Collection(SettingsCollection.Name)]
