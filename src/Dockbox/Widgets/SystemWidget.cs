@@ -1,3 +1,4 @@
+using Dockbox.Core;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,8 +16,8 @@ public sealed class SystemWidget : DockWidget
     private double _cpu;
 
     public override string Kind => "system";
-    public override string DisplayName => "Monitor do sistema";
-    public override string Description => "Uso de CPU (anel externo) e memória RAM (anel interno). Clique abre o Gerenciador de Tarefas.";
+    public override string DisplayName => Loc.T("W_System_Name");
+    public override string Description => Loc.T("W_System_Desc");
 
     public override void Build()
     {
@@ -56,8 +57,7 @@ public sealed class SystemWidget : DockWidget
         _ramArc.Data = Arc(32, 32, 15, ram);
         _cpuText.Text = $"{_cpu * 100:0}%";
 
-        var pt = CultureInfo.GetCultureInfo("pt-BR");
-        Label = string.Format(pt, "CPU {0:0}% · RAM {1:0.0} de {2:0} GB", _cpu * 100, used, total);
+        Label = Loc.F("W_System_Label", _cpu * 100, used, total);
         return Task.CompletedTask;
     }
 

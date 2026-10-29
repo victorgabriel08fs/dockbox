@@ -1,3 +1,4 @@
+using Dockbox.Core;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,8 +16,8 @@ public sealed class MediaWidget : DockWidget
     private bool _playing;
 
     public override string Kind => "media";
-    public override string DisplayName => "Mídia";
-    public override string Description => "Música ou vídeo tocando agora, com controles de tocar, pausar e pular.";
+    public override string DisplayName => Loc.T("W_Media_Name");
+    public override string Description => Loc.T("W_Media_Desc");
     public override TimeSpan Interval => TimeSpan.FromSeconds(2);
 
     public override void Build()
@@ -48,7 +49,7 @@ public sealed class MediaWidget : DockWidget
         g.Children.Add(bar);
         _tile.Child = g;
         Visual.Children.Add(_tile);
-        Label = "Nada tocando";
+        Label = Loc.T("W_Media_Nothing");
     }
 
     private Border Button(string glyph, double size, Action action)
@@ -69,7 +70,7 @@ public sealed class MediaWidget : DockWidget
         var info = await MediaService.GetAsync();
         if (info == null || (string.IsNullOrEmpty(info.Title) && string.IsNullOrEmpty(info.Artist)))
         {
-            Label = "Nada tocando";
+            Label = Loc.T("W_Media_Nothing");
             _art.Source = null;
             _note.Visibility = Visibility.Visible;
             SetPlaying(false);

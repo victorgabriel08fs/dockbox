@@ -30,6 +30,12 @@ public partial class App : Application
 
         SettingsStore.SaveFailed += message => Dispatcher.BeginInvoke(() => ShowSaveError(message));
         SettingsStore.Load();
+        Loc.Apply(SettingsStore.Current.Language);
+        // Antes das janelas se inscreverem: quando elas redesenham, o idioma novo já vale.
+        SettingsStore.Changed += () =>
+        {
+            if (Loc.Setting != SettingsStore.Current.Language) Loc.Apply(SettingsStore.Current.Language);
+        };
         Services.Autostart.RepairIfMoved();
         DispatcherUnhandledException += (_, args) =>
         {
@@ -50,12 +56,11 @@ public partial class App : Application
     private static void ShowSaveError(string message)
     {
         var answer = MessageBox.Show(
-            message + "\n\nSuas mudanças continuam valendo enquanto o Dockbox estiver aberto, mas se perdem ao fechar.\n\n" +
-            "Corrija o problema e clique em Sim para tentar salvar de novo.",
+            Loc.F("Msg_SaveFailed_Body", message),
             "Dockbox", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes);
         if (answer != MessageBoxResult.Yes) return;
         if (!SettingsStore.Save())
-            MessageBox.Show("Ainda não foi possível salvar. Dá para tentar de novo pelo Gerenciar Dock.",
+            MessageBox.Show(Loc.T("Msg_StillCannotSave"),
                 "Dockbox", MessageBoxButton.OK, MessageBoxImage.Warning);
     }
 

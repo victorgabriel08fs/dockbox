@@ -1,3 +1,4 @@
+using Dockbox.Core;
 using System.Windows;
 using Dockbox.Views;
 using Forms = System.Windows.Forms;
@@ -14,22 +15,28 @@ public sealed class TrayIcon : IDisposable
 
     public TrayIcon()
     {
-        var menu = new Forms.ContextMenuStrip();
-        menu.Items.Add("Gerenciar Dock...", null, (_, _) => OpenSettings());
-        menu.Items.Add(new Forms.ToolStripSeparator());
-        menu.Items.Add("Sair do Dockbox", null, (_, _) => Quit());
-
         _icon = new Forms.NotifyIcon
         {
             Icon = LoadIcon(),
             Text = "Dockbox",
-            ContextMenuStrip = menu,
+            ContextMenuStrip = new Forms.ContextMenuStrip(),
             Visible = true,
         };
+        BuildMenu();
+        Loc.Changed += BuildMenu;
         _icon.MouseClick += (_, e) =>
         {
             if (e.Button == Forms.MouseButtons.Left) OpenSettings();
         };
+    }
+
+    private void BuildMenu()
+    {
+        var menu = _icon.ContextMenuStrip!;
+        menu.Items.Clear();
+        menu.Items.Add(Loc.T("Menu_ManageDock"), null, (_, _) => OpenSettings());
+        menu.Items.Add(new Forms.ToolStripSeparator());
+        menu.Items.Add(Loc.T("Menu_Quit"), null, (_, _) => Quit());
     }
 
     private static System.Drawing.Icon LoadIcon()
@@ -52,6 +59,7 @@ public sealed class TrayIcon : IDisposable
 
     public void Dispose()
     {
+        Loc.Changed -= BuildMenu;
         _icon.Visible = false;
         _icon.ContextMenuStrip?.Dispose();
         _icon.Icon?.Dispose();

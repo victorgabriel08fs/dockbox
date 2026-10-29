@@ -85,6 +85,19 @@ escala junto com a ampliação) e pode sobrescrever:
 Para criar um widget novo: crie a classe em `Widgets/`, registre o nome em `WidgetFactory.Create`,
 `DisplayName`, `Description` e `Glyph`, e acrescente o nome em `SettingsStore.AllWidgetKinds`.
 
+## Idiomas
+
+Os textos ficam em `src/Dockbox/Strings.resx` (inglês, usado quando falta tradução), `Strings.pt.resx` e
+`Strings.es.resx`, gerados por `tools/i18n/build_resx.py` a partir de `tools/i18n/strings.py` (não edite os `.resx`
+à mão). No código, `Loc.T("Chave")` e `Loc.F("Chave", valores)`; no XAML, `Text="{l:T Chave}"` com
+`xmlns:l="clr-namespace:Dockbox.Views"`.
+
+`Loc.Apply` (chamado pelo `App` ao abrir e quando `DockSettings.Language` muda) escolhe a cultura com `Loc.Resolve`
+(automático = idioma do Windows, mantendo o país para datas) e dispara `Loc.Changed`: a bandeja refaz o menu, o Dock
+pede rótulos novos aos widgets e o Gerenciar Dock reabre. Menus do Dock são criados a cada clique, então já saem no
+idioma novo. Os testes em `LocTests` conferem que toda chave existe nas três línguas, com os mesmos `{0}`, e que toda
+chave usada no código existe. Como acrescentar um idioma: [TRADUCAO.md](TRADUCAO.md).
+
 ## Persistência
 
 `%APPDATA%\Dockbox\settings.json`, via `System.Text.Json` (sem tipos polimórficos, então sem risco de

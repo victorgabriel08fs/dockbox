@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gerado por tools/i18n/build_resx.py a partir de tools/i18n/strings.py. Não edite à mão. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Common_Off" xml:space="preserve"><value>Desligado</value></data>
+  <data name="Key_Space" xml:space="preserve"><value>Espaço</value></data>
+  <data name="Monitor_Primary" xml:space="preserve"><value>principal</value></data>
+  <data name="W_Battery_Name" xml:space="preserve"><value>Bateria</value></data>
+  <data name="W_Battery_Desc" xml:space="preserve"><value>Nível de carga (só aparece em notebooks).</value></data>
+  <data name="W_Battery_Level" xml:space="preserve"><value>Bateria {0}%</value></data>
+  <data name="W_Battery_Charging" xml:space="preserve"><value>Bateria {0}% · carregando</value></data>
+  <data name="W_Calendar_Name" xml:space="preserve"><value>Calendário</value></data>
+  <data name="W_Calendar_Desc" xml:space="preserve"><value>Dia de hoje; clique para ver o mês.</value></data>
+  <data name="W_Clock_Name" xml:space="preserve"><value>Relógio</value></data>
+  <data name="W_Clock_Desc" xml:space="preserve"><value>Relógio analógico; mostra data e hora ao passar o mouse.</value></data>
+  <data name="W_Media_Name" xml:space="preserve"><value>Mídia</value></data>
+  <data name="W_Media_Desc" xml:space="preserve"><value>Música ou vídeo tocando agora, com controles.</value></data>
+  <data name="W_Media_Nothing" xml:space="preserve"><value>Nada tocando</value></data>
+  <data name="W_System_Name" xml:space="preserve"><value>Monitor do sistema</value></data>
+  <data name="W_System_Desc" xml:space="preserve"><value>Uso de CPU e memória RAM. Clique abre o Gerenciador de Tarefas.</value></data>
+  <data name="W_System_Label" xml:space="preserve"><value>CPU {0:0}% · RAM {1:0.0} de {2:0} GB</value></data>
+  <data name="W_Trash_Name" xml:space="preserve"><value>Lixeira</value></data>
+  <data name="W_Trash_Desc" xml:space="preserve"><value>Abre a Lixeira; arraste arquivos para apagá-los.</value></data>
+  <data name="W_Trash_Empty" xml:space="preserve"><value>Lixeira (vazia)</value></data>
+  <data name="W_Trash_One" xml:space="preserve"><value>Lixeira · 1 item</value></data>
+  <data name="W_Trash_Many" xml:space="preserve"><value>Lixeira · {0} itens</value></data>
+  <data name="W_Trash_Open" xml:space="preserve"><value>Abrir Lixeira</value></data>
+  <data name="W_Trash_EmptyAction" xml:space="preserve"><value>Esvaziar Lixeira...</value></data>
+  <data name="W_Trash_NItems" xml:space="preserve"><value>{0} itens</value></data>
+  <data name="W_Trash_Confirm" xml:space="preserve"><value>Mover {0} para a Lixeira?</value></data>
+  <data name="W_Weather_Name" xml:space="preserve"><value>Clima</value></data>
+  <data name="W_Weather_Desc" xml:space="preserve"><value>Temperatura e condição atual da sua cidade.</value></data>
+  <data name="W_Weather_Loading" xml:space="preserve"><value>Clima: carregando…</value></data>
+  <data name="W_Weather_NoCity" xml:space="preserve"><value>Clima: defina sua cidade em Gerenciar Dock › Widgets</value></data>
+  <data name="W_Weather_Unavailable" xml:space="preserve"><value>Clima indisponível (sem internet ou cidade não encontrada)</value></data>
+  <data name="W_Weather_Search" xml:space="preserve"><value>previsão do tempo {0}</value></data>
+  <data name="Wx_Clear" xml:space="preserve"><value>Céu limpo</value></data>
+  <data name="Wx_MainlyClear" xml:space="preserve"><value>Predominantemente limpo</value></data>
+  <data name="Wx_PartlyCloudy" xml:space="preserve"><value>Parcialmente nublado</value></data>
+  <data name="Wx_Cloudy" xml:space="preserve"><value>Nublado</value></data>
+  <data name="Wx_Fog" xml:space="preserve"><value>Neblina</value></data>
+  <data name="Wx_Drizzle" xml:space="preserve"><value>Garoa</value></data>
+  <data name="Wx_Rain" xml:space="preserve"><value>Chuva</value></data>
+  <data name="Wx_Snow" xml:space="preserve"><value>Neve</value></data>
+  <data name="Wx_RainShowers" xml:space="preserve"><value>Pancadas de chuva</value></data>
+  <data name="Wx_SnowShowers" xml:space="preserve"><value>Pancadas de neve</value></data>
+  <data name="Wx_Thunder" xml:space="preserve"><value>Tempestade</value></data>
+  <data name="Msg_SaveFailed_Body" xml:space="preserve"><value>{0}
+
+Suas mudanças continuam valendo enquanto o Dockbox estiver aberto, mas se perdem ao fechar.
+
+Corrija o problema e clique em Sim para tentar salvar de novo.</value></data>
+  <data name="Msg_StillCannotSave" xml:space="preserve"><value>Ainda não foi possível salvar. Dá para tentar de novo pelo Gerenciar Dock.</value></data>
+  <data name="Msg_OpenFailed" xml:space="preserve"><value>Não foi possível abrir "{0}":
+{1}</value></data>
+  <data name="Msg_Blocked" xml:space="preserve"><value>"{0}" foi bloqueado por segurança.
+
+{1}
+
+Este tipo de link já foi usado para atacar computadores com Windows. Remova o item do Dock.</value></data>
+  <data name="Msg_Risky" xml:space="preserve"><value>"{0}" executa um script, comando ou protocolo que pode alterar o seu computador:
+
+{1}
+
+Só continue se você sabe de onde veio este item.
+
+{2}</value></data>
+  <data name="Msg_Risky_PinQuestion" xml:space="preserve"><value>Fixar no Dock mesmo assim?</value></data>
+  <data name="Msg_Risky_OpenQuestion" xml:space="preserve"><value>Abrir mesmo assim? O Dockbox não vai perguntar de novo para este item.</value></data>
+  <data name="Msg_SettingsCorrupt" xml:space="preserve"><value>O arquivo de configurações estava com erro e o Dockbox voltou aos padrões.</value></data>
+  <data name="Msg_SettingsCorruptCopy" xml:space="preserve"><value>{0}
+
+Uma cópia do arquivo antigo foi guardada em:
+{1}</value></data>
+  <data name="Msg_SaveError" xml:space="preserve"><value>Não foi possível salvar as configurações: {0}.
+
+Arquivo: {1}</value></data>
+  <data name="Err_ReadOnly" xml:space="preserve"><value>o arquivo está como somente leitura ou falta permissão na pasta</value></data>
+  <data name="Err_DiskFull" xml:space="preserve"><value>o disco está cheio</value></data>
+  <data name="Err_InUse" xml:space="preserve"><value>o arquivo está em uso por outro programa (OneDrive, antivírus ou backup)</value></data>
+  <data name="Err_NoFolder" xml:space="preserve"><value>a pasta de configurações não existe e não pôde ser criada</value></data>
+  <data name="Item_FileExplorer" xml:space="preserve"><value>Explorador de Arquivos</value></data>
+  <data name="Item_Notepad" xml:space="preserve"><value>Bloco de Notas</value></data>
+  <data name="Item_Calculator" xml:space="preserve"><value>Calculadora</value></data>
+  <data name="Dock_TileHelp" xml:space="preserve"><value>Enter abre. Shift+F10 abre o menu.</value></data>
+  <data name="Undo_Removed" xml:space="preserve"><value>“{0}” removido</value></data>
+  <data name="Undo_Button" xml:space="preserve"><value>Desfazer</value></data>
+  <data name="Drag_Remove" xml:space="preserve"><value>Remover</value></data>
+  <data name="Shortcut_InUse" xml:space="preserve"><value>O atalho {0} já é usado por outro programa. Escolha outro.</value></data>
+  <data name="A11y_Open" xml:space="preserve"><value>{0}, aberto</value></data>
+  <data name="A11y_OpenUnpinned" xml:space="preserve"><value>{0}, aberto, não fixado</value></data>
+  <data name="Menu_DockOptions" xml:space="preserve"><value>Opções do Dock</value></data>
+  <data name="Menu_RemoveWidget" xml:space="preserve"><value>Remover widget</value></data>
+  <data name="Menu_Minimized" xml:space="preserve"><value>{0}  (minimizada)</value></data>
+  <data name="Menu_NewWindow" xml:space="preserve"><value>Nova janela</value></data>
+  <data name="Menu_Open" xml:space="preserve"><value>Abrir</value></data>
+  <data name="Menu_ShowFolderInExplorer" xml:space="preserve"><value>Mostrar a pasta no Explorador</value></data>
+  <data name="Menu_ShowInExplorer" xml:space="preserve"><value>Mostrar no Explorador</value></data>
+  <data name="Menu_KeepInDock" xml:space="preserve"><value>Manter no Dock</value></data>
+  <data name="Menu_RemoveFromDock" xml:space="preserve"><value>Remover do Dock</value></data>
+  <data name="Menu_Close" xml:space="preserve"><value>Fechar</value></data>
+  <data name="Menu_CloseAll" xml:space="preserve"><value>Fechar todas as janelas ({0})</value></data>
+  <data name="Menu_ManageDock" xml:space="preserve"><value>Gerenciar Dock...</value></data>
+  <data name="Menu_MagnifyOff" xml:space="preserve"><value>Desligar ampliação</value></data>
+  <data name="Menu_MagnifyOn" xml:space="preserve"><value>Ligar ampliação</value></data>
+  <data name="Menu_AutoHideOff" xml:space="preserve"><value>Desligar ocultação automática</value></data>
+  <data name="Menu_AutoHideOn" xml:space="preserve"><value>Ligar ocultação automática</value></data>
+  <data name="Menu_Position" xml:space="preserve"><value>Posição na tela</value></data>
+  <data name="Menu_Quit" xml:space="preserve"><value>Sair do Dockbox</value></data>
+  <data name="Edge_Bottom" xml:space="preserve"><value>Embaixo</value></data>
+  <data name="Edge_Left" xml:space="preserve"><value>À esquerda</value></data>
+  <data name="Edge_Right" xml:space="preserve"><value>À direita</value></data>
+  <data name="Edge_Top" xml:space="preserve"><value>Em cima</value></data>
+  <data name="Item_NoName" xml:space="preserve"><value>(sem nome)</value></data>
+  <data name="Dlg_PickApp" xml:space="preserve"><value>Escolha um app ou arquivo</value></data>
+  <data name="Dlg_FilterApps" xml:space="preserve"><value>Apps e atalhos (*.exe;*.lnk;*.url)|*.exe;*.lnk;*.url|Todos os arquivos (*.*)|*.*</value></data>
+  <data name="Dlg_FilterAppsLnk" xml:space="preserve"><value>Apps e atalhos (*.exe;*.lnk)|*.exe;*.lnk|Todos os arquivos (*.*)|*.*</value></data>
+  <data name="Dlg_PickFolder" xml:space="preserve"><value>Escolha uma pasta</value></data>
+  <data name="Move_BeforeLeft" xml:space="preserve"><value>Mover para antes (mais à esquerda no Dock)</value></data>
+  <data name="Move_BeforeUp" xml:space="preserve"><value>Mover para antes (mais acima no Dock)</value></data>
+  <data name="Move_AfterRight" xml:space="preserve"><value>Mover para depois (mais à direita no Dock)</value></data>
+  <data name="Move_AfterDown" xml:space="preserve"><value>Mover para depois (mais abaixo no Dock)</value></data>
+  <data name="Move_Up" xml:space="preserve"><value>Mover para cima</value></data>
+  <data name="Move_Down" xml:space="preserve"><value>Mover para baixo</value></data>
+  <data name="Shortcut_A11y" xml:space="preserve"><value>Atalho do teclado: {0}</value></data>
+  <data name="Monitor_Missing" xml:space="preserve"><value>O monitor escolhido não está conectado. O Dock fica no principal até ele voltar.</value></data>
+  <data name="Monitor_OnlyOne" xml:space="preserve"><value>Só há um monitor conectado agora.</value></data>
+  <data name="Monitor_FollowBottom" xml:space="preserve"><value>Pare o mouse na borda de baixo de outro monitor por meio segundo e o Dock vai para lá.</value></data>
+  <data name="Monitor_FollowTop" xml:space="preserve"><value>Pare o mouse na borda de cima de outro monitor por meio segundo e o Dock vai para lá.</value></data>
+  <data name="Monitor_FollowLeft" xml:space="preserve"><value>Pare o mouse na borda da esquerda de outro monitor por meio segundo e o Dock vai para lá.</value></data>
+  <data name="Monitor_FollowRight" xml:space="preserve"><value>Pare o mouse na borda da direita de outro monitor por meio segundo e o Dock vai para lá.</value></data>
+  <data name="Reserve_AutoHideTip" xml:space="preserve"><value>Com o auto-ocultar ligado o Dock não reserva espaço na tela.</value></data>
+  <data name="Autostart_Volatile_Ask" xml:space="preserve"><value>O Dockbox está rodando de
+{0}
+
+Se o arquivo for movido ou apagado dali, ele deixa de abrir com o Windows, e qualquer programa pode trocar arquivos nessa pasta.
+
+Copiar o Dockbox para
+{1}
+e iniciar de lá?
+
+Sim: copia, liga o início automático e reabre o Dockbox de lá.
+Não: liga assim mesmo, usando a pasta atual.</value></data>
+  <data name="Autostart_CopyFailed" xml:space="preserve"><value>Não foi possível copiar o Dockbox: {0}
+O início automático vai usar a pasta atual.</value></data>
+  <data name="Autostart_FolderWarn" xml:space="preserve"><value>O Dockbox está rodando de
+{0}
+
+Se a pasta for movida ou apagada, ele deixa de abrir com o Windows. Considere mover a pasta do Dockbox para um lugar fixo antes.</value></data>
+  <data name="Reset_Confirm" xml:space="preserve"><value>Restaurar estilo, widgets e comportamento para o padrão?
+Seus apps fixados serão mantidos.</value></data>
+  <data name="Language_Auto" xml:space="preserve"><value>Automático ({0})</value></data>
+  <data name="S_WindowTitle" xml:space="preserve"><value>Gerenciar Dock · Dockbox</value></data>
+  <data name="S_ManageDock" xml:space="preserve"><value>Gerenciar Dock</value></data>
+  <data name="S_NavItems" xml:space="preserve"><value>Itens do Dock</value></data>
+  <data name="S_NavWidgets" xml:space="preserve"><value>Widgets</value></data>
+  <data name="S_NavStyle" xml:space="preserve"><value>Estilo</value></data>
+  <data name="S_NavBehavior" xml:space="preserve"><value>Comportamento</value></data>
+  <data name="S_OpenSettingsFolder" xml:space="preserve"><value>Abrir pasta de configurações</value></data>
+  <data name="S_RestoreDefaults" xml:space="preserve"><value>Restaurar padrões</value></data>
+  <data name="S_RetrySave" xml:space="preserve"><value>Tentar salvar de novo</value></data>
+  <data name="S_ItemsSub" xml:space="preserve"><value>Apps, pastas e arquivos fixados. Você também pode arrastar qualquer arquivo para o Dock.</value></data>
+  <data name="S_AddApp" xml:space="preserve"><value>Adicionar app</value></data>
+  <data name="S_AddFile" xml:space="preserve"><value>Adicionar arquivo...</value></data>
+  <data name="S_AddFolder" xml:space="preserve"><value>Adicionar pasta...</value></data>
+  <data name="S_SelectedItem" xml:space="preserve"><value>Item selecionado</value></data>
+  <data name="S_Name" xml:space="preserve"><value>Nome</value></data>
+  <data name="S_ItemName" xml:space="preserve"><value>Nome do item</value></data>
+  <data name="S_Path" xml:space="preserve"><value>Caminho</value></data>
+  <data name="S_ItemPath" xml:space="preserve"><value>Caminho do item</value></data>
+  <data name="S_Browse" xml:space="preserve"><value>Procurar...</value></data>
+  <data name="S_Arguments" xml:space="preserve"><value>Argumentos</value></data>
+  <data name="S_ItemArguments" xml:space="preserve"><value>Argumentos do item</value></data>
+  <data name="S_WidgetsSub" xml:space="preserve"><value>Ícones vivos que ficam no fim do Dock, depois do separador. Ligue, desligue e mude a ordem.</value></data>
+  <data name="S_WidgetOptions" xml:space="preserve"><value>Opções dos widgets</value></data>
+  <data name="S_WeatherCity" xml:space="preserve"><value>Cidade do clima</value></data>
+  <data name="S_Apply" xml:space="preserve"><value>Aplicar</value></data>
+  <data name="S_AutoLocate" xml:space="preserve"><value>Sem cidade: detectar pela internet (envia seu IP para o serviço ipwho.is)</value></data>
+  <data name="S_Clock24h" xml:space="preserve"><value>Relógio em 24 horas</value></data>
+  <data name="S_StyleSub" xml:space="preserve"><value>As mudanças aparecem no Dock na hora.</value></data>
+  <data name="S_Theme" xml:space="preserve"><value>Tema</value></data>
+  <data name="S_Automatic" xml:space="preserve"><value>Automático</value></data>
+  <data name="S_Light" xml:space="preserve"><value>Claro</value></data>
+  <data name="S_Dark" xml:space="preserve"><value>Escuro</value></data>
+  <data name="S_Custom" xml:space="preserve"><value>Personalizado</value></data>
+  <data name="S_BackgroundColor" xml:space="preserve"><value>Cor do fundo</value></data>
+  <data name="S_BackgroundColorHex" xml:space="preserve"><value>Cor do fundo em hexadecimal</value></data>
+  <data name="S_AccentColor" xml:space="preserve"><value>Cor de destaque (anéis, seleção, botões)</value></data>
+  <data name="S_AccentColorHex" xml:space="preserve"><value>Cor de destaque em hexadecimal</value></data>
+  <data name="S_Background" xml:space="preserve"><value>Fundo</value></data>
+  <data name="S_Opacity" xml:space="preserve"><value>Opacidade</value></data>
+  <data name="S_BackgroundOpacity" xml:space="preserve"><value>Opacidade do fundo</value></data>
+  <data name="S_Corners" xml:space="preserve"><value>Cantos arredondados</value></data>
+  <data name="S_Size" xml:space="preserve"><value>Tamanho</value></data>
+  <data name="S_IconSize" xml:space="preserve"><value>Tamanho dos ícones</value></data>
+  <data name="S_Magnify" xml:space="preserve"><value>Ampliação ao passar o mouse</value></data>
+  <data name="S_MagnifyAmount" xml:space="preserve"><value>Intensidade da ampliação</value></data>
+  <data name="S_Position" xml:space="preserve"><value>Posição na tela</value></data>
+  <data name="S_Bottom" xml:space="preserve"><value>Embaixo</value></data>
+  <data name="S_Left" xml:space="preserve"><value>Esquerda</value></data>
+  <data name="S_Right" xml:space="preserve"><value>Direita</value></data>
+  <data name="S_Top" xml:space="preserve"><value>Em cima</value></data>
+  <data name="S_Monitor" xml:space="preserve"><value>Monitor</value></data>
+  <data name="S_MonitorPrimary" xml:space="preserve"><value>Principal</value></data>
+  <data name="S_MonitorChoose" xml:space="preserve"><value>Escolher</value></data>
+  <data name="S_MonitorFollow" xml:space="preserve"><value>Seguir o mouse</value></data>
+  <data name="S_BehaviorSub" xml:space="preserve"><value>Como o Dock reage aos seus cliques e apps.</value></data>
+  <data name="S_ShowLabels" xml:space="preserve"><value>Mostrar o nome ao passar o mouse</value></data>
+  <data name="S_ShowIndicator" xml:space="preserve"><value>Indicador de app aberto (ponto embaixo do ícone)</value></data>
+  <data name="S_ShowRunning" xml:space="preserve"><value>Mostrar apps abertos que não estão fixados</value></data>
+  <data name="S_Bounce" xml:space="preserve"><value>Animação de pulo ao abrir um app</value></data>
+  <data name="S_Separator" xml:space="preserve"><value>Separador entre apps e widgets</value></data>
+  <data name="S_AutoHide" xml:space="preserve"><value>Ocultar e mostrar o Dock automaticamente</value></data>
+  <data name="S_AutoHideDelay" xml:space="preserve"><value>Tempo com o mouse na borda até aparecer</value></data>
+  <data name="S_AutoHideDelayA11y" xml:space="preserve"><value>Tempo até o Dock aparecer</value></data>
+  <data name="S_Reserve" xml:space="preserve"><value>Reservar espaço na tela (janelas maximizadas param antes do Dock)</value></data>
+  <data name="S_Autostart" xml:space="preserve"><value>Iniciar o Dockbox junto com o Windows</value></data>
+  <data name="S_Keyboard" xml:space="preserve"><value>Teclado</value></data>
+  <data name="S_KeyboardSub" xml:space="preserve"><value>Atalho para usar o Dock sem mouse. Depois dele: setas escolhem, Enter abre, Shift+F10 abre o menu e Esc volta para onde você estava.</value></data>
+  <data name="S_A11yNote" xml:space="preserve"><value>Com "Mostrar animações" desligado no Windows, o Dock não amplia nem pula. Com alto contraste ligado, usa as cores do Windows.</value></data>
+  <data name="S_Language" xml:space="preserve"><value>Idioma</value></data>
+  <data name="S_LanguageSub" xml:space="preserve"><value>Idioma dos menus, das configurações e dos widgets. No automático, segue o idioma do Windows.</value></data>
+  <data name="S_Tips" xml:space="preserve"><value>Dicas</value></data>
+  <data name="S_TipsBody" xml:space="preserve"><value>• Clique num app aberto para trazê-lo para frente; clique de novo para minimizar.
+• Ctrl + clique abre uma nova janela do app.
+• Solte arquivos sobre um app para abri-los com ele, ou sobre a Lixeira para apagar.
+• Botão direito no Dock abre o menu com posição, ampliação e mais opções.</value></data>
+  <data name="P_WindowTitle" xml:space="preserve"><value>Adicionar apps ao Dock</value></data>
+  <data name="P_Title" xml:space="preserve"><value>Adicionar apps</value></data>
+  <data name="P_Sub" xml:space="preserve"><value>Apps do Menu Iniciar. Selecione um ou vários (Ctrl + clique).</value></data>
+  <data name="P_Search" xml:space="preserve"><value>Buscar apps</value></data>
+  <data name="P_Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="P_Add" xml:space="preserve"><value>Adicionar</value></data>
+</root>

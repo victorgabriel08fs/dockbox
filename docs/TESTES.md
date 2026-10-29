@@ -205,6 +205,17 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Configurações → Acessibilidade → Efeitos visuais → Efeitos de animação desligado: o Dock não amplia, não pula e o auto-ocultar não desliza (aparece/some direto).
 - [ ] Alto contraste ligado (Alt+Shift esquerdo+Print Screen): o Dock fica com fundo e texto do tema de contraste, sem transparência.
 
+### 10d. Idiomas
+- [ ] Windows em português, sem `settings.json`: tudo em português; itens padrão com nomes em português.
+- [ ] Comportamento → Idioma → **English**: a janela reabre na mesma página em inglês; botão direito no Dock, menu da bandeja, rótulos dos widgets (Relógio, Calendário, Clima, Lixeira) e aviso de Desfazer em inglês.
+- [ ] **Español**: o mesmo em espanhol. Data do calendário em espanhol ("Jueves, 29 de octubre de 2026").
+- [ ] **Automático**: volta ao idioma do Windows; o botão mostra qual é (ex.: "Automático (Português)").
+- [ ] Feche e abra o Dockbox: o idioma escolhido continua.
+- [ ] Clima com cidade digitada: em inglês, a descrição fica em inglês (ex.: "Partly cloudy").
+- [ ] Narrador lê os itens no idioma escolhido ("Notepad, open").
+- [ ] Mensagens: arrastar arquivo para a Lixeira pergunta no idioma escolhido.
+- [ ] Opcional: Windows em espanhol ou inglês (Configurações → Hora e idioma) com Idioma em Automático: o Dock segue.
+
 ### 11. Monitores
 Precisa de dois monitores (dá para usar uma TV ou um monitor emprestado).
 - [ ] Padrão: o Dock fica no principal.

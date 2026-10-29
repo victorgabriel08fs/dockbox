@@ -3,6 +3,7 @@ using Dockbox.Core;
 
 namespace Dockbox.Tests;
 
+[Collection(SettingsCollection.Name)] // usa o idioma (Loc), que é global
 public sealed class AccessibilityTests
 {
     [Theory]
@@ -30,6 +31,7 @@ public sealed class AccessibilityTests
     [Fact]
     public void Hotkey_Display()
     {
+        Loc.Apply("pt-BR");
         Assert.Equal("Desligado", Hotkey.Display(""));
         Assert.Equal("Ctrl+Alt+Espaço", Hotkey.Display("Ctrl+Alt+Space"));
         Assert.Equal("Win+Shift+D", Hotkey.Default);

@@ -13,7 +13,7 @@ public static class Hotkey
 
     /// <summary>Texto para mostrar ao usuário.</summary>
     public static string Display(string? text) =>
-        string.IsNullOrEmpty(text) ? "Desligado" : text.Replace("Space", "Espaço");
+        string.IsNullOrEmpty(text) ? Loc.T("Common_Off") : text.Replace("Space", Loc.T("Key_Space"));
 
     /// <summary>Converte "Ctrl+Alt+D" em modificadores e código de tecla virtual do Windows; null se inválido.</summary>
     public static (uint Mods, uint Vk)? Parse(string? text)
