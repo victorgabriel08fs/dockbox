@@ -18,6 +18,8 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
   - Notas rápidas: um bloquinho flutuante que salva sozinho em `%APPDATA%\Dockbox\notas.txt`.
   - Temporizador: Pomodoro de 25 min, com 5, 15 e 50 min no botão direito, e som ao terminar.
   - Área de transferência: os últimos 10 textos copiados, guardados só na memória; ignora o que os gerenciadores de senha pedem para não guardar.
+- Temas: em Estilo, temas prontos (Sonoma claro, Sonoma escuro, Grafite, Transparente) e "Importar tema…"/"Exportar tema…" em arquivos `.dockbox-theme`; o tema importado aparece no Dock antes de confirmar e "Não" volta ao anterior (#29).
+- Backup completo: em Comportamento, "Exportar tudo…"/"Importar tudo…" salva e restaura apps, pastas, widgets, estilo e opções num arquivo `.dockbox-backup`, com os ícones personalizados dentro. Itens importados pedem confirmação de novo antes de abrir scripts e links. Arquivo inválido mostra o motivo e não muda nada (#29).
 
 ## [0.4.0] - 2026-10-29
 

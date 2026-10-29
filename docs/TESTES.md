@@ -207,6 +207,19 @@ Ligue os cinco em Gerenciar Dock → Widgets. Eles aparecem antes da Lixeira.
 - [ ] Copie uma senha num gerenciador de senhas (ex.: Bitwarden, 1Password ou KeePass): ela não aparece no histórico.
 - [ ] Reinicie o Dockbox: o histórico da área de transferência começa vazio (nada foi gravado em disco).
 
+### 8a7. Temas e backup
+- [ ] Estilo → **Temas** → clique em **Sonoma escuro**, **Grafite**, **Transparente** e **Sonoma claro**: o Dock muda na hora; o tamanho dos ícones e a ampliação não mudam.
+- [ ] Ajuste cores, opacidade e tamanho → **Exportar tema…** → salve `Teste.dockbox-theme`.
+- [ ] Clique em **Sonoma claro** → **Importar tema…** → escolha o arquivo: o Dock volta ao seu estilo e pergunta se mantém o tema "Teste". **Não** volta ao Sonoma claro; repita e **Sim** mantém.
+- [ ] Importe um `.txt` renomeado para `.dockbox-theme`: aparece um aviso claro e nada muda.
+- [ ] Importe um backup em **Importar tema…**: o aviso diz para usar "Importar tudo…".
+- [ ] Coloque um ícone personalizado num item → Comportamento → **Exportar tudo…**: avisa onde salvou.
+- [ ] Mude bastante coisa (remova itens, troque o tema, desligue widgets, mude a posição) → **Importar tudo…** → confirme: tudo volta como no backup, inclusive o ícone personalizado.
+- [ ] PC limpo (ou apague `%APPDATA%\Dockbox`): abra o Dockbox → **Importar tudo…**: o Dock fica igual ao do outro PC.
+- [ ] Item `.bat` ou link importado: ao clicar, pede confirmação de novo.
+- [ ] Backup com outro idioma: a janela reabre no idioma do backup.
+- [ ] Na pergunta de confirmação do backup, **Não**: nada muda.
+
 ### 8a6. Ícones personalizados
 - [ ] Botão direito num app → **Trocar ícone…** → escolha um PNG grande (ex.: 1024 px): o ícone muda na hora e fica nítido, sem serrilhado.
 - [ ] Escolha um .ico com vários tamanhos: usa o maior.
