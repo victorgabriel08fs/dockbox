@@ -230,7 +230,9 @@ public partial class SettingsWindow : Window
     {
         if (_loading || Selected is not ItemVm vm) return;
         vm.Entry.Name = EditName.Text;
-        vm.Entry.Arguments = string.IsNullOrWhiteSpace(EditArgs.Text) ? null : EditArgs.Text;
+        string? args = string.IsNullOrWhiteSpace(EditArgs.Text) ? null : EditArgs.Text;
+        if (args != vm.Entry.Arguments) vm.Entry.Trusted = false; // comando mudou: pergunta de novo
+        vm.Entry.Arguments = args;
         vm.Refresh(false);
         Commit(debounce: true);
     }
@@ -243,6 +245,7 @@ public partial class SettingsWindow : Window
         if (path == vm.Entry.Path) return;
         if (string.IsNullOrWhiteSpace(path)) { EditPath.Text = vm.Entry.Path; return; }
         vm.Entry.Path = path;
+        vm.Entry.Trusted = false; // caminho mudou: pergunta de novo se for script
         bool isNetwork = path.StartsWith(@"\\", StringComparison.Ordinal);
         vm.Refresh(!isNetwork && (File.Exists(path) || Directory.Exists(path)));
         Commit();

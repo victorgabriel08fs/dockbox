@@ -26,6 +26,10 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Ícone na área de notificação com atalhos para Gerenciar Dock e Sair (#40).
 - Reordenar arrastando um ícone no Dock e remover arrastando para fora, com indicador de onde o item entra, também ao arrastar arquivos de fora (#6).
 
+### Segurança
+
+- Scripts, protocolos desconhecidos e interpretadores com argumentos pedem confirmação antes de abrir (uma vez por item); protocolos usados em ataques, como `ms-msdt:` e `search-ms:`, são bloqueados (#13).
+
 ### Alterado
 
 - Configurações agora ficam em `%APPDATA%\Dockbox\settings.json`; o `pinned.json` antigo é importado.

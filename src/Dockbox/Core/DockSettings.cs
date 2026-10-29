@@ -13,6 +13,8 @@ public sealed class DockEntry
     /// <summary>Caminho de um .exe, atalho .lnk, pasta ou arquivo. Aceita %VARIAVEIS%.</summary>
     public string Path { get; set; } = "";
     public string? Arguments { get; set; }
+    /// <summary>O usuário já confirmou que este item (script, protocolo...) pode abrir. Zera ao mudar caminho ou argumentos.</summary>
+    public bool Trusted { get; set; }
 }
 
 public sealed class WidgetConfig

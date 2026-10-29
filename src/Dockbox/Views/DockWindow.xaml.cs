@@ -1067,7 +1067,16 @@ public partial class DockWindow : Window
         foreach (var f in files)
         {
             string name = Directory.Exists(f) ? new DirectoryInfo(f).Name : Path.GetFileNameWithoutExtension(f);
-            items.Insert(index++, new DockEntry { Name = name, Path = f });
+            var entry = new DockEntry { Name = name, Path = f };
+            var risk = AppLauncher.Assess(f, null);
+            if (risk == LaunchRisk.Blocked) continue;
+            if (risk == LaunchRisk.Confirm)
+            {
+                // Fixar um script por arraste também avisa; quem confirmou aqui não é perguntado de novo ao abrir.
+                if (!AppLauncher.ConfirmRisky(name, f, null, pinning: true)) continue;
+                entry.Trusted = true;
+            }
+            items.Insert(index++, entry);
         }
         SettingsStore.Commit();
     }
