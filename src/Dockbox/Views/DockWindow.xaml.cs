@@ -28,7 +28,8 @@ public partial class DockWindow : Window
 
     private static readonly Brush HitBrush = ColorUtil.Brush(Color.FromArgb(1, 0, 0, 0));
 
-    private enum TileKind { App, Widget, Separator }
+    /// <summary>App = fixado; Running = aberto mas não fixado (temporário, depois dos fixados).</summary>
+    private enum TileKind { App, Widget, Separator, Running }
 
     private sealed class Tile
     {
@@ -81,6 +82,12 @@ public partial class DockWindow : Window
     private bool _dragRemove;                  // solto aqui, sai do Dock
     private int _externalSlot = -1;            // arquivo vindo de fora: onde vai entrar (-1 = nenhum)
     private double _gapEnd;                    // espaço aberto depois do último app
+
+    // ---- Apps abertos não fixados ----
+    private sealed record UnpinnedApp(string Key, string Path, string Name);
+    private List<UnpinnedApp> _unpinned = new();
+    private static readonly string? OwnExe = Environment.ProcessPath?.ToLowerInvariant();
+    private static readonly Dictionary<string, string> ExeNames = new(StringComparer.OrdinalIgnoreCase);
 
     private Appearance A => SettingsStore.Current.Appearance;
     private double BaseSize => A.IconSize;
@@ -285,6 +292,19 @@ public partial class DockWindow : Window
         foreach (var entry in s.Items)
             _tiles.Add(CreateAppTile(entry));
 
+        if (A.ShowRunningUnpinned && _unpinned.Count > 0)
+        {
+            if (_tiles.Count > 0) _tiles.Add(CreateSeparator());
+            foreach (var app in _unpinned)
+            {
+                var t = CreateAppTile(new DockEntry { Name = app.Name, Path = app.Path });
+                t.Kind = TileKind.Running;
+                t.ExeKey = app.Key;
+                t.Running = true;
+                _tiles.Add(t);
+            }
+        }
+
         var widgets = new List<Tile>();
         foreach (var cfg in s.Widgets.Where(w => w.Enabled))
         {
@@ -293,13 +313,7 @@ public partial class DockWindow : Window
         }
 
         if (widgets.Count > 0 && _tiles.Count > 0 && A.ShowSeparator)
-        {
-            _tiles.Add(new Tile
-            {
-                Kind = TileKind.Separator,
-                Visual = new Rectangle { Fill = _theme.Separator, IsHitTestVisible = false },
-            });
-        }
+            _tiles.Add(CreateSeparator());
         _tiles.AddRange(widgets);
 
         // Widgets desligados: libera recursos
@@ -318,6 +332,12 @@ public partial class DockWindow : Window
         }
         Layout();
     }
+
+    private Tile CreateSeparator() => new()
+    {
+        Kind = TileKind.Separator,
+        Visual = new Rectangle { Fill = _theme.Separator, IsHitTestVisible = false },
+    };
 
     private Tile CreateAppTile(DockEntry entry)
     {
@@ -552,6 +572,11 @@ public partial class DockWindow : Window
                     Bounce(tile);
                 break;
 
+            case TileKind.Running:
+                if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) || tile.ExeKey == null || !RunningApps.ToggleWindows(tile.ExeKey))
+                    AppLauncher.Launch(tile.Entry!);
+                break;
+
             case TileKind.Widget:
                 tile.Widget!.OnClick(tile.Visual);
                 break;
@@ -594,12 +619,13 @@ public partial class DockWindow : Window
                 SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
         }
 
-        // Indicadores de apps abertos
-        if (A.ShowRunning)
+        // Indicadores de apps abertos e apps abertos não fixados
+        if (A.ShowRunning || A.ShowRunningUnpinned)
         {
-            Dictionary<string, List<IntPtr>> snap;
-            try { snap = RunningApps.Snapshot(); }
-            catch { snap = new(); }
+            List<RunningApps.AppWindow> windows;
+            try { windows = RunningApps.Windows(); }
+            catch { windows = new(); }
+            var snap = RunningApps.Snapshot(windows);
             bool changed = false;
             foreach (var t in _tiles.Where(t => t.Kind == TileKind.App))
             {
@@ -607,6 +633,12 @@ public partial class DockWindow : Window
                 if (running != t.Running) { t.Running = running; changed = true; }
             }
             if (changed && !_animating) Layout();
+            UpdateUnpinned(windows);
+        }
+        else if (_unpinned.Count > 0)
+        {
+            _unpinned = new();
+            RebuildTiles();
         }
 
         // Widgets
@@ -694,6 +726,67 @@ public partial class DockWindow : Window
         UpdateLabel(mouse);
 
         if (settled && revealSettled && !_hovering) StopAnimating();
+    }
+
+    // ================= Apps abertos não fixados =================
+
+    /// <summary>Atualiza a seção de apps abertos que não estão fixados; reconstrói o Dock só se mudou.</summary>
+    private void UpdateUnpinned(List<RunningApps.AppWindow> windows)
+    {
+        if (_pressTile != null || _menuOpen) return; // não mexe nos ícones durante arraste ou menu
+
+        var next = new List<UnpinnedApp>();
+        if (A.ShowRunningUnpinned)
+        {
+            var pinned = new HashSet<string>(_tiles.Where(t => t.Kind == TileKind.App && t.ExeKey != null).Select(t => t.ExeKey!));
+            var found = new Dictionary<string, UnpinnedApp>();
+            foreach (var w in windows)
+            {
+                if (w.Key is not string key || w.Exe == OwnExe) continue;
+                if (w.Keys.Any(pinned.Contains) || found.ContainsKey(key)) continue;
+                string path = w.Aumid != null ? @"shell:AppsFolder\" + w.Aumid : w.Exe!;
+                found[key] = new UnpinnedApp(key, path, AppName(w));
+            }
+            // Mantém a ordem de quem já estava e coloca os novos no fim, como no macOS.
+            next.AddRange(_unpinned.Where(u => found.ContainsKey(u.Key)).Select(u => found[u.Key]));
+            next.AddRange(found.Values.Where(f => !_unpinned.Any(u => u.Key == f.Key)));
+        }
+
+        if (next.Select(u => u.Key).SequenceEqual(_unpinned.Select(u => u.Key))) return;
+        _unpinned = next;
+        RebuildTiles();
+        StartAnimating();
+    }
+
+    /// <summary>Nome do app: descrição do executável (ex.: "Google Chrome") ou o título da janela, para apps da Store.</summary>
+    private static string AppName(RunningApps.AppWindow w)
+    {
+        if (w.Aumid != null || w.Exe == null)
+        {
+            var sb = new System.Text.StringBuilder(256);
+            GetWindowText(w.Handle, sb, sb.Capacity);
+            return sb.Length > 0 ? sb.ToString() : "App";
+        }
+        if (ExeNames.TryGetValue(w.Exe, out var cached)) return cached;
+        string name;
+        try
+        {
+            var info = FileVersionInfo.GetVersionInfo(w.Exe);
+            name = !string.IsNullOrWhiteSpace(info.FileDescription) ? info.FileDescription.Trim() : Path.GetFileNameWithoutExtension(w.Exe);
+        }
+        catch { name = Path.GetFileNameWithoutExtension(w.Exe); }
+        if (name.Length > 0) name = char.ToUpper(name[0]) + name[1..];
+        ExeNames[w.Exe] = name;
+        return name;
+    }
+
+    /// <summary>"Manter no Dock": fixa um app aberto, no fim dos fixados.</summary>
+    private void PinRunning(Tile tile)
+    {
+        var entry = tile.Entry!;
+        _unpinned.RemoveAll(u => u.Key == tile.ExeKey);
+        SettingsStore.Current.Items.Add(new DockEntry { Name = entry.Name, Path = entry.Path });
+        SettingsStore.Commit();
     }
 
     // ================= Auto-ocultar =================
@@ -945,7 +1038,7 @@ public partial class DockWindow : Window
         var tile = mouse is (double main, double) ? TileAt(main) : null;
 
         var menu = new ContextMenu();
-        if (tile?.Kind == TileKind.App)
+        if (tile?.Kind is TileKind.App or TileKind.Running)
         {
             // Cada app tem o próprio menu; as opções gerais ficam num submenu.
             AddAppItems(menu, tile);
@@ -996,7 +1089,8 @@ public partial class DockWindow : Window
         menu.Items.Add(Item(Directory.Exists(Environment.ExpandEnvironmentVariables(entry.Path)) ? "Mostrar a pasta no Explorador" : "Mostrar no Explorador",
             () => AppLauncher.ShowInExplorer(entry.Path)));
         menu.Items.Add(new Separator());
-        menu.Items.Add(Item("Remover do Dock", () => RemoveEntry(entry)));
+        if (tile.Kind == TileKind.Running) menu.Items.Add(Item("Manter no Dock", () => PinRunning(tile)));
+        else menu.Items.Add(Item("Remover do Dock", () => RemoveEntry(entry)));
 
         if (windows.Count > 0)
         {
@@ -1099,7 +1193,7 @@ public partial class DockWindow : Window
         StartAnimating();
         var t = DropTarget(out double main);
         if (t?.Widget is { AcceptsFiles: true }) e.Effects = DragDropEffects.Move;
-        else if (t?.Kind == TileKind.App && !files.All(IsPinnable)) e.Effects = DragDropEffects.Copy;
+        else if (t?.Kind is TileKind.App or TileKind.Running && !files.All(IsPinnable)) e.Effects = DragDropEffects.Copy;
         else e.Effects = DragDropEffects.Link;
 
         // Ao fixar, abre espaço mostrando onde o item vai entrar.
@@ -1119,7 +1213,7 @@ public partial class DockWindow : Window
             w.OnFilesDropped(files);
             return;
         }
-        if (t?.Kind == TileKind.App && !files.All(IsPinnable))
+        if (t?.Kind is TileKind.App or TileKind.Running && !files.All(IsPinnable))
         {
             // Soltar arquivos num app abre os arquivos com ele (como no macOS)
             if (AppLauncher.Launch(t.Entry!, files) && A.BounceOnLaunch) Bounce(t);

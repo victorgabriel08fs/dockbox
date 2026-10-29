@@ -43,6 +43,8 @@ public sealed class Appearance
     public bool ShowSeparator { get; set; } = true;
     /// <summary>Reserva a faixa do Dock na tela para as janelas maximizadas pararem antes dele.</summary>
     public bool ReserveSpace { get; set; } = true;
+    /// <summary>Mostra apps abertos que não estão fixados, depois dos fixados.</summary>
+    public bool ShowRunningUnpinned { get; set; } = true;
     /// <summary>Esconde o Dock fora da tela até o mouse encostar na borda.</summary>
     public bool AutoHide { get; set; }
     /// <summary>Segundos com o mouse na borda até o Dock aparecer.</summary>

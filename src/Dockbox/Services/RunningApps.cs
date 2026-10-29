@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Text;
 using static Dockbox.Interop.NativeMethods;
 
@@ -11,10 +12,30 @@ public static class RunningApps
         "Progman", "WorkerW", "Shell_TrayWnd", "Shell_SecondaryTrayWnd", "Windows.UI.Core.CoreWindow",
     };
 
-    /// <summary>exe (minúsculo) → janelas em ordem de empilhamento (a de cima primeiro).</summary>
-    public static Dictionary<string, List<IntPtr>> Snapshot()
+    /// <summary>Uma janela de app: executável (minúsculo) e, para apps da Store, o AppUserModelID.</summary>
+    public sealed record AppWindow(IntPtr Handle, string? Exe, string? Aumid)
     {
-        var result = new Dictionary<string, List<IntPtr>>();
+        /// <summary>Chave principal do app: AUMID quando for app da Store, senão o executável.</summary>
+        public string? Key => Aumid != null ? AumidKey(Aumid) : Exe;
+
+        /// <summary>Todas as chaves que podem casar com um item fixado.</summary>
+        public IEnumerable<string> Keys
+        {
+            get
+            {
+                if (Exe != null) yield return Exe;
+                if (Aumid != null) yield return AumidKey(Aumid);
+            }
+        }
+    }
+
+    /// <summary>Chave usada para apps identificados pelo AppUserModelID (ex.: shell:AppsFolder\...).</summary>
+    public static string AumidKey(string aumid) => "aumid:" + aumid.ToLowerInvariant();
+
+    /// <summary>Janelas de apps abertas, em ordem de empilhamento (a de cima primeiro), com o mesmo filtro do Alt+Tab.</summary>
+    public static List<AppWindow> Windows()
+    {
+        var result = new List<AppWindow>();
         var pidCache = new Dictionary<uint, string?>();
         var cls = new StringBuilder(256);
 
@@ -28,12 +49,61 @@ public static class RunningApps
                 pidCache[pid] = exe;
             }
             if (exe == null) return true;
-            if (!result.TryGetValue(exe, out var list)) result[exe] = list = new List<IntPtr>();
-            list.Add(hwnd);
+
+            // Apps da Store rodam dentro do ApplicationFrameHost (ou de um exe em WindowsApps):
+            // o que identifica o app é o AppUserModelID da janela.
+            string? aumid = null;
+            if (exe.EndsWith(@"\applicationframehost.exe", StringComparison.Ordinal) || exe.Contains(@"\windowsapps\", StringComparison.Ordinal))
+                aumid = GetAumid(hwnd);
+            if (exe.EndsWith(@"\applicationframehost.exe", StringComparison.Ordinal) && aumid == null) return true;
+
+            result.Add(new AppWindow(hwnd, exe, aumid));
             return true;
         }, IntPtr.Zero);
 
         return result;
+    }
+
+    /// <summary>chave (exe minúsculo ou aumid:...) → janelas em ordem de empilhamento.</summary>
+    public static Dictionary<string, List<IntPtr>> Snapshot() => Snapshot(Windows());
+
+    public static Dictionary<string, List<IntPtr>> Snapshot(List<AppWindow> windows)
+    {
+        var result = new Dictionary<string, List<IntPtr>>();
+        foreach (var w in windows)
+        {
+            foreach (var key in w.Keys)
+            {
+                if (!result.TryGetValue(key, out var list)) result[key] = list = new List<IntPtr>();
+                list.Add(w.Handle);
+            }
+        }
+        return result;
+    }
+
+    private static string? GetAumid(IntPtr hwnd)
+    {
+        IPropertyStore? store = null;
+        var pv = new PROPVARIANT();
+        try
+        {
+            Guid iid = IID_IPropertyStore;
+            SHGetPropertyStoreForWindow(hwnd, ref iid, out store);
+            var key = PKEY_AppUserModel_ID;
+            store.GetValue(ref key, out pv);
+            if (pv.vt != VT_LPWSTR || pv.pointer == IntPtr.Zero) return null;
+            string? id = Marshal.PtrToStringUni(pv.pointer);
+            return string.IsNullOrWhiteSpace(id) ? null : id;
+        }
+        catch
+        {
+            return null;
+        }
+        finally
+        {
+            PropVariantClear(ref pv);
+            if (store != null) Marshal.ReleaseComObject(store);
+        }
     }
 
     private static bool IsAppWindow(IntPtr hwnd, StringBuilder cls)

@@ -11,12 +11,13 @@
 - Dock sem borda, transparente e sempre no topo, que **não rouba o foco** e não aparece no Alt+Tab.
 - Visual estilo macOS: fundo de vidro com gradiente, sombra, borda clara, rótulo com o nome do item.
 - Ampliação suave ao passar o mouse e animação de "pulo" ao abrir um app.
-- Ponto embaixo dos apps abertos; clique num app aberto traz a janela para frente, clique de novo minimiza.
+- Ponto embaixo dos apps abertos (inclusive apps da Microsoft Store); clique num app aberto traz a janela para frente, clique de novo minimiza.
+- Apps abertos que não estão fixados aparecem depois dos fixados e somem ao fechar; botão direito → **Manter no Dock** fixa.
   Ctrl + clique abre uma nova janela.
 - Arraste um app, atalho, pasta ou arquivo para o Dock para fixá-lo (os ícones abrem espaço mostrando onde ele entra);
   solte arquivos sobre um app para abri-los com ele.
 - Arraste um ícone do Dock para o lado para reordenar, ou para fora do Dock para remover.
-- **Gerenciar Dock** (botão direito no Dock): adicionar apps do Menu Iniciar, arquivos e pastas; remover, reordenar e editar.
+- **Gerenciar Dock** (botão direito no Dock): adicionar apps do Menu Iniciar e da Microsoft Store, arquivos e pastas; remover, reordenar e editar.
 - **Widgets**: relógio, calendário, clima (Open-Meteo), CPU/RAM, bateria, mídia tocando agora e Lixeira.
 - **Estilo**: tema automático/claro/escuro/personalizado, cor de fundo, cor de destaque, opacidade,
   cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).

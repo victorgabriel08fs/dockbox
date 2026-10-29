@@ -186,6 +186,7 @@ public partial class SettingsWindow : Window
             // Comportamento
             LabelsToggle.IsChecked = A.ShowLabels;
             RunningToggle.IsChecked = A.ShowRunning;
+            UnpinnedToggle.IsChecked = A.ShowRunningUnpinned;
             BounceToggle.IsChecked = A.BounceOnLaunch;
             SeparatorToggle.IsChecked = A.ShowSeparator;
             ReserveToggle.IsChecked = A.ReserveSpace;
@@ -542,6 +543,7 @@ public partial class SettingsWindow : Window
         MagSlider.IsEnabled = A.Magnify;
         A.ShowLabels = LabelsToggle.IsChecked == true;
         A.ShowRunning = RunningToggle.IsChecked == true;
+        A.ShowRunningUnpinned = UnpinnedToggle.IsChecked == true;
         A.BounceOnLaunch = BounceToggle.IsChecked == true;
         A.ShowSeparator = SeparatorToggle.IsChecked == true;
         A.ReserveSpace = ReserveToggle.IsChecked == true;
