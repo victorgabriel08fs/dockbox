@@ -27,6 +27,8 @@ Get-FileHash .\Dockbox-v0.1.0-win-x64.zip -Algorithm SHA256
 
 1. Atualize `<Version>` em `src/Dockbox/Dockbox.csproj` e mova as notas de
    **[Não lançado]** para uma seção nova no `CHANGELOG.md`.
-2. Faça o merge na `main` e crie a tag: `git tag v0.2.0 && git push origin v0.2.0`.
+2. Faça o merge na `main` e crie a tag. Pelo terminal: `git tag v0.2.0 origin/main && git push origin v0.2.0`.
+   Ou pelo site: **Releases** → **Draft a new release** → em *Choose a tag* digite `v0.2.0`,
+   escolha **Create new tag on publish**, target `main`, e clique em **Publish release**.
 3. O workflow **release** compila o `Dockbox.exe`, cria a release no GitHub com o
    zip anexado e abre um PR adicionando o zip em `releases/v0.2.0/`.
