@@ -22,6 +22,50 @@
   <data name="W_System_Name" xml:space="preserve"><value>Monitor del sistema</value></data>
   <data name="W_System_Desc" xml:space="preserve"><value>Uso de CPU y memoria RAM. Haz clic para abrir el Administrador de tareas.</value></data>
   <data name="W_System_Label" xml:space="preserve"><value>CPU {0:0}% · RAM {1:0.0} de {2:0} GB</value></data>
+  <data name="W_Volume_Name" xml:space="preserve"><value>Volumen</value></data>
+  <data name="W_Volume_Desc" xml:space="preserve"><value>Desplaza el ratón sobre el icono para ajustar el volumen; haz clic para silenciar.</value></data>
+  <data name="W_Volume_Label" xml:space="preserve"><value>Volumen {0} · {1}</value></data>
+  <data name="W_Volume_LabelNoName" xml:space="preserve"><value>Volumen {0}</value></data>
+  <data name="W_Volume_Muted" xml:space="preserve"><value>silenciado</value></data>
+  <data name="W_Volume_MutedShort" xml:space="preserve"><value>mudo</value></data>
+  <data name="W_Volume_NoDevice" xml:space="preserve"><value>Ninguna salida de sonido</value></data>
+  <data name="W_Volume_Up" xml:space="preserve"><value>Subir volumen</value></data>
+  <data name="W_Volume_Down" xml:space="preserve"><value>Bajar volumen</value></data>
+  <data name="W_Volume_Settings" xml:space="preserve"><value>Configuración de sonido</value></data>
+  <data name="W_Network_Name" xml:space="preserve"><value>Red</value></data>
+  <data name="W_Network_Desc" xml:space="preserve"><value>Wi-Fi o cable, nombre de la red y velocidad de descarga y subida.</value></data>
+  <data name="W_Network_Label" xml:space="preserve"><value>{0}: {1} · ↓ {2} · ↑ {3}</value></data>
+  <data name="W_Network_WiFi" xml:space="preserve"><value>Wi-Fi</value></data>
+  <data name="W_Network_Ethernet" xml:space="preserve"><value>Cable</value></data>
+  <data name="W_Network_Other" xml:space="preserve"><value>Red</value></data>
+  <data name="W_Network_Offline" xml:space="preserve"><value>sin red</value></data>
+  <data name="W_Network_OfflineLabel" xml:space="preserve"><value>Sin conexión de red</value></data>
+  <data name="W_Network_Settings" xml:space="preserve"><value>Configuración de red</value></data>
+  <data name="W_Network_WiFiList" xml:space="preserve"><value>Redes Wi-Fi disponibles</value></data>
+  <data name="W_Notes_Name" xml:space="preserve"><value>Notas rápidas</value></data>
+  <data name="W_Notes_Desc" xml:space="preserve"><value>Haz clic para abrir un bloc que se guarda solo.</value></data>
+  <data name="W_Notes_Label" xml:space="preserve"><value>Notas: {0}</value></data>
+  <data name="W_Notes_Empty" xml:space="preserve"><value>Notas rápidas (vacío)</value></data>
+  <data name="W_Notes_OpenFile" xml:space="preserve"><value>Abrir archivo de notas</value></data>
+  <data name="W_Timer_Name" xml:space="preserve"><value>Temporizador</value></data>
+  <data name="W_Timer_Desc" xml:space="preserve"><value>Pomodoro: haz clic para iniciar o pausar; clic derecho para elegir el tiempo.</value></data>
+  <data name="W_Timer_Idle" xml:space="preserve"><value>Temporizador · {0} min (clic para iniciar)</value></data>
+  <data name="W_Timer_Running" xml:space="preserve"><value>Temporizador · faltan {0}</value></data>
+  <data name="W_Timer_Paused" xml:space="preserve"><value>Temporizador en pausa · faltan {0}</value></data>
+  <data name="W_Timer_Done" xml:space="preserve"><value>¡Se acabó el tiempo! Haz clic para reiniciar.</value></data>
+  <data name="W_Timer_Minutes" xml:space="preserve"><value>{0} minutos</value></data>
+  <data name="W_Timer_Pomodoro" xml:space="preserve"><value>{0} minutos (Pomodoro)</value></data>
+  <data name="W_Timer_Reset" xml:space="preserve"><value>Reiniciar</value></data>
+  <data name="W_Clipboard_Name" xml:space="preserve"><value>Portapapeles</value></data>
+  <data name="W_Clipboard_Desc" xml:space="preserve"><value>Últimos 10 textos copiados; haz clic en uno para copiarlo de nuevo. Solo se guarda en memoria.</value></data>
+  <data name="W_Clipboard_Label" xml:space="preserve"><value>Copiado: {0}</value></data>
+  <data name="W_Clipboard_Empty" xml:space="preserve"><value>Portapapeles (nada copiado aún)</value></data>
+  <data name="W_Clipboard_EmptyHint" xml:space="preserve"><value>Copia un texto (Ctrl + C) y aparecerá aquí.</value></data>
+  <data name="W_Clipboard_PausedLabel" xml:space="preserve"><value>Historial en pausa</value></data>
+  <data name="W_Clipboard_CopyA11y" xml:space="preserve"><value>Copiar de nuevo: {0}</value></data>
+  <data name="W_Clipboard_Pause" xml:space="preserve"><value>Pausar historial</value></data>
+  <data name="W_Clipboard_Resume" xml:space="preserve"><value>Reanudar historial</value></data>
+  <data name="W_Clipboard_Clear" xml:space="preserve"><value>Borrar historial</value></data>
   <data name="W_Trash_Name" xml:space="preserve"><value>Papelera de reciclaje</value></data>
   <data name="W_Trash_Desc" xml:space="preserve"><value>Abre la Papelera; arrastra archivos para eliminarlos.</value></data>
   <data name="W_Trash_Empty" xml:space="preserve"><value>Papelera (vacía)</value></data>

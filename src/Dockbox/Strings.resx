@@ -22,6 +22,50 @@
   <data name="W_System_Name" xml:space="preserve"><value>System monitor</value></data>
   <data name="W_System_Desc" xml:space="preserve"><value>CPU and RAM usage. Click to open Task Manager.</value></data>
   <data name="W_System_Label" xml:space="preserve"><value>CPU {0:0}% · RAM {1:0.0} of {2:0} GB</value></data>
+  <data name="W_Volume_Name" xml:space="preserve"><value>Volume</value></data>
+  <data name="W_Volume_Desc" xml:space="preserve"><value>Scroll over the icon to change the volume; click to mute.</value></data>
+  <data name="W_Volume_Label" xml:space="preserve"><value>Volume {0} · {1}</value></data>
+  <data name="W_Volume_LabelNoName" xml:space="preserve"><value>Volume {0}</value></data>
+  <data name="W_Volume_Muted" xml:space="preserve"><value>muted</value></data>
+  <data name="W_Volume_MutedShort" xml:space="preserve"><value>mute</value></data>
+  <data name="W_Volume_NoDevice" xml:space="preserve"><value>No sound output</value></data>
+  <data name="W_Volume_Up" xml:space="preserve"><value>Volume up</value></data>
+  <data name="W_Volume_Down" xml:space="preserve"><value>Volume down</value></data>
+  <data name="W_Volume_Settings" xml:space="preserve"><value>Sound settings</value></data>
+  <data name="W_Network_Name" xml:space="preserve"><value>Network</value></data>
+  <data name="W_Network_Desc" xml:space="preserve"><value>Wi-Fi or cable, network name and download and upload speed.</value></data>
+  <data name="W_Network_Label" xml:space="preserve"><value>{0}: {1} · ↓ {2} · ↑ {3}</value></data>
+  <data name="W_Network_WiFi" xml:space="preserve"><value>Wi-Fi</value></data>
+  <data name="W_Network_Ethernet" xml:space="preserve"><value>Cable</value></data>
+  <data name="W_Network_Other" xml:space="preserve"><value>Network</value></data>
+  <data name="W_Network_Offline" xml:space="preserve"><value>offline</value></data>
+  <data name="W_Network_OfflineLabel" xml:space="preserve"><value>No network connection</value></data>
+  <data name="W_Network_Settings" xml:space="preserve"><value>Network settings</value></data>
+  <data name="W_Network_WiFiList" xml:space="preserve"><value>Available Wi-Fi networks</value></data>
+  <data name="W_Notes_Name" xml:space="preserve"><value>Quick notes</value></data>
+  <data name="W_Notes_Desc" xml:space="preserve"><value>Click to open a notepad that saves itself.</value></data>
+  <data name="W_Notes_Label" xml:space="preserve"><value>Notes: {0}</value></data>
+  <data name="W_Notes_Empty" xml:space="preserve"><value>Quick notes (empty)</value></data>
+  <data name="W_Notes_OpenFile" xml:space="preserve"><value>Open notes file</value></data>
+  <data name="W_Timer_Name" xml:space="preserve"><value>Timer</value></data>
+  <data name="W_Timer_Desc" xml:space="preserve"><value>Pomodoro: click to start or pause; right-click to choose the time.</value></data>
+  <data name="W_Timer_Idle" xml:space="preserve"><value>Timer · {0} min (click to start)</value></data>
+  <data name="W_Timer_Running" xml:space="preserve"><value>Timer · {0} left</value></data>
+  <data name="W_Timer_Paused" xml:space="preserve"><value>Timer paused · {0} left</value></data>
+  <data name="W_Timer_Done" xml:space="preserve"><value>Time's up! Click to reset.</value></data>
+  <data name="W_Timer_Minutes" xml:space="preserve"><value>{0} minutes</value></data>
+  <data name="W_Timer_Pomodoro" xml:space="preserve"><value>{0} minutes (Pomodoro)</value></data>
+  <data name="W_Timer_Reset" xml:space="preserve"><value>Reset</value></data>
+  <data name="W_Clipboard_Name" xml:space="preserve"><value>Clipboard</value></data>
+  <data name="W_Clipboard_Desc" xml:space="preserve"><value>Last 10 copied texts; click one to copy it again. Kept in memory only.</value></data>
+  <data name="W_Clipboard_Label" xml:space="preserve"><value>Copied: {0}</value></data>
+  <data name="W_Clipboard_Empty" xml:space="preserve"><value>Clipboard (nothing copied yet)</value></data>
+  <data name="W_Clipboard_EmptyHint" xml:space="preserve"><value>Copy some text (Ctrl + C) and it shows up here.</value></data>
+  <data name="W_Clipboard_PausedLabel" xml:space="preserve"><value>History paused</value></data>
+  <data name="W_Clipboard_CopyA11y" xml:space="preserve"><value>Copy again: {0}</value></data>
+  <data name="W_Clipboard_Pause" xml:space="preserve"><value>Pause history</value></data>
+  <data name="W_Clipboard_Resume" xml:space="preserve"><value>Resume history</value></data>
+  <data name="W_Clipboard_Clear" xml:space="preserve"><value>Clear history</value></data>
   <data name="W_Trash_Name" xml:space="preserve"><value>Recycle Bin</value></data>
   <data name="W_Trash_Desc" xml:space="preserve"><value>Opens the Recycle Bin; drag files here to delete them.</value></data>
   <data name="W_Trash_Empty" xml:space="preserve"><value>Recycle Bin (empty)</value></data>

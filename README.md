@@ -26,7 +26,7 @@ Funciona no Windows 10 (versão 1809 ou mais recente) e no Windows 11, 64 bits. 
   solte arquivos sobre um app para abri-los com ele.
 - Arraste um ícone do Dock para o lado para reordenar, ou para fora do Dock para remover.
 - **Gerenciar Dock** (botão direito no Dock): adicionar apps do Menu Iniciar e da Microsoft Store, arquivos e pastas; remover, reordenar e editar.
-- **Widgets**: relógio, calendário, clima (Open-Meteo), CPU/RAM, bateria, mídia tocando agora e Lixeira.
+- **Widgets**: relógio, calendário, clima (Open-Meteo), CPU/RAM, bateria, mídia tocando agora, volume, rede, notas rápidas, temporizador (Pomodoro), área de transferência e Lixeira.
 - **Estilo**: tema automático/claro/escuro/personalizado, cor de fundo, cor de destaque, opacidade,
   cantos arredondados, tamanho dos ícones, intensidade da ampliação, posição (embaixo, em cima, esquerda, direita) e monitor (principal, escolhido ou seguir o mouse).
 - Reserva espaço na tela: janelas maximizadas param antes do Dock, como na barra de tarefas (dá para desligar).
