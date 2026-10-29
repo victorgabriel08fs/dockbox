@@ -33,6 +33,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Ícones nítidos em telas com escala (125%, 150%, 200%): o Gerenciar Dock e a lista de apps pedem o ícone no tamanho certo para a maior escala entre os monitores; quando o Windows não dá o ícone grande, o Dockbox usa o de 48 px em vez do de 32 px (#20).
 - Acessibilidade: atalho global (Win+Shift+D, configurável ou desligado) para usar o Dock pelo teclado, com setas, Enter, Shift+F10 e Esc; nomes para leitores de tela em cada item e widget e nos controles do Gerenciar Dock; sem ampliação, pulo nem deslizes com "Mostrar animações" desligado; cores do Windows no alto contraste (#25).
 - Idiomas: português, inglês e espanhol, escolhidos em Gerenciar Dock › Comportamento › Idioma; no automático segue o idioma do Windows (outros idiomas ficam em inglês). Datas do relógio e do calendário e o nome da cidade do clima seguem o idioma (#34).
+- Ocultar a barra de tarefas do Windows (opcional, em Comportamento ou no botão direito do Dock), com "Abrir o menu Iniciar" no menu do Dock; a barra volta ao desligar, ao fechar o Dockbox e, se ele travar ou for encerrado, na próxima vez que abrir; reaparece sozinha só com o Iniciar ou a pesquisa abertos (#21).
 
 ### Segurança
 

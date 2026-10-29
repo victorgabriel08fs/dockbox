@@ -31,6 +31,10 @@ public partial class App : Application
         SettingsStore.SaveFailed += message => Dispatcher.BeginInvoke(() => ShowSaveError(message));
         SettingsStore.Load();
         Loc.Apply(SettingsStore.Current.Language);
+        // Se a última sessão escondeu a barra de tarefas e não a trouxe de volta (travou, foi encerrada), traz agora.
+        Services.Taskbar.RecoverAfterCrash();
+        AppDomain.CurrentDomain.ProcessExit += (_, _) => Services.Taskbar.Restore();
+        AppDomain.CurrentDomain.UnhandledException += (_, _) => Services.Taskbar.Restore();
         // Antes das janelas se inscreverem: quando elas redesenham, o idioma novo já vale.
         SettingsStore.Changed += () =>
         {
@@ -68,6 +72,7 @@ public partial class App : Application
     {
         // Última tentativa de não perder mudanças que falharam ao salvar.
         if (SettingsStore.LastSaveError != null) SettingsStore.Save();
+        Services.Taskbar.Restore();
         _tray?.Dispose();
         _singleInstance?.Dispose();
         base.OnExit(e);

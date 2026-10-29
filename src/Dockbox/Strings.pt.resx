@@ -108,6 +108,9 @@ Arquivo: {1}</value></data>
   <data name="Menu_MagnifyOn" xml:space="preserve"><value>Ligar ampliação</value></data>
   <data name="Menu_AutoHideOff" xml:space="preserve"><value>Desligar ocultação automática</value></data>
   <data name="Menu_AutoHideOn" xml:space="preserve"><value>Ligar ocultação automática</value></data>
+  <data name="Menu_TaskbarHide" xml:space="preserve"><value>Ocultar a barra de tarefas</value></data>
+  <data name="Menu_TaskbarShow" xml:space="preserve"><value>Mostrar a barra de tarefas</value></data>
+  <data name="Menu_StartMenu" xml:space="preserve"><value>Abrir o menu Iniciar</value></data>
   <data name="Menu_Position" xml:space="preserve"><value>Posição na tela</value></data>
   <data name="Menu_Quit" xml:space="preserve"><value>Sair do Dockbox</value></data>
   <data name="Edge_Bottom" xml:space="preserve"><value>Embaixo</value></data>
@@ -217,6 +220,8 @@ Seus apps fixados serão mantidos.</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Tempo com o mouse na borda até aparecer</value></data>
   <data name="S_AutoHideDelayA11y" xml:space="preserve"><value>Tempo até o Dock aparecer</value></data>
   <data name="S_Reserve" xml:space="preserve"><value>Reservar espaço na tela (janelas maximizadas param antes do Dock)</value></data>
+  <data name="S_HideTaskbar" xml:space="preserve"><value>Ocultar a barra de tarefas do Windows</value></data>
+  <data name="S_HideTaskbarHint" xml:space="preserve"><value>Ela volta ao desligar aqui, pelo botão direito no Dock ou ao fechar o Dockbox. O menu Iniciar continua na tecla Windows. Os ícones da área de notificação ficam escondidos junto.</value></data>
   <data name="S_Autostart" xml:space="preserve"><value>Iniciar o Dockbox junto com o Windows</value></data>
   <data name="S_Keyboard" xml:space="preserve"><value>Teclado</value></data>
   <data name="S_KeyboardSub" xml:space="preserve"><value>Atalho para usar o Dock sem mouse. Depois dele: setas escolhem, Enter abre, Shift+F10 abre o menu e Esc volta para onde você estava.</value></data>

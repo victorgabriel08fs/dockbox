@@ -205,6 +205,16 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Configurações → Acessibilidade → Efeitos visuais → Efeitos de animação desligado: o Dock não amplia, não pula e o auto-ocultar não desliza (aparece/some direto).
 - [ ] Alto contraste ligado (Alt+Shift esquerdo+Print Screen): o Dock fica com fundo e texto do tema de contraste, sem transparência.
 
+### 10c2. Ocultar a barra de tarefas
+- [ ] Comportamento → **Ocultar a barra de tarefas do Windows**: a barra some em todos os monitores e as janelas maximizadas usam o espaço dela.
+- [ ] Tecla Windows abre o Iniciar; ao fechar o Iniciar, a barra some de novo em até 1 segundo.
+- [ ] Botão direito no Dock → **Abrir o menu Iniciar** funciona; **Mostrar a barra de tarefas** traz a barra de volta.
+- [ ] Sair do Dockbox (menu do Dock): a barra volta.
+- [ ] Com a opção ligada, encerre o Dockbox pelo Gerenciador de Tarefas e abra de novo com a opção desligada: a barra volta ao normal.
+- [ ] Se a barra já estava com "Ocultar automaticamente" do Windows antes, ela continua assim depois de desligar a opção.
+- [ ] Reinicie o Explorer (Gerenciador de Tarefas → Windows Explorer → Reiniciar) com a opção ligada: a barra some de novo sozinha.
+- [ ] Conectar um segundo monitor com a opção ligada: a barra dele também some.
+
 ### 10d. Idiomas
 - [ ] Windows em português, sem `settings.json`: tudo em português; itens padrão com nomes em português.
 - [ ] Comportamento → Idioma → **English**: a janela reabre na mesma página em inglês; botão direito no Dock, menu da bandeja, rótulos dos widgets (Relógio, Calendário, Clima, Lixeira) e aviso de Desfazer em inglês.

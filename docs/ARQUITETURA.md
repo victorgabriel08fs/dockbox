@@ -85,6 +85,15 @@ escala junto com a ampliação) e pode sobrescrever:
 Para criar um widget novo: crie a classe em `Widgets/`, registre o nome em `WidgetFactory.Create`,
 `DisplayName`, `Description` e `Glyph`, e acrescente o nome em `SettingsStore.AllWidgetKinds`.
 
+## Barra de tarefas do Windows
+
+`Services/Taskbar` esconde `Shell_TrayWnd` e `Shell_SecondaryTrayWnd` (`ShowWindow`) e liga a ocultação
+automática da barra (`ABM_SETSTATE`) para liberar a área de trabalho. Antes, grava o estado original em
+`barra-de-tarefas-oculta.txt` na pasta de configurações; `Restore` volta esse estado e apaga o arquivo. O `App`
+restaura na saída (`OnExit`, `ProcessExit`, exceção não tratada) e, na abertura, se o arquivo ainda existir
+(`RecoverAfterCrash`). O Dock esconde de novo quando o Explorer reinicia (`TaskbarCreated`) e no timer lento, se a
+barra reapareceu e a janela em foco não é o Iniciar ou a pesquisa.
+
 ## Idiomas
 
 Os textos ficam em `src/Dockbox/Strings.resx` (inglês, usado quando falta tradução), `Strings.pt.resx` e

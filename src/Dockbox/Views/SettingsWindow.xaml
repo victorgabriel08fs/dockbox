@@ -292,6 +292,8 @@
                             </DockPanel>
                             <Slider x:Name="AutoHideDelaySlider" AutomationProperties.Name="{l:T S_AutoHideDelayA11y}" Style="{StaticResource UiSlider}" Minimum="0" Maximum="1.5" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
                             <CheckBox x:Name="ReserveToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Reserve}" Click="Toggle_Click" Margin="0,0,0,14"/>
+                            <CheckBox x:Name="HideTaskbarToggle" Style="{StaticResource UiToggle}" Content="{l:T S_HideTaskbar}" Click="Toggle_Click" Margin="0,0,0,4"/>
+                            <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,0,0,14" Text="{l:T S_HideTaskbarHint}"/>
                             <CheckBox x:Name="AutostartToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Autostart}" Click="Autostart_Click"/>
                         </StackPanel>
                     </Border>

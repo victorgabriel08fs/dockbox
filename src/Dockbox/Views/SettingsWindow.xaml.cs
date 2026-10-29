@@ -238,6 +238,7 @@ public partial class SettingsWindow : Window
             SeparatorToggle.IsChecked = A.ShowSeparator;
             ReserveToggle.IsChecked = A.ReserveSpace;
             AutoHideToggle.IsChecked = A.AutoHide;
+            HideTaskbarToggle.IsChecked = A.HideTaskbar;
             AutoHideDelaySlider.Value = A.AutoHideDelay;
             UpdateAutoHideControls();
             AutostartToggle.IsChecked = Autostart.IsEnabled;
@@ -782,6 +783,7 @@ public partial class SettingsWindow : Window
         A.ShowSeparator = SeparatorToggle.IsChecked == true;
         A.ReserveSpace = ReserveToggle.IsChecked == true;
         A.AutoHide = AutoHideToggle.IsChecked == true;
+        A.HideTaskbar = HideTaskbarToggle.IsChecked == true;
         UpdateAutoHideControls();
         Commit();
     }

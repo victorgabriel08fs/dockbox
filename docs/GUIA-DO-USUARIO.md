@@ -108,6 +108,12 @@ cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição
 **Comportamento**: mostrar nome, ponto de app aberto, animação de pulo, separador, ocultar automaticamente
 (com o tempo até aparecer), reservar espaço na tela (janelas maximizadas param antes do Dock), iniciar com o Windows, o idioma e o atalho do teclado.
 
+**Ocultar a barra de tarefas do Windows** (em Comportamento, desligado por padrão): a barra some e o Dock fica
+sozinho, como no macOS. Também liga e desliga pelo botão direito no Dock, que ganha **Abrir o menu Iniciar** (a tecla
+Windows continua funcionando). Os ícones da área de notificação (inclusive o do Dockbox) ficam escondidos junto.
+A barra volta quando você desliga a opção ou fecha o Dockbox. Se o Dockbox travar ou for encerrado pelo Gerenciador
+de Tarefas, abra-o de novo: ele devolve a barra como estava antes (com ou sem ocultação automática).
+
 **Idioma** (em Comportamento): **Automático** segue o idioma do Windows (português, inglês ou espanhol; outros
 idiomas ficam em inglês). Ou escolha **Português**, **English** ou **Español**. A troca vale na hora para menus,
 Gerenciar Dock, bandeja e widgets; as datas do relógio e do calendário seguem o idioma escolhido. Os nomes dos seus

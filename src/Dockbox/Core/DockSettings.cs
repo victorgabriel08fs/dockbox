@@ -47,6 +47,8 @@ public sealed class Appearance
     public bool ShowRunningUnpinned { get; set; } = true;
     /// <summary>Esconde o Dock fora da tela até o mouse encostar na borda.</summary>
     public bool AutoHide { get; set; }
+    /// <summary>Esconde a barra de tarefas do Windows enquanto o Dockbox está aberto.</summary>
+    public bool HideTaskbar { get; set; }
     /// <summary>Segundos com o mouse na borda até o Dock aparecer.</summary>
     public double AutoHideDelay { get; set; } = 0.3;
     /// <summary>Em qual monitor o Dock fica.</summary>

@@ -372,6 +372,15 @@ internal static class NativeMethods
     public const uint ABM_NEW = 0, ABM_REMOVE = 1, ABM_QUERYPOS = 2, ABM_SETPOS = 3;
     public const int ABN_STATECHANGE = 0, ABN_POSCHANGED = 1, ABN_FULLSCREENAPP = 2;
     public const uint ABE_LEFT = 0, ABE_TOP = 1, ABE_RIGHT = 2, ABE_BOTTOM = 3;
+    public const uint ABM_GETSTATE = 4, ABM_SETSTATE = 10;
+    public const int ABS_AUTOHIDE = 1, ABS_ALWAYSONTOP = 2;
+
+    // ---- Barra de tarefas do Windows ----
+    public const int SW_HIDE = 0, SW_SHOWNA = 8;
+    public const byte VK_LWIN = 0x5B;
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public static extern IntPtr FindWindow(string lpClassName, string? lpWindowName);
     public const int SM_CXSCREEN = 0, SM_CYSCREEN = 1;
 
     [DllImport("shell32.dll")]

@@ -108,6 +108,9 @@ Archivo: {1}</value></data>
   <data name="Menu_MagnifyOn" xml:space="preserve"><value>Activar ampliación</value></data>
   <data name="Menu_AutoHideOff" xml:space="preserve"><value>Desactivar ocultación automática</value></data>
   <data name="Menu_AutoHideOn" xml:space="preserve"><value>Activar ocultación automática</value></data>
+  <data name="Menu_TaskbarHide" xml:space="preserve"><value>Ocultar la barra de tareas</value></data>
+  <data name="Menu_TaskbarShow" xml:space="preserve"><value>Mostrar la barra de tareas</value></data>
+  <data name="Menu_StartMenu" xml:space="preserve"><value>Abrir el menú Inicio</value></data>
   <data name="Menu_Position" xml:space="preserve"><value>Posición en la pantalla</value></data>
   <data name="Menu_Quit" xml:space="preserve"><value>Salir de Dockbox</value></data>
   <data name="Edge_Bottom" xml:space="preserve"><value>Abajo</value></data>
@@ -217,6 +220,8 @@ Tus aplicaciones ancladas se mantendrán.</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Tiempo con el ratón en el borde hasta que aparece</value></data>
   <data name="S_AutoHideDelayA11y" xml:space="preserve"><value>Tiempo hasta que aparece el Dock</value></data>
   <data name="S_Reserve" xml:space="preserve"><value>Reservar espacio en la pantalla (las ventanas maximizadas se detienen antes del Dock)</value></data>
+  <data name="S_HideTaskbar" xml:space="preserve"><value>Ocultar la barra de tareas de Windows</value></data>
+  <data name="S_HideTaskbarHint" xml:space="preserve"><value>Vuelve al desactivar esta opción, desde el menú del clic derecho en el Dock o al cerrar Dockbox. El menú Inicio sigue abriéndose con la tecla Windows. Los iconos del área de notificación también se ocultan.</value></data>
   <data name="S_Autostart" xml:space="preserve"><value>Iniciar Dockbox con Windows</value></data>
   <data name="S_Keyboard" xml:space="preserve"><value>Teclado</value></data>
   <data name="S_KeyboardSub" xml:space="preserve"><value>Atajo para usar el Dock sin ratón. Después: las flechas eligen, Enter abre, Mayús+F10 abre el menú y Esc vuelve a donde estabas.</value></data>
