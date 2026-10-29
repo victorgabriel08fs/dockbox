@@ -166,6 +166,10 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Desligar e religar cada widget; mudar a ordem.
 
 ### 10. Configurações e falhas
+- [ ] Com o Dockbox aberto, abra o exe de novo: aparece "O Dockbox já está aberto". **Não**: nada muda. **Sim**: o aberto fecha e este abre.
+- [ ] Com uma versão antiga aberta (sem esse aviso), abrir a nova e clicar **Sim**: a antiga é encerrada e a nova abre.
+- [ ] Com um Dockbox aberto como administrador, abrir outro normal e clicar **Sim**: aparece a explicação com o `taskkill`.
+- [ ] Com "Ocultar a barra de tarefas" ligado, trocar pela versão nova: a barra não fica escondida para sempre.
 - [ ] Feche o Dockbox, coloque um erro de digitação no `settings.json` e abra:
       aparece um aviso com o local da cópia, o Dock abre com padrões e o `settings.json.corrompido-...` tem o conteúdo antigo.
 - [ ] Faça duas mudanças: `settings.json.bak` tem a penúltima versão.

@@ -20,13 +20,20 @@ public partial class App : Application
             catch { /* já fechou */ }
         }
 
-        // Só uma instância do Dock por vez.
-        _singleInstance = new Mutex(true, @"Local\Dockbox.SingleInstance", out bool isNew);
-        if (!isNew)
+        // Só uma cópia do Dock por vez. Abrir de novo (ex.: versão nova) oferece trocar pela nova.
+        var mutex = SingleInstance.Create(out bool isFirst);
+        if (!isFirst && !ReplaceRunning(mutex))
         {
+            mutex.Dispose();
             Shutdown();
             return;
         }
+        _singleInstance = mutex;
+        SingleInstance.ListenForQuit(() => Dispatcher.BeginInvoke(() =>
+        {
+            if (MainWindow is Window w) w.Close();
+            else Shutdown();
+        }));
 
         SettingsStore.SaveFailed += message => Dispatcher.BeginInvoke(() => ShowSaveError(message));
         SettingsStore.Load();
@@ -56,6 +63,24 @@ public partial class App : Application
             Dispatcher.BeginInvoke(() => MessageBox.Show(warning, "Dockbox", MessageBoxButton.OK, MessageBoxImage.Information));
     }
 
+    /// <summary>
+    /// Outra cópia já está aberta: pergunta se é para trocar por esta. Pede para a outra fechar
+    /// e, se ela não responder (versão antiga ou travada), encerra. True quando esta cópia pode abrir.
+    /// </summary>
+    private static bool ReplaceRunning(Mutex mutex)
+    {
+        var answer = MessageBox.Show(Loc.T("Instance_Running"), "Dockbox",
+            MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+        if (answer != MessageBoxResult.Yes) return false;
+
+        if (SingleInstance.AskRunningToQuit() && SingleInstance.WaitFor(mutex, TimeSpan.FromSeconds(6))) return true;
+        SingleInstance.KillOthers();
+        if (SingleInstance.WaitFor(mutex, TimeSpan.FromSeconds(3))) return true;
+
+        MessageBox.Show(Loc.T("Instance_CannotClose"), "Dockbox", MessageBoxButton.OK, MessageBoxImage.Warning);
+        return false;
+    }
+
     /// <summary>Avisa que as configurações não foram salvas e oferece tentar de novo.</summary>
     private static void ShowSaveError(string message)
     {
@@ -74,6 +99,7 @@ public partial class App : Application
         if (SettingsStore.LastSaveError != null) SettingsStore.Save();
         Services.Taskbar.Restore();
         _tray?.Dispose();
+        try { _singleInstance?.ReleaseMutex(); } catch { /* não era desta thread */ }
         _singleInstance?.Dispose();
         base.OnExit(e);
     }

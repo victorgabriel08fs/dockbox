@@ -35,6 +35,10 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Idiomas: português, inglês e espanhol, escolhidos em Gerenciar Dock › Comportamento › Idioma; no automático segue o idioma do Windows (outros idiomas ficam em inglês). Datas do relógio e do calendário e o nome da cidade do clima seguem o idioma (#34).
 - Ocultar a barra de tarefas do Windows (opcional, em Comportamento ou no botão direito do Dock), com "Abrir o menu Iniciar" no menu do Dock; a barra volta ao desligar, ao fechar o Dockbox e, se ele travar ou for encerrado, na próxima vez que abrir; reaparece sozinha só com o Iniciar ou a pesquisa abertos (#21).
 
+### Corrigido
+
+- Abrir o Dockbox com outro já aberto (por exemplo, uma versão nova) não fazia nada. Agora pergunta se é para trocar: o aberto fecha sozinho ou é encerrado; se não der (aberto como administrador), explica como fechar.
+
 ### Segurança
 
 - Scripts, protocolos desconhecidos e interpretadores com argumentos pedem confirmação antes de abrir (uma vez por item); protocolos usados em ataques, como `ms-msdt:` e `search-ms:`, são bloqueados (#13).

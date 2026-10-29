@@ -82,6 +82,15 @@ File: {1}</value></data>
   <data name="Err_DiskFull" xml:space="preserve"><value>the disk is full</value></data>
   <data name="Err_InUse" xml:space="preserve"><value>the file is in use by another program (OneDrive, antivirus or backup)</value></data>
   <data name="Err_NoFolder" xml:space="preserve"><value>the settings folder doesn't exist and couldn't be created</value></data>
+  <data name="Instance_Running" xml:space="preserve"><value>Dockbox is already open.
+
+Close the open one and start this one? Choose Yes when opening a new version.</value></data>
+  <data name="Instance_CannotClose" xml:space="preserve"><value>Couldn't close the Dockbox that is open. It may have been started as administrator.
+
+Close it from the Dock's right-click menu → Quit Dockbox, or run in an administrator PowerShell:
+taskkill /F /IM Dockbox.exe
+
+Then open this one again.</value></data>
   <data name="Item_FileExplorer" xml:space="preserve"><value>File Explorer</value></data>
   <data name="Item_Notepad" xml:space="preserve"><value>Notepad</value></data>
   <data name="Item_Calculator" xml:space="preserve"><value>Calculator</value></data>

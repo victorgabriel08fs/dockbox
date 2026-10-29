@@ -82,6 +82,15 @@ Archivo: {1}</value></data>
   <data name="Err_DiskFull" xml:space="preserve"><value>el disco está lleno</value></data>
   <data name="Err_InUse" xml:space="preserve"><value>el archivo está en uso por otro programa (OneDrive, antivirus o copia de seguridad)</value></data>
   <data name="Err_NoFolder" xml:space="preserve"><value>la carpeta de configuración no existe y no se pudo crear</value></data>
+  <data name="Instance_Running" xml:space="preserve"><value>Dockbox ya está abierto.
+
+¿Cerrar el que está abierto y abrir este? Elige Sí al abrir una versión nueva.</value></data>
+  <data name="Instance_CannotClose" xml:space="preserve"><value>No se pudo cerrar el Dockbox que está abierto. Puede que se haya abierto como administrador.
+
+Ciérralo con clic derecho en el Dock → Salir de Dockbox, o ejecuta en un PowerShell como administrador:
+taskkill /F /IM Dockbox.exe
+
+Luego vuelve a abrir este.</value></data>
   <data name="Item_FileExplorer" xml:space="preserve"><value>Explorador de archivos</value></data>
   <data name="Item_Notepad" xml:space="preserve"><value>Bloc de notas</value></data>
   <data name="Item_Calculator" xml:space="preserve"><value>Calculadora</value></data>
