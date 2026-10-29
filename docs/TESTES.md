@@ -145,6 +145,24 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Economia de bateria ligada (notebook): o desfoque some. Alto contraste: some.
 - [ ] Opção desligada: o fundo volta ao visual de antes.
 
+### 8a2. Miniaturas das janelas
+- [ ] Abra 2 ou 3 janelas do Bloco de Notas e do Explorador de Arquivos. Pare o mouse no ícone: em meio segundo aparece o painel com uma miniatura por janela, com título e ícone, encostado no ícone.
+- [ ] As miniaturas são ao vivo: digite numa janela do Bloco de Notas visível e veja o texto aparecer na miniatura.
+- [ ] Clique numa miniatura: aquela janela vem para a frente (mesmo minimizada) e o painel some.
+- [ ] Clique no **X** de uma miniatura: a janela fecha (o Bloco de Notas com texto pergunta se quer salvar) e o painel se atualiza com as que sobraram.
+- [ ] Janela minimizada: aparece com o ícone do app e "(minimizada)" no título.
+- [ ] App com uma janela só: não aparece painel, só o rótulo com o nome.
+- [ ] App da Store com 2 janelas (ex.: duas Calculadoras): as miniaturas aparecem.
+- [ ] Com o painel aberto, passe o mouse para outro app com várias janelas: troca na hora, sem esperar. Para um app com uma janela ou um widget: o painel some.
+- [ ] Leve o mouse do ícone até o painel: o painel não some no caminho. Tire o mouse do painel: some em menos de meio segundo.
+- [ ] Nas 4 posições do Dock: o painel fica acima/abaixo/ao lado do ícone, dentro da tela, nas 4 bordas e com o ícone perto do canto da tela.
+- [ ] Monitor com escala 150% e Dock em outro monitor: miniaturas no lugar certo dentro das caixas, sem cortar.
+- [ ] Tema claro, escuro e alto contraste: o painel acompanha as cores; cantos arredondados acompanham a opção de cantos.
+- [ ] Com Ocultar automaticamente: o Dock não some enquanto o mouse está no painel.
+- [ ] Botão direito com o painel aberto: o painel some e o menu abre normalmente.
+- [ ] Comportamento → desligue **Mostrar miniaturas das janelas**: o painel não aparece mais. Mude o tempo para 0 s e 1,5 s e confira a espera.
+- [ ] Clicar no painel não tira o foco da janela que você estava usando (a não ser a janela escolhida).
+
 ### 8b. Reservar espaço na tela
 - [ ] Com a opção ligada (padrão), maximize uma janela: ela para antes do Dock nas 4 posições.
 - [ ] Mude o tamanho dos ícones: a área reservada acompanha na hora.

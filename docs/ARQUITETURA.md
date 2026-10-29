@@ -30,7 +30,7 @@ O Dock escuta `Changed` e se redesenha (`ApplyTheme` + `RebuildTiles` + `Positio
 | `Core/` | `DockSettings` + `SettingsStore` (modelo e persistência), `DockTheme` (cores derivadas), `ColorUtil` | `ColorUtil`/`DockTheme` usam tipos de mídia |
 | `Services/` | Integração com o Windows: ícone da bandeja (`TrayIcon`, via WinForms `NotifyIcon`), ícones, atalhos `.lnk`, janelas abertas, abrir apps, clima, mídia, lixeira, CPU/RAM, autostart | Alguns (ícones, mídia) |
 | `Widgets/` | `DockWidget` (classe base) e um arquivo por widget; `WidgetFactory` cria por nome | Sim |
-| `Views/` | `DockWindow`, `SettingsWindow`, `AppPickerWindow` | Sim |
+| `Views/` | `DockWindow` (+ `DockWindow.Previews.cs`), `SettingsWindow`, `AppPickerWindow`, `BlurBackdrop`, `WindowPreview` | Sim |
 | `Interop/` | `NativeMethods`: P/Invoke de user32, gdi32, shell32, dwmapi, kernel32 | Não |
 | `Assets/` | `Dockbox.ico` (exe, janelas, bandeja) e `Dockbox-128.png`; gerados de `assets/brand/` por `tools/build-icons.js` | — |
 | `tests/Dockbox.Tests` | Testes xUnit | — |
@@ -93,6 +93,23 @@ O Dock continua com a janela transparente e desenha a cor e a borda por cima (co
 enquanto o desfoque está ativo). `DockWindow.PlaceBlur` reposiciona o desfoque a cada `Layout` e no deslize do
 auto-ocultar; `UpdateBlur` liga/desliga conforme a opção, "Efeitos de transparência", economia de bateria e alto
 contraste (conferidos também no timer lento).
+
+## Miniaturas das janelas
+
+`Views/WindowPreview` é uma janela sem foco (`WS_EX_NOACTIVATE`, `MA_NOACTIVATE`) com um cartão por janela do app:
+título, botão de fechar e uma caixa vazia. O próprio Windows desenha a miniatura ao vivo sobre essa caixa
+(`DwmRegisterThumbnail` + `DwmUpdateThumbnailProperties`, em pixels físicos, mantendo a proporção da janela).
+A janela não é transparente, porque miniaturas do DWM não aparecem em janelas em camadas (`AllowsTransparency`);
+os cantos arredondados vêm de `SetWindowRgn`, e as cores vêm do rótulo do Dock (sem alfa). Janelas minimizadas
+mostram o ícone do app, porque o Windows não tem a imagem atual delas.
+
+`DockWindow.Previews.cs` decide quando abrir: a cada frame (e por um timer de 50 ms enquanto o painel está
+aberto, já que o mouse no painel faz o Dock parar de animar) olha o ícone sob o mouse. Depois de
+`Appearance.PreviewDelay` no mesmo app com pelo menos `PreviewLayout.MinWindows` janelas, abre; outro app troca
+na hora; fora do ícone e do painel, fecha depois de 0,35 s. O ponto de apoio é o centro do ícone na altura máxima
+da ampliação, onde o Dock deixa de segurar o mouse, para não haver vão no caminho. `Core/PreviewLayout` calcula
+quantas miniaturas cabem na tela (encolhe até 60% antes de esconder as que sobram) e o encaixe de cada uma, sem
+chamadas ao Windows, para os testes.
 
 ## Barra de tarefas do Windows
 

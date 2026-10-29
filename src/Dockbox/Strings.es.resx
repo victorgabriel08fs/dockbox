@@ -103,6 +103,10 @@ Luego vuelve a abrir este.</value></data>
   <data name="A11y_OpenUnpinned" xml:space="preserve"><value>{0}, abierto, no anclado</value></data>
   <data name="Menu_DockOptions" xml:space="preserve"><value>Opciones del Dock</value></data>
   <data name="Menu_RemoveWidget" xml:space="preserve"><value>Quitar widget</value></data>
+  <data name="Preview_Name" xml:space="preserve"><value>Ventanas abiertas</value></data>
+  <data name="Preview_Close" xml:space="preserve"><value>Cerrar ventana</value></data>
+  <data name="Preview_CloseA11y" xml:space="preserve"><value>Cerrar {0}</value></data>
+  <data name="Preview_CardHelp" xml:space="preserve"><value>Haz clic para traer esta ventana</value></data>
   <data name="Menu_Minimized" xml:space="preserve"><value>{0}  (minimizada)</value></data>
   <data name="Menu_NewWindow" xml:space="preserve"><value>Nueva ventana</value></data>
   <data name="Menu_Open" xml:space="preserve"><value>Abrir</value></data>
@@ -229,6 +233,10 @@ Tus aplicaciones ancladas se mantendrán.</value></data>
   <data name="S_Separator" xml:space="preserve"><value>Separador entre aplicaciones y widgets</value></data>
   <data name="S_AutoHide" xml:space="preserve"><value>Ocultar y mostrar el Dock automáticamente</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Tiempo con el ratón en el borde hasta que aparece</value></data>
+  <data name="S_Previews" xml:space="preserve"><value>Mostrar miniaturas de las ventanas al pasar el ratón</value></data>
+  <data name="S_PreviewsHint" xml:space="preserve"><value>Aparece en apps con más de una ventana abierta. Haz clic en una miniatura para traer esa ventana.</value></data>
+  <data name="S_PreviewDelay" xml:space="preserve"><value>Tiempo con el ratón sobre el icono hasta que aparecen</value></data>
+  <data name="S_PreviewDelayA11y" xml:space="preserve"><value>Tiempo hasta que aparecen las miniaturas</value></data>
   <data name="S_AutoHideDelayA11y" xml:space="preserve"><value>Tiempo hasta que aparece el Dock</value></data>
   <data name="S_Reserve" xml:space="preserve"><value>Reservar espacio en la pantalla (las ventanas maximizadas se detienen antes del Dock)</value></data>
   <data name="S_HideTaskbar" xml:space="preserve"><value>Ocultar la barra de tareas de Windows</value></data>

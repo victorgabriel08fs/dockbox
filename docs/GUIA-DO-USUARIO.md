@@ -103,6 +103,13 @@ de parede atrás dele, como no macOS. Com o desfoque, a cor do fundo fica um pou
 **Opacidade**. O desfoque some sozinho quando "Efeitos de transparência" está desligado no Windows
 (Configurações → Personalização → Cores), na economia de bateria e no alto contraste, e volta quando eles mudam.
 
+**Miniaturas das janelas** (em Comportamento, ligado por padrão): pare o mouse num app com mais de uma janela
+aberta (por exemplo, dois documentos do Word) e aparece um painel com a miniatura ao vivo de cada janela e o
+título. Clique numa miniatura para trazer aquela janela; o **X** no canto fecha a janela (o app pode perguntar se
+quer salvar). Janelas minimizadas aparecem com o ícone do app. Passe o mouse para outro app para trocar de painel
+na hora; tire o mouse do ícone e do painel para ele sumir. **Tempo com o mouse no ícone até aparecer** ajusta a
+espera (0 a 1,5 s). O botão direito no ícone continua listando as janelas.
+
 **Monitor** (em Aparência, abaixo de Posição na tela):
 - **Principal**: o Dock fica no monitor principal do Windows.
 - **Escolher**: aparece a lista de monitores (número e resolução); clique no que quiser. A escolha fica salva.

@@ -103,6 +103,10 @@ Then open this one again.</value></data>
   <data name="A11y_OpenUnpinned" xml:space="preserve"><value>{0}, open, not pinned</value></data>
   <data name="Menu_DockOptions" xml:space="preserve"><value>Dock options</value></data>
   <data name="Menu_RemoveWidget" xml:space="preserve"><value>Remove widget</value></data>
+  <data name="Preview_Name" xml:space="preserve"><value>Open windows</value></data>
+  <data name="Preview_Close" xml:space="preserve"><value>Close window</value></data>
+  <data name="Preview_CloseA11y" xml:space="preserve"><value>Close {0}</value></data>
+  <data name="Preview_CardHelp" xml:space="preserve"><value>Click to bring this window forward</value></data>
   <data name="Menu_Minimized" xml:space="preserve"><value>{0}  (minimized)</value></data>
   <data name="Menu_NewWindow" xml:space="preserve"><value>New window</value></data>
   <data name="Menu_Open" xml:space="preserve"><value>Open</value></data>
@@ -229,6 +233,10 @@ Your pinned apps will be kept.</value></data>
   <data name="S_Separator" xml:space="preserve"><value>Separator between apps and widgets</value></data>
   <data name="S_AutoHide" xml:space="preserve"><value>Automatically hide and show the Dock</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Time with the mouse at the edge before it appears</value></data>
+  <data name="S_Previews" xml:space="preserve"><value>Show window thumbnails on hover</value></data>
+  <data name="S_PreviewsHint" xml:space="preserve"><value>Appears for apps with more than one open window. Click a thumbnail to bring that window forward.</value></data>
+  <data name="S_PreviewDelay" xml:space="preserve"><value>Time with the mouse on the icon before they appear</value></data>
+  <data name="S_PreviewDelayA11y" xml:space="preserve"><value>Time until thumbnails appear</value></data>
   <data name="S_AutoHideDelayA11y" xml:space="preserve"><value>Time until the Dock appears</value></data>
   <data name="S_Reserve" xml:space="preserve"><value>Reserve screen space (maximized windows stop before the Dock)</value></data>
   <data name="S_HideTaskbar" xml:space="preserve"><value>Hide the Windows taskbar</value></data>

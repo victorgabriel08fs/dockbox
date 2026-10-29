@@ -284,6 +284,13 @@
                         <StackPanel>
                             <CheckBox x:Name="LabelsToggle" Style="{StaticResource UiToggle}" Content="{l:T S_ShowLabels}" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="RunningToggle" Style="{StaticResource UiToggle}" Content="{l:T S_ShowIndicator}" Click="Toggle_Click" Margin="0,0,0,14"/>
+                            <CheckBox x:Name="PreviewsToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Previews}" Click="Toggle_Click" Margin="0,0,0,4"/>
+                            <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,0,0,10" Text="{l:T S_PreviewsHint}"/>
+                            <DockPanel x:Name="PreviewDelayRow" Margin="0,0,0,4">
+                                <TextBlock x:Name="PreviewDelayValue" DockPanel.Dock="Right" Foreground="{DynamicResource UiSubFg}"/>
+                                <TextBlock Text="{l:T S_PreviewDelay}" Foreground="{DynamicResource UiSubFg}"/>
+                            </DockPanel>
+                            <Slider x:Name="PreviewDelaySlider" AutomationProperties.Name="{l:T S_PreviewDelayA11y}" Style="{StaticResource UiSlider}" Minimum="0" Maximum="1.5" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
                             <CheckBox x:Name="UnpinnedToggle" Style="{StaticResource UiToggle}" Content="{l:T S_ShowRunning}" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="BounceToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Bounce}" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="SeparatorToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Separator}" Click="Toggle_Click" Margin="0,0,0,14"/>
