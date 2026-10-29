@@ -1,0 +1,209 @@
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace Dockbox.Core;
+
+public enum DockEdge { Bottom, Top, Left, Right }
+public enum ThemeMode { Auto, Light, Dark, Custom }
+
+public sealed class DockEntry
+{
+    public string Name { get; set; } = "";
+    /// <summary>Caminho de um .exe, atalho .lnk, pasta ou arquivo. Aceita %VARIAVEIS%.</summary>
+    public string Path { get; set; } = "";
+    public string? Arguments { get; set; }
+}
+
+public sealed class WidgetConfig
+{
+    public string Kind { get; set; } = "";
+    public bool Enabled { get; set; } = true;
+}
+
+public sealed class Appearance
+{
+    public double IconSize { get; set; } = 54;
+    public bool Magnify { get; set; } = true;
+    public double Magnification { get; set; } = 1.8;
+    public DockEdge Edge { get; set; } = DockEdge.Bottom;
+    public ThemeMode Theme { get; set; } = ThemeMode.Auto;
+    /// <summary>Opacidade do fundo, 0 a 1.</summary>
+    public double Opacity { get; set; } = 0.72;
+    /// <summary>Cor do fundo no tema personalizado (#RRGGBB).</summary>
+    public string CustomColor { get; set; } = "#2A2D3A";
+    /// <summary>Cor de destaque: indicador de app aberto, anéis dos widgets (#RRGGBB).</summary>
+    public string AccentColor { get; set; } = "#0A84FF";
+    public double CornerRadius { get; set; } = 18;
+    public bool ShowLabels { get; set; } = true;
+    public bool ShowRunning { get; set; } = true;
+    public bool BounceOnLaunch { get; set; } = true;
+    public bool ShowSeparator { get; set; } = true;
+}
+
+public sealed class DockSettings
+{
+    public List<DockEntry> Items { get; set; } = new();
+    public List<WidgetConfig> Widgets { get; set; } = new();
+    public Appearance Appearance { get; set; } = new();
+    /// <summary>Cidade do widget de clima; vazio = detectar pela internet.</summary>
+    public string WeatherCity { get; set; } = "";
+    public bool Clock24h { get; set; } = true;
+    /// <summary>Com a cidade vazia, descobrir a localização pelo IP (ipwho.is). Desligado por padrão.</summary>
+    public bool WeatherAutoLocate { get; set; }
+}
+
+/// <summary>Lê e grava %APPDATA%\Dockbox\settings.json e avisa quem estiver ouvindo.</summary>
+public static class SettingsStore
+{
+    public static string FolderPath { get; private set; } =
+        System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Dockbox");
+
+    public static string FilePath => System.IO.Path.Combine(FolderPath, "settings.json");
+
+    /// <summary>Usa outra pasta (para testes; não toca no %APPDATA% real).</summary>
+    public static void UseFolder(string folder) => FolderPath = folder;
+    private static string LegacyPinnedPath => System.IO.Path.Combine(FolderPath, "pinned.json");
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        WriteIndented = true,
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter(allowIntegerValues: false) },
+    };
+
+    public static DockSettings Current { get; private set; } = new();
+
+    /// <summary>Aviso para mostrar ao usuário depois de carregar (ex.: arquivo corrompido).</summary>
+    public static string? LoadWarning { get; private set; }
+
+    /// <summary>Disparado (na thread da UI) sempre que as configurações mudam.</summary>
+    public static event Action? Changed;
+
+    public static void Load()
+    {
+        DockSettings? s = null;
+        try
+        {
+            if (File.Exists(FilePath))
+                s = JsonSerializer.Deserialize<DockSettings>(File.ReadAllText(FilePath), JsonOptions);
+        }
+        catch
+        {
+            // Arquivo inválido: guarda uma cópia com data (nunca sobrescrita) antes de recomeçar.
+            string copy = FilePath + $".corrompido-{DateTime.Now:yyyyMMdd-HHmmss}";
+            try
+            {
+                File.Copy(FilePath, copy, false);
+                LoadWarning = $"O arquivo de configurações estava com erro e o Dockbox voltou aos padrões.\n\nUma cópia do arquivo antigo foi guardada em:\n{copy}";
+            }
+            catch
+            {
+                LoadWarning = "O arquivo de configurações estava com erro e o Dockbox voltou aos padrões.";
+            }
+        }
+
+        if (s == null)
+        {
+            s = new DockSettings { Items = LoadLegacyPinned() ?? DefaultItems() };
+        }
+
+        Normalize(s);
+        Current = s;
+        Save();
+    }
+
+    public static void Save()
+    {
+        try
+        {
+            Directory.CreateDirectory(FolderPath);
+            // Escrita atômica: grava num .tmp e troca, assim uma queda no meio não corrompe o arquivo.
+            string tmp = FilePath + ".tmp";
+            File.WriteAllText(tmp, JsonSerializer.Serialize(Current, JsonOptions));
+            if (!File.Exists(FilePath)) File.Move(tmp, FilePath);
+            else
+            {
+                try { File.Replace(tmp, FilePath, FilePath + ".bak", ignoreMetadataErrors: true); }
+                catch (IOException) { File.Copy(tmp, FilePath, true); File.Delete(tmp); }
+            }
+        }
+        catch
+        {
+            // sem permissão de escrita: o Dock continua funcionando
+        }
+    }
+
+    /// <summary>Salva e avisa o Dock para se redesenhar.</summary>
+    public static void Commit()
+    {
+        Normalize(Current);
+        Save();
+        Changed?.Invoke();
+    }
+
+    public static readonly string[] AllWidgetKinds =
+        { "clock", "calendar", "weather", "system", "battery", "media", "trash" };
+
+    private static void Normalize(DockSettings s)
+    {
+        s.Items ??= new();
+        s.Items.RemoveAll(i => i == null || string.IsNullOrWhiteSpace(i.Path));
+        s.Widgets ??= new();
+        s.Widgets.RemoveAll(w => w == null || !AllWidgetKinds.Contains(w.Kind));
+        s.Widgets = s.Widgets.GroupBy(w => w.Kind).Select(g => g.First()).ToList();
+        foreach (var kind in AllWidgetKinds)
+        {
+            if (!s.Widgets.Any(w => w.Kind == kind))
+            {
+                // Padrão: relógio, calendário, clima e lixeira ligados
+                bool on = kind is "clock" or "calendar" or "weather" or "trash";
+                s.Widgets.Add(new WidgetConfig { Kind = kind, Enabled = on });
+            }
+        }
+
+        var a = s.Appearance ??= new Appearance();
+        if (!Enum.IsDefined(a.Edge)) a.Edge = DockEdge.Bottom;
+        if (!Enum.IsDefined(a.Theme)) a.Theme = ThemeMode.Auto;
+        a.IconSize = Math.Clamp(a.IconSize, 32, 96);
+        a.Magnification = Math.Clamp(a.Magnification, 1.0, 2.6);
+        a.Opacity = Math.Clamp(a.Opacity, 0.0, 1.0);
+        a.CornerRadius = Math.Clamp(a.CornerRadius, 0, 40);
+        a.CustomColor = ColorUtil.IsValid(a.CustomColor) ? a.CustomColor : "#2A2D3A";
+        a.AccentColor = ColorUtil.IsValid(a.AccentColor) ? a.AccentColor : "#0A84FF";
+        s.WeatherCity ??= "";
+    }
+
+    private static List<DockEntry>? LoadLegacyPinned()
+    {
+        try
+        {
+            if (!File.Exists(LegacyPinnedPath)) return null;
+            return JsonSerializer.Deserialize<List<DockEntry>>(File.ReadAllText(LegacyPinnedPath), JsonOptions);
+        }
+        catch { return null; }
+    }
+
+    private static List<DockEntry> DefaultItems()
+    {
+        string win = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+        string sys = Environment.SystemDirectory;
+        string pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+        string pf86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+        string local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+        var candidates = new List<DockEntry>
+        {
+            new() { Name = "Explorador de Arquivos", Path = System.IO.Path.Combine(win, "explorer.exe") },
+            new() { Name = "Microsoft Edge", Path = System.IO.Path.Combine(pf86, @"Microsoft\Edge\Application\msedge.exe") },
+            new() { Name = "Google Chrome", Path = System.IO.Path.Combine(pf, @"Google\Chrome\Application\chrome.exe") },
+            new() { Name = "Google Chrome", Path = System.IO.Path.Combine(local, @"Google\Chrome\Application\chrome.exe") },
+            new() { Name = "Bloco de Notas", Path = System.IO.Path.Combine(sys, "notepad.exe") },
+            new() { Name = "Calculadora", Path = System.IO.Path.Combine(sys, "calc.exe") },
+            new() { Name = "Paint", Path = System.IO.Path.Combine(sys, "mspaint.exe") },
+            new() { Name = "Terminal", Path = System.IO.Path.Combine(sys, "cmd.exe") },
+        };
+
+        return candidates.Where(a => File.Exists(a.Path)).GroupBy(a => a.Name).Select(g => g.First()).ToList();
+    }
+}

@@ -1,0 +1,44 @@
+<Window x:Class="Dockbox.Views.AppPickerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Adicionar apps ao Dock"
+        Width="520" Height="600"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Background="{DynamicResource UiWindowBg}"
+        Foreground="{DynamicResource UiFg}"
+        FontFamily="{StaticResource UiFont}">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock Text="Adicionar apps" Style="{StaticResource UiH1}"/>
+            <TextBlock Text="Apps do Menu Iniciar. Selecione um ou vários (Ctrl + clique)." Style="{StaticResource UiSub}" Margin="0,0,0,12"/>
+            <Grid Margin="0,0,0,10">
+                <TextBox x:Name="Search" Style="{StaticResource UiTextBox}" Padding="32,7,8,7" TextChanged="Search_TextChanged"/>
+                <TextBlock Text="&#xE721;" FontFamily="{StaticResource UiIconFont}" FontSize="13" Margin="11,0,0,0"
+                           VerticalAlignment="Center" Foreground="{DynamicResource UiSubFg}" IsHitTestVisible="False"/>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Style="{StaticResource UiButton}" Content="Cancelar" IsCancel="True" Margin="0,0,8,0"/>
+            <Button x:Name="AddButton" Style="{StaticResource UiAccentButton}" Content="Adicionar" IsDefault="True" Click="Add_Click" IsEnabled="False"/>
+        </StackPanel>
+
+        <Border Style="{StaticResource UiCard}" Padding="6" Margin="0">
+            <ListBox x:Name="List" Background="Transparent" BorderThickness="0" SelectionMode="Extended"
+                     ItemContainerStyle="{StaticResource UiListItem}"
+                     VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     SelectionChanged="List_SelectionChanged" MouseDoubleClick="List_MouseDoubleClick">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Icon}" Width="26" Height="26" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="13.5" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+    </DockPanel>
+</Window>

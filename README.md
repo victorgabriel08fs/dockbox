@@ -2,14 +2,19 @@
 
 Um clone do Dock do macOS para Windows, feito em C# + WPF (.NET 8).
 
-## Fase 1 (MVP), o que já existe
+## O que já existe
 
-- Barra fixa na parte inferior da tela, sem borda, transparente e sempre no topo.
-- A janela **não rouba o foco** e não aparece no Alt+Tab nem na barra de tarefas.
-- Ícones de apps fixados; um clique abre o app.
-- Ampliação suave ao passar o mouse, com o nome do app acima do ícone.
-- Arraste um `.exe`, atalho `.lnk` ou pasta para cima do Dock para fixá-lo.
-- Clique com o botão direito no Dock: editar apps fixados, recarregar, sair.
+- Dock sem borda, transparente e sempre no topo, que **não rouba o foco** e não aparece no Alt+Tab.
+- Visual estilo macOS: fundo de vidro com gradiente, sombra, borda clara, rótulo com o nome do item.
+- Ampliação suave ao passar o mouse e animação de "pulo" ao abrir um app.
+- Ponto embaixo dos apps abertos; clique num app aberto traz a janela para frente, clique de novo minimiza.
+  Ctrl + clique abre uma nova janela.
+- Arraste um app, atalho, pasta ou arquivo para o Dock para fixá-lo; solte arquivos sobre um app para abri-los com ele.
+- **Gerenciar Dock** (botão direito no Dock): adicionar apps do Menu Iniciar, arquivos e pastas; remover, reordenar e editar.
+- **Widgets**: relógio, calendário, clima (Open-Meteo), CPU/RAM, bateria, mídia tocando agora e Lixeira.
+- **Estilo**: tema automático/claro/escuro/personalizado, cor de fundo, cor de destaque, opacidade,
+  cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).
+- Iniciar junto com o Windows (opcional).
 
 ## Como rodar no Windows
 
@@ -36,24 +41,18 @@ Opção B, compilando:
 
 Também dá para abrir `Dockbox.sln` no Visual Studio 2022 e apertar F5.
 
-## Apps fixados
+## Configurações
 
-A lista fica em `%APPDATA%\Dockbox\pinned.json` (criada na primeira execução com alguns apps padrão):
-
-```json
-[
-  { "Name": "Explorador de Arquivos", "Path": "C:\\Windows\\explorer.exe" },
-  { "Name": "Bloco de Notas", "Path": "%SystemRoot%\\System32\\notepad.exe", "Arguments": null }
-]
-```
-
-Depois de editar, use **Recarregar** no menu do botão direito.
+Tudo fica em `%APPDATA%\Dockbox\settings.json` e é editado pela janela **Gerenciar Dock**.
+Se o arquivo for corrompido, uma cópia com data é guardada antes de voltar aos padrões.
+Um `pinned.json` da versão anterior é importado automaticamente.
 
 ## Limitações conhecidas do MVP
 
 - Só aparece no monitor principal.
-- Fica por cima das janelas maximizadas (ainda não reserva espaço na tela).
+- Fica por cima das janelas maximizadas (ainda não reserva espaço na tela) e não tem auto-ocultar.
 - A barra de tarefas do Windows continua visível.
+- O fundo imita vidro, mas não desfoca o que está atrás.
 
 Esses pontos estão previstos nas fases 2 e 3.
 
@@ -66,9 +65,10 @@ onde também está o passo a passo para lançar uma versão nova.
 
 ## Estrutura
 
-| Arquivo | Função |
+| Pasta | Conteúdo |
 |---|---|
-| `MainWindow.xaml(.cs)` | Janela do Dock, layout e animação de ampliação |
-| `IconLoader.cs` | Extrai ícones de até 256px pelo Shell do Windows |
-| `PinnedApps.cs` | Lê/grava a lista de apps fixados |
-| `NativeMethods.cs` | Declarações Win32 (estilos de janela, cursor, ícones) |
+| `Core/` | Configurações (`DockSettings`), tema e cores; sem dependência de janela |
+| `Services/` | Ícones, atalhos, apps abertos, clima, mídia, lixeira, estatísticas do sistema |
+| `Widgets/` | Um arquivo por widget, todos derivados de `DockWidget` |
+| `Views/` | Janela do Dock, Gerenciar Dock e seletor de apps |
+| `Interop/` | Declarações Win32 |
