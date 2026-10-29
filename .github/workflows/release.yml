@@ -37,7 +37,13 @@ jobs:
           tag="${{ inputs.tag || github.ref_name }}"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
-          # Se o zip desta versão já está commitado em releases/, usa ele em vez de recompilar.
+          # Se o zip desta versão já está commitado em releases/ (na tag ou na main),
+          # usa ele em vez de recompilar, para a release e a pasta terem o mesmo arquivo.
+          if [ ! -f "releases/$tag/Dockbox-$tag-win-x64.zip" ] \
+             && git fetch --depth=1 origin main 2>/dev/null \
+             && git cat-file -e "FETCH_HEAD:releases/$tag/Dockbox-$tag-win-x64.zip" 2>/dev/null; then
+            git checkout FETCH_HEAD -- "releases/$tag"
+          fi
           if [ -f "releases/$tag/Dockbox-$tag-win-x64.zip" ]; then
             echo "prebuilt=true" >> "$GITHUB_OUTPUT"
           else
@@ -77,9 +83,13 @@ jobs:
         run: |
           tag="${{ steps.ver.outputs.tag }}"
           files=("releases/$tag/Dockbox-$tag-win-x64.zip" "releases/$tag/SHA256SUMS.txt")
-          # Se a release já foi criada pela página Releases do GitHub, só anexa os arquivos.
+          # Se a release já foi criada pela página Releases do GitHub, anexa os arquivos
+          # e, se ela ficou sem descrição, preenche título e notas a partir do CHANGELOG.
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" "${files[@]}" --clobber
+            if [ -z "$(gh release view "$tag" --json body -q .body | tr -d '[:space:]')" ]; then
+              gh release edit "$tag" --title "Dockbox $tag" --notes-file notes.md
+            fi
           else
             gh release create "$tag" "${files[@]}" --title "Dockbox $tag" --notes-file notes.md
           fi
