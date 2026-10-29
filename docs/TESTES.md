@@ -176,6 +176,25 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Feche o Dockbox com o efeito ligado: a animação do Windows volta. Encerre o Dockbox pelo Gerenciador de Tarefas e abra de novo: volta também.
 - [ ] Configurações do Windows → Acessibilidade → Efeitos visuais → **Efeitos de animação** desligado: sem efeito do Dockbox.
 - [ ] Minimizar várias janelas rápido (Win+M): não trava; cada uma anima ou some.
+### 8a3. Pedidos de atenção e contadores
+- [ ] Pulo por atenção: abra o Bloco de Notas, deixe outra janela na frente e rode no PowerShell:
+  ```powershell
+  Add-Type -Name W -Namespace N -MemberDefinition '[DllImport("user32.dll")] public static extern bool FlashWindow(IntPtr h, bool i);'
+  $h = (Get-Process notepad)[0].MainWindowHandle; [N.W]::FlashWindow($h, $true)
+  ```
+  O ícone do Bloco de Notas pula no Dock sem parar. Com Teams, Discord ou WhatsApp, uma mensagem nova com o app em segundo plano faz o mesmo.
+- [ ] Clique no ícone (ou traga a janela pelo Alt+Tab): para de pular.
+- [ ] Feche a janela que pedia atenção: para de pular.
+- [ ] Comportamento → desligue **Pular quando um app pedir atenção**: não pula mais.
+- [ ] "Mostrar animações" desligado no Windows: não pula; o Narrador lê "pedindo atenção" no item.
+- [ ] Contador: abra o WhatsApp Web, o Discord ou o Gmail com mensagens não lidas (título "(3) ..."): aparece um círculo vermelho com o número no canto de cima à direita do ícone do navegador ou do app.
+- [ ] Número maior que 99 mostra "99+". Ao ler as mensagens (título sem número), o contador some em até 1 s.
+- [ ] O contador acompanha a ampliação e o pulo, e some ao arrastar o ícone.
+- [ ] Nas 4 posições do Dock o contador fica dentro da tela (com o Dock em cima, fica embaixo à direita do ícone).
+- [ ] Alto contraste: o contador usa as cores de destaque do Windows.
+- [ ] Narrador: o item lê "Chrome, aberto, 3 não lidas".
+- [ ] Comportamento → desligue **Mostrar contadores nos ícones**: os contadores somem em até 1 s.
+- [ ] Título com número no meio ("Documento (1).docx") não mostra contador.
 
 ### 8b. Reservar espaço na tela
 - [ ] Com a opção ligada (padrão), maximize uma janela: ela para antes do Dock nas 4 posições.

@@ -44,6 +44,10 @@ public sealed class Appearance
     public bool BounceOnLaunch { get; set; } = true;
     /// <summary>Efeito ao minimizar uma janela: encolhe até o ícone do app no Dock.</summary>
     public MinimizeEffect MinimizeEffect { get; set; } = MinimizeEffect.Scale;
+    /// <summary>O ícone pula enquanto o app pisca pedindo atenção.</summary>
+    public bool BounceOnAttention { get; set; } = true;
+    /// <summary>Contador vermelho no ícone, lido do título das janelas ("(3) WhatsApp").</summary>
+    public bool ShowBadges { get; set; } = true;
     public bool ShowSeparator { get; set; } = true;
     /// <summary>Reserva a faixa do Dock na tela para as janelas maximizadas pararem antes dele.</summary>
     public bool ReserveSpace { get; set; } = true;

@@ -124,6 +124,18 @@ eixo ao longo do Dock, depois o eixo até o Dock).
 Para a animação do Windows não aparecer junto, `Services/SystemMinimizeAnimation` desliga `MinAnimate`
 (`SPI_SETANIMATION`, sem gravar no registro) enquanto o efeito está ligado, com um arquivo de recuperação
 como o da barra de tarefas: religa ao escolher Nenhum, ao fechar e, depois de uma queda, na próxima abertura.
+## Pedidos de atenção e contadores
+
+O Dock se registra com `RegisterShellHookWindow` e recebe a mensagem `SHELLHOOK`. `HSHELL_FLASH` diz que uma
+janela piscou (FlashWindowEx); a janela principal dela (`GetAncestor(GA_ROOTOWNER)`) entra em
+`Core/AttentionTracker`, que tira as janelas que fecharam e as do app que foi para o primeiro plano
+(conferido no timer lento e quando chega `HSHELL_WINDOWACTIVATED`/`DESTROYED`). Ícones com atenção pulam de
+novo a cada segundo (o pulo dura 1,4 s), menos com animações desligadas no Windows.
+
+Os contadores vêm do título das janelas (`Core/Badges.ParseCount`: "(N) Nome" no começo do título), lidos no
+timer lento. O contador e o progresso que os apps mandam com `ITaskbarList3` vão direto para a janela da barra
+de tarefas do Explorer; não há API para outro programa ler isso sem substituir o Explorer como shell ou
+injetar código nele, por isso ficaram de fora.
 
 ## Barra de tarefas do Windows
 

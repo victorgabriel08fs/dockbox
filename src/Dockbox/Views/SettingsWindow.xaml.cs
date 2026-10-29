@@ -241,6 +241,8 @@ public partial class SettingsWindow : Window
             MinimizeNone.IsChecked = A.MinimizeEffect == MinimizeEffect.None;
             MinimizeScale.IsChecked = A.MinimizeEffect == MinimizeEffect.Scale;
             MinimizeGenie.IsChecked = A.MinimizeEffect == MinimizeEffect.Genie;
+            AttentionToggle.IsChecked = A.BounceOnAttention;
+            BadgesToggle.IsChecked = A.ShowBadges;
             SeparatorToggle.IsChecked = A.ShowSeparator;
             ReserveToggle.IsChecked = A.ReserveSpace;
             AutoHideToggle.IsChecked = A.AutoHide;
@@ -800,6 +802,8 @@ public partial class SettingsWindow : Window
         A.ShowRunningUnpinned = UnpinnedToggle.IsChecked == true;
         A.WindowPreviews = PreviewsToggle.IsChecked == true;
         A.BounceOnLaunch = BounceToggle.IsChecked == true;
+        A.BounceOnAttention = AttentionToggle.IsChecked == true;
+        A.ShowBadges = BadgesToggle.IsChecked == true;
         A.ShowSeparator = SeparatorToggle.IsChecked == true;
         A.ReserveSpace = ReserveToggle.IsChecked == true;
         A.AutoHide = AutoHideToggle.IsChecked == true;

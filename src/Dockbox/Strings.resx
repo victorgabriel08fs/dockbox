@@ -238,6 +238,11 @@ Your pinned apps will be kept.</value></data>
   <data name="S_MinimizeScale" xml:space="preserve"><value>Scale</value></data>
   <data name="S_MinimizeGenie" xml:space="preserve"><value>Genie</value></data>
   <data name="S_MinimizeHint" xml:space="preserve"><value>The window shrinks into the app's icon in the Dock. While the effect is on, Windows' own minimize and restore animation is turned off; it comes back when you choose None or close Dockbox.</value></data>
+  <data name="S_Attention" xml:space="preserve"><value>Bounce when an app needs attention</value></data>
+  <data name="S_Badges" xml:space="preserve"><value>Show counters on icons</value></data>
+  <data name="S_BadgesHint" xml:space="preserve"><value>The number comes from window titles, as in "(3) WhatsApp". Download progress doesn't show: Windows doesn't let other programs read it.</value></data>
+  <data name="A11y_WithBadge" xml:space="preserve"><value>{0}, {1} unread</value></data>
+  <data name="A11y_WithAttention" xml:space="preserve"><value>{0}, needs attention</value></data>
   <data name="S_Previews" xml:space="preserve"><value>Show window thumbnails on hover</value></data>
   <data name="S_PreviewsHint" xml:space="preserve"><value>Appears for apps with more than one open window. Click a thumbnail to bring that window forward.</value></data>
   <data name="S_PreviewDelay" xml:space="preserve"><value>Time with the mouse on the icon before they appear</value></data>

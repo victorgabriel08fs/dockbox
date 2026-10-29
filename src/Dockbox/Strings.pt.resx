@@ -238,6 +238,11 @@ Seus apps fixados serão mantidos.</value></data>
   <data name="S_MinimizeScale" xml:space="preserve"><value>Escala</value></data>
   <data name="S_MinimizeGenie" xml:space="preserve"><value>Gênio</value></data>
   <data name="S_MinimizeHint" xml:space="preserve"><value>A janela encolhe até o ícone do app no Dock. Enquanto o efeito estiver ligado, a animação do próprio Windows ao minimizar e restaurar fica desligada; ela volta ao escolher Nenhum ou fechar o Dockbox.</value></data>
+  <data name="S_Attention" xml:space="preserve"><value>Pular quando um app pedir atenção</value></data>
+  <data name="S_Badges" xml:space="preserve"><value>Mostrar contadores nos ícones</value></data>
+  <data name="S_BadgesHint" xml:space="preserve"><value>O número vem do título das janelas, como em "(3) WhatsApp". O progresso de downloads não aparece: o Windows não deixa outros programas lerem isso.</value></data>
+  <data name="A11y_WithBadge" xml:space="preserve"><value>{0}, {1} não lidas</value></data>
+  <data name="A11y_WithAttention" xml:space="preserve"><value>{0}, pedindo atenção</value></data>
   <data name="S_Previews" xml:space="preserve"><value>Mostrar miniaturas das janelas ao passar o mouse</value></data>
   <data name="S_PreviewsHint" xml:space="preserve"><value>Aparece em apps com mais de uma janela aberta. Clique numa miniatura para trazer a janela.</value></data>
   <data name="S_PreviewDelay" xml:space="preserve"><value>Tempo com o mouse no ícone até aparecer</value></data>

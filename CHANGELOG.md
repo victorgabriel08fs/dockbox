@@ -37,6 +37,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Desfoque de verdade atrás do Dock no Windows 10 e 11 (opção em Estilo, ligada por padrão); desliga sozinho com "Efeitos de transparência" desligado, na economia de bateria e no alto contraste (#22).
 - Miniaturas das janelas: passar o mouse num app com mais de uma janela aberta mostra as miniaturas ao vivo de cada janela, com o título; clicar traz a janela e o X fecha. Segue o tema, os cantos e a posição do Dock; dá para desligar e mudar o tempo até aparecer em Comportamento (#23).
 - Animação ao minimizar: a janela encolhe até o ícone do app no Dock, com os efeitos Escala (padrão) e Gênio, ou Nenhum, em Comportamento. Enquanto o efeito está ligado, a animação do próprio Windows ao minimizar e restaurar fica desligada; ela volta ao escolher Nenhum, ao fechar o Dockbox e, se ele travar, na próxima abertura (#26).
+- App pedindo atenção (piscando na barra de tarefas) faz o ícone pular no Dock até você abrir a janela; contador vermelho no ícone com o número que o app põe no título da janela, como "(3) WhatsApp". As duas coisas têm opção em Comportamento. O progresso de downloads não aparece: o Windows não deixa outros programas lerem o que os apps mandam para a barra de tarefas (#24).
 
 ### Corrigido
 

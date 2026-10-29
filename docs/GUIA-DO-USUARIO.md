@@ -118,6 +118,15 @@ espera (0 a 1,5 s). O botão direito no ícone continua listando as janelas.
 Se o app não tem ícone no Dock, a janela vai para o meio do Dock. Enquanto Escala ou Gênio estão ligados, o
 Windows não faz a própria animação ao minimizar e ao restaurar (senão as duas apareceriam juntas); ela volta
 ao escolher Nenhum ou fechar o Dockbox. Com "Mostrar animações" desligado no Windows, não há efeito.
+**Pedidos de atenção e contadores** (em Comportamento, ligados por padrão):
+- **Pular quando um app pedir atenção**: quando um app pisca na barra de tarefas (mensagem nova, download
+  terminado, uma janela pedindo resposta), o ícone dele pula no Dock até você abrir uma janela desse app.
+  Com "Mostrar animações" desligado no Windows, não pula, mas o Narrador avisa "pedindo atenção".
+- **Mostrar contadores nos ícones**: um círculo vermelho com o número de não lidas. O número vem do título da
+  janela, que muitos apps e sites usam no formato "(3) WhatsApp" ou "(12) Discord". Apps que não põem o
+  número no título não mostram contador. No navegador, conta só a aba que está aberta em cada janela.
+- O progresso de downloads e os contadores que alguns apps mostram só na barra de tarefas do Windows não
+  aparecem no Dock: o Windows não deixa outros programas lerem essas informações.
 
 **Monitor** (em Aparência, abaixo de Posição na tela):
 - **Principal**: o Dock fica no monitor principal do Windows.

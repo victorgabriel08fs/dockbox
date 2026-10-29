@@ -39,6 +39,9 @@ public partial class DockWindow : Window
         public DockWidget? Widget;
         public required FrameworkElement Visual;
         public Ellipse? Dot;
+        public Border? Badge;           // contador vermelho no canto
+        public string? BadgeText;
+        public bool Attention;          // app piscando pedindo atenção
         public string? ExeKey;
         public bool Running;
         public bool Pressed;
@@ -170,6 +173,7 @@ public partial class DockWindow : Window
             ReleaseAppBar();
             var h = new WindowInteropHelper(this).Handle;
             if (h != IntPtr.Zero) UnregisterHotKey(h, HotkeyId);
+            if (h != IntPtr.Zero) UnregisterShellHook(h);
         };
         // Se o processo cair, devolve a área de trabalho inteira.
         AppDomain.CurrentDomain.UnhandledException += (_, _) => ReleaseAppBar();
@@ -194,11 +198,13 @@ public partial class DockWindow : Window
         _appBar = new AppBar(hwnd);
         PositionWindow();
         RegisterShortcut();
+        RegisterShellHook(hwnd);
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (msg == WM_DISPLAYCHANGE) OnDisplayChanged();
+        if (msg == ShellHookMessage && ShellHookMessage != 0) OnShellHook(wParam, lParam);
         if (msg == TaskbarCreatedMessage && A.HideTaskbar)
         {
             // O Explorer reiniciou e recriou a barra: esconde de novo quando ela terminar de aparecer.
@@ -502,6 +508,7 @@ public partial class DockWindow : Window
         {
             DockCanvas.Children.Remove(t.Visual);
             if (t.Dot != null) DockCanvas.Children.Remove(t.Dot);
+            if (t.Badge != null) DockCanvas.Children.Remove(t.Badge);
         }
         _tiles.Clear();
 
@@ -546,7 +553,9 @@ public partial class DockWindow : Window
             if (t.ExeKey != null && runningKeys.Contains(t.ExeKey)) t.Running = true;
             DockCanvas.Children.Add(t.Visual);
             if (t.Dot != null) DockCanvas.Children.Add(t.Dot);
+            if (t.Badge != null) DockCanvas.Children.Add(t.Badge);
         }
+        ApplyBadges();
         UpdateAutomationNames();
         if (kbOld != null)
         {
@@ -586,6 +595,7 @@ public partial class DockWindow : Window
             Visual = img,
             ExeKey = ShellLinks.ExecutableKey(entry.Path),
             Dot = new Ellipse { Width = DotSize, Height = DotSize, Fill = _theme.Dot, IsHitTestVisible = false, Visibility = Visibility.Collapsed },
+            Badge = CreateBadge(),
         };
         HookClicks(tile);
         return tile;
@@ -710,6 +720,7 @@ public partial class DockWindow : Window
         PlaceRect(t.Visual, t.Main, _dragCross, size, size);
         t.Visual.Opacity = _dragRemove ? 0.5 : 0.9;
         if (t.Dot != null) t.Dot.Visibility = Visibility.Collapsed;
+        if (t.Badge != null) t.Badge.Visibility = Visibility.Collapsed;
     }
 
     private void OnMouseUpDrag(object sender, MouseButtonEventArgs e)
@@ -909,7 +920,7 @@ public partial class DockWindow : Window
         }
 
         // Indicadores de apps abertos e apps abertos não fixados
-        if (A.ShowRunning || A.ShowRunningUnpinned)
+        if (A.ShowRunning || A.ShowRunningUnpinned || A.ShowBadges || A.BounceOnAttention)
         {
             List<RunningApps.AppWindow> windows;
             try { windows = RunningApps.Windows(); }
@@ -921,9 +932,11 @@ public partial class DockWindow : Window
                 bool running = t.ExeKey != null && snap.ContainsKey(t.ExeKey);
                 if (running != t.Running) { t.Running = running; changed = true; }
             }
+            if (UpdateBadges(windows)) changed = true;
             if (changed && !_animating) Layout();
             UpdateUnpinned(windows);
             if (changed) UpdateAutomationNames();
+            RefreshAttention(windows);
         }
         else if (_unpinned.Count > 0)
         {
@@ -1241,6 +1254,7 @@ public partial class DockWindow : Window
                 t.Dot.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
                 if (show) PlaceRect(t.Dot, x + size / 2 - DotSize / 2, EdgeMargin + 1.5, DotSize, DotSize);
             }
+            if (t.Badge != null) PlaceBadge(t, size - press);
             if (t == _kbTile)
                 PlaceRect(_focusRing, x - 3, baseCross + lift - 3, size + 6, size + 6);
             x += size + Gap;
@@ -1469,6 +1483,8 @@ public partial class DockWindow : Window
                 TileKind.Widget => string.IsNullOrEmpty(t.Widget!.Label) ? t.Widget.DisplayName : $"{t.Widget.DisplayName}: {t.Widget.Label}",
                 _ => "",
             };
+            if (name.Length > 0 && t.BadgeText != null) name = Loc.F("A11y_WithBadge", name, t.BadgeText);
+            if (name.Length > 0 && t.Attention) name = Loc.F("A11y_WithAttention", name);
             if (name.Length > 0 && AutomationProperties.GetName(t.Visual) != name)
                 AutomationProperties.SetName(t.Visual, name);
         }

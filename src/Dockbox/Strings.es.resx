@@ -238,6 +238,11 @@ Tus aplicaciones ancladas se mantendrán.</value></data>
   <data name="S_MinimizeScale" xml:space="preserve"><value>Escala</value></data>
   <data name="S_MinimizeGenie" xml:space="preserve"><value>Genio</value></data>
   <data name="S_MinimizeHint" xml:space="preserve"><value>La ventana se encoge hasta el icono de la aplicación en el Dock. Mientras el efecto esté activado, la animación propia de Windows al minimizar y restaurar se desactiva; vuelve al elegir Ninguno o cerrar Dockbox.</value></data>
+  <data name="S_Attention" xml:space="preserve"><value>Rebotar cuando una aplicación pida atención</value></data>
+  <data name="S_Badges" xml:space="preserve"><value>Mostrar contadores en los iconos</value></data>
+  <data name="S_BadgesHint" xml:space="preserve"><value>El número viene del título de las ventanas, como en "(3) WhatsApp". El progreso de descargas no aparece: Windows no permite que otros programas lo lean.</value></data>
+  <data name="A11y_WithBadge" xml:space="preserve"><value>{0}, {1} sin leer</value></data>
+  <data name="A11y_WithAttention" xml:space="preserve"><value>{0}, requiere atención</value></data>
   <data name="S_Previews" xml:space="preserve"><value>Mostrar miniaturas de las ventanas al pasar el ratón</value></data>
   <data name="S_PreviewsHint" xml:space="preserve"><value>Aparece en apps con más de una ventana abierta. Haz clic en una miniatura para traer esa ventana.</value></data>
   <data name="S_PreviewDelay" xml:space="preserve"><value>Tiempo con el ratón sobre el icono hasta que aparecen</value></data>
