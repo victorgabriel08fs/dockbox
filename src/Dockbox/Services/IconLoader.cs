@@ -4,9 +4,9 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static Dockbox.NativeMethods;
+using static Dockbox.Interop.NativeMethods;
 
-namespace Dockbox;
+namespace Dockbox.Services;
 
 /// <summary>Extrai ícones grandes (até 256px) de executáveis, atalhos e pastas.</summary>
 internal static class IconLoader

@@ -8,6 +8,25 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 
 ## [Não lançado]
 
+### Adicionado
+
+- Visual estilo macOS: fundo de vidro com gradiente, borda clara e sombra; rótulo com o nome do item.
+- Tema automático, claro, escuro ou personalizado; cor de fundo, cor de destaque, opacidade e cantos configuráveis.
+- Posição na tela: embaixo, em cima, à esquerda ou à direita.
+- Tamanho dos ícones e intensidade da ampliação configuráveis; ampliação pode ser desligada.
+- Ponto sob apps abertos; clique traz a janela para frente ou minimiza; Ctrl + clique abre nova janela.
+- Animação de pulo ao abrir um app.
+- Janela "Gerenciar Dock": adicionar apps do Menu Iniciar, arquivos e pastas; remover, reordenar e editar.
+- Widgets: relógio, calendário, clima, CPU/RAM, bateria, mídia tocando agora e Lixeira.
+- Soltar arquivos sobre um app abre os arquivos com ele; soltar na Lixeira apaga.
+- Opção de iniciar junto com o Windows.
+
+### Alterado
+
+- Configurações agora ficam em `%APPDATA%\Dockbox\settings.json`; o `pinned.json` antigo é importado.
+- Gravação atômica das configurações; um arquivo corrompido é copiado com data antes de voltar aos padrões.
+- Requer Windows 10 versão 1809 ou mais recente.
+
 ## [0.1.0] - 2026-10-29
 
 Primeira versão (Fase 1, MVP).
