@@ -11,6 +11,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>Dockbox</AssemblyName>
     <RootNamespace>Dockbox</RootNamespace>
+    <!-- Versão do app (SemVer). Atualize junto com o CHANGELOG.md. -->
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
 </Project>
