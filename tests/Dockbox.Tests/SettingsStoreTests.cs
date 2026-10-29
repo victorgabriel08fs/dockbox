@@ -4,7 +4,7 @@ using Dockbox.Core;
 namespace Dockbox.Tests;
 
 /// <summary>
-/// SettingsStore é estático, então estes testes não rodam em paralelo
+/// SettingsStore e Loc são estáticos, então estes testes não rodam em paralelo
 /// e cada um usa uma pasta temporária própria (nunca o %APPDATA% real).
 /// </summary>
 [Collection(SettingsCollection.Name)]
@@ -17,6 +17,7 @@ public sealed class SettingsStoreTests : IDisposable
         _dir = Path.Combine(Path.GetTempPath(), "dockbox-tests-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_dir);
         SettingsStore.UseFolder(_dir);
+        Loc.Apply("pt-BR"); // mensagens conferidas em português
     }
 
     public void Dispose()

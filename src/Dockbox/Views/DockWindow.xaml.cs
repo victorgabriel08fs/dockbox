@@ -145,6 +145,7 @@ public partial class DockWindow : Window
         MouseRightButtonUp += OnRightClick;
 
         SettingsStore.Changed += ApplySettings;
+        Loc.Changed += OnLanguageChanged;
         RemovalHistory.Recorded += entry => Dispatcher.BeginInvoke(() => ShowUndoToast(entry));
         _undoTimer.Tick += (_, _) => HideUndoToast();
         UndoToast.MouseLeftButtonUp += (_, e) =>
@@ -363,6 +364,14 @@ public partial class DockWindow : Window
         StartAnimating();
     }
 
+    /// <summary>Idioma mudou: recria os ícones, pede rótulos novos aos widgets e refaz os nomes para leitores de tela.</summary>
+    private void OnLanguageChanged()
+    {
+        RebuildTiles(); // dicas de teclado e rótulos guardados nos ícones
+        foreach (var t in _tiles.Where(t => t.Kind == TileKind.Widget)) t.Widget!.NextUpdate = DateTime.MinValue;
+        UpdateAutomationNames();
+    }
+
     private void ApplyTheme()
     {
         _theme = DockTheme.Current(A);
@@ -488,7 +497,7 @@ public partial class DockWindow : Window
         }
 
         var img = new Image { Source = icon, Stretch = Stretch.Uniform, Cursor = Cursors.Hand, Focusable = true, FocusVisualStyle = null };
-        AutomationProperties.SetHelpText(img, "Enter abre. Shift+F10 abre o menu.");
+        AutomationProperties.SetHelpText(img, Loc.T("Dock_TileHelp"));
         RenderOptions.SetBitmapScalingMode(img, BitmapScalingMode.HighQuality);
 
         var tile = new Tile
@@ -512,12 +521,12 @@ public partial class DockWindow : Window
             w.SetTheme(_theme);
             w.AvailabilityChanged += () => Dispatcher.BeginInvoke(RebuildTiles);
             var box = new Viewbox { Stretch = Stretch.Uniform, Child = w.Visual, Cursor = Cursors.Hand, Focusable = true, FocusVisualStyle = null };
-            AutomationProperties.SetHelpText(box, "Enter abre. Shift+F10 abre o menu.");
             cached = (w, box);
             _widgetCache[kind] = cached;
         }
 
         var tile = new Tile { Kind = TileKind.Widget, Widget = cached.Widget, Visual = cached.Box };
+        AutomationProperties.SetHelpText(cached.Box, Loc.T("Dock_TileHelp"));
         HookClicks(tile);
         return tile;
     }
@@ -741,7 +750,7 @@ public partial class DockWindow : Window
     private void ShowUndoToast(DockEntry entry)
     {
         string name = entry.Name.Length > 32 ? entry.Name[..29] + "..." : entry.Name;
-        UndoText.Text = $"\u201C{name}\u201D removido";
+        UndoText.Text = Loc.F("Undo_Removed", name);
         UndoToast.Background = _theme.LabelBackground;
         UndoToast.BorderBrush = _theme.LabelBorder;
         UndoText.Foreground = _theme.LabelForeground;
@@ -1173,7 +1182,7 @@ public partial class DockWindow : Window
         if (A.ShowLabels && _hovering && !_menuOpen && _pressTile == null && _externalSlot < 0 && mouse is (double main, double)) hot = TileAt(main);
         if (hot == null && A.ShowLabels && _kbTile != null && !_hovering && !_menuOpen) hot = _kbTile;
         if (_dragTile != null) hot = _dragTile;
-        string text = _dragTile != null && _dragRemove ? "Remover" : hot?.Label ?? "";
+        string text = _dragTile != null && _dragRemove ? Loc.T("Drag_Remove") : hot?.Label ?? "";
 
         if (hot == null || string.IsNullOrEmpty(text))
         {
@@ -1233,7 +1242,8 @@ public partial class DockWindow : Window
     private const int HotkeyId = 0xD0C;
     private string? _shortcutRegistered;
     /// <summary>Por que o atalho não pôde ser registrado (já usado por outro programa), ou null.</summary>
-    public static string? ShortcutError { get; private set; }
+    public static string? ShortcutError => _shortcutFailed is string s ? Loc.F("Shortcut_InUse", Hotkey.Display(s)) : null;
+    private static string? _shortcutFailed;
     public static event Action? ShortcutStatusChanged;
 
     private Tile? _kbTile;          // item com o foco do teclado; null = fora do modo teclado
@@ -1255,9 +1265,9 @@ public partial class DockWindow : Window
 
         UnregisterHotKey(hwnd, HotkeyId);
         _shortcutRegistered = want;
-        ShortcutError = null;
+        _shortcutFailed = null;
         if (Hotkey.Parse(want) is (uint mods, uint vk) && !RegisterHotKey(hwnd, HotkeyId, mods | MOD_NOREPEAT, vk))
-            ShortcutError = $"O atalho {Hotkey.Display(want)} já é usado por outro programa. Escolha outro.";
+            _shortcutFailed = want;
         ShortcutStatusChanged?.Invoke();
     }
 
@@ -1355,8 +1365,8 @@ public partial class DockWindow : Window
         {
             string name = t.Kind switch
             {
-                TileKind.App => t.Entry!.Name + (t.Running ? ", aberto" : ""),
-                TileKind.Running => t.Entry!.Name + ", aberto, não fixado",
+                TileKind.App => t.Running ? Loc.F("A11y_Open", t.Entry!.Name) : t.Entry!.Name,
+                TileKind.Running => Loc.F("A11y_OpenUnpinned", t.Entry!.Name),
                 TileKind.Widget => string.IsNullOrEmpty(t.Widget!.Label) ? t.Widget.DisplayName : $"{t.Widget.DisplayName}: {t.Widget.Label}",
                 _ => "",
             };
@@ -1384,7 +1394,7 @@ public partial class DockWindow : Window
             // Cada app tem o próprio menu; as opções gerais ficam num submenu.
             AddAppItems(menu, tile);
             menu.Items.Add(new Separator());
-            var options = new MenuItem { Header = "Opções do Dock" };
+            var options = new MenuItem { Header = Loc.T("Menu_DockOptions") };
             AddDockItems(options);
             menu.Items.Add(options);
         }
@@ -1395,7 +1405,7 @@ public partial class DockWindow : Window
                 var w = tile.Widget!;
                 menu.Items.Add(Header(w.DisplayName));
                 foreach (var (h, a) in w.MenuItems()) menu.Items.Add(Item(h, a));
-                menu.Items.Add(Item("Remover widget", () => DisableWidget(w.Kind)));
+                menu.Items.Add(Item(Loc.T("Menu_RemoveWidget"), () => DisableWidget(w.Kind)));
                 menu.Items.Add(new Separator());
             }
             AddDockItems(menu);
@@ -1415,28 +1425,28 @@ public partial class DockWindow : Window
             foreach (var (hwnd, title, minimized) in windows.Take(12))
             {
                 string text = title.Length > 60 ? title[..57] + "..." : title;
-                var mi = Item(minimized ? text + "  (minimizada)" : text, () => RunningApps.Activate(hwnd));
+                var mi = Item(minimized ? Loc.F("Menu_Minimized", text) : text, () => RunningApps.Activate(hwnd));
                 mi.Padding = new Thickness(18, mi.Padding.Top, mi.Padding.Right, mi.Padding.Bottom);
                 menu.Items.Add(mi);
             }
             menu.Items.Add(new Separator());
-            menu.Items.Add(Item("Nova janela", () => AppLauncher.Launch(entry)));
+            menu.Items.Add(Item(Loc.T("Menu_NewWindow"), () => AppLauncher.Launch(entry)));
         }
         else
         {
-            menu.Items.Add(Item("Abrir", () => OnTileClicked(tile)));
+            menu.Items.Add(Item(Loc.T("Menu_Open"), () => OnTileClicked(tile)));
         }
 
-        menu.Items.Add(Item(Directory.Exists(Environment.ExpandEnvironmentVariables(entry.Path)) ? "Mostrar a pasta no Explorador" : "Mostrar no Explorador",
+        menu.Items.Add(Item(Directory.Exists(Environment.ExpandEnvironmentVariables(entry.Path)) ? Loc.T("Menu_ShowFolderInExplorer") : Loc.T("Menu_ShowInExplorer"),
             () => AppLauncher.ShowInExplorer(entry.Path)));
         menu.Items.Add(new Separator());
-        if (tile.Kind == TileKind.Running) menu.Items.Add(Item("Manter no Dock", () => PinRunning(tile)));
-        else menu.Items.Add(Item("Remover do Dock", () => RemoveEntry(entry)));
+        if (tile.Kind == TileKind.Running) menu.Items.Add(Item(Loc.T("Menu_KeepInDock"), () => PinRunning(tile)));
+        else menu.Items.Add(Item(Loc.T("Menu_RemoveFromDock"), () => RemoveEntry(entry)));
 
         if (windows.Count > 0)
         {
             menu.Items.Add(new Separator());
-            menu.Items.Add(Item(windows.Count == 1 ? "Fechar" : $"Fechar todas as janelas ({windows.Count})", () =>
+            menu.Items.Add(Item(windows.Count == 1 ? Loc.T("Menu_Close") : Loc.F("Menu_CloseAll", windows.Count), () =>
             {
                 foreach (var (hwnd, _, _) in windows) RunningApps.Close(hwnd);
             }));
@@ -1446,20 +1456,20 @@ public partial class DockWindow : Window
     /// <summary>Opções gerais do Dock (área vazia, separador, widgets e submenu dos apps).</summary>
     private void AddDockItems(ItemsControl menu)
     {
-        menu.Items.Add(Item("Gerenciar Dock...", () => SettingsWindow.ShowSingle()));
-        menu.Items.Add(Item(A.Magnify ? "Desligar ampliação" : "Ligar ampliação", () =>
+        menu.Items.Add(Item(Loc.T("Menu_ManageDock"), () => SettingsWindow.ShowSingle()));
+        menu.Items.Add(Item(Loc.T(A.Magnify ? "Menu_MagnifyOff" : "Menu_MagnifyOn"), () =>
         {
             A.Magnify = !A.Magnify;
             SettingsStore.Commit();
         }));
-        menu.Items.Add(Item(A.AutoHide ? "Desligar ocultação automática" : "Ligar ocultação automática", () =>
+        menu.Items.Add(Item(Loc.T(A.AutoHide ? "Menu_AutoHideOff" : "Menu_AutoHideOn"), () =>
         {
             A.AutoHide = !A.AutoHide;
             SettingsStore.Commit();
         }));
         menu.Items.Add(new Separator());
-        menu.Items.Add(Header("Posição na tela"));
-        foreach (var (edge, name) in new[] { (DockEdge.Bottom, "Embaixo"), (DockEdge.Left, "À esquerda"), (DockEdge.Right, "À direita"), (DockEdge.Top, "Em cima") })
+        menu.Items.Add(Header(Loc.T("Menu_Position")));
+        foreach (var (edge, name) in new[] { (DockEdge.Bottom, Loc.T("Edge_Bottom")), (DockEdge.Left, Loc.T("Edge_Left")), (DockEdge.Right, Loc.T("Edge_Right")), (DockEdge.Top, Loc.T("Edge_Top")) })
         {
             var mi = Item(name, () => { A.Edge = edge; SettingsStore.Commit(); });
             mi.IsCheckable = false;
@@ -1467,7 +1477,7 @@ public partial class DockWindow : Window
             menu.Items.Add(mi);
         }
         menu.Items.Add(new Separator());
-        menu.Items.Add(Item("Sair do Dockbox", Close));
+        menu.Items.Add(Item(Loc.T("Menu_Quit"), Close));
     }
 
     private void ShowMenu(ContextMenu menu, Tile? at = null)

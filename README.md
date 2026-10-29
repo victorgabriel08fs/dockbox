@@ -26,6 +26,7 @@
 - Ícone na área de notificação (bandeja) com atalhos para Gerenciar Dock e Sair.
 - Acessível: **Win+Shift+D** leva o foco ao Dock (setas, Enter, Shift+F10, Esc), nomes para o Narrador/NVDA,
   sem animações quando o Windows pede e cores do alto contraste.
+- Em português, inglês e espanhol (segue o idioma do Windows ou o que você escolher).
 - Iniciar junto com o Windows (opcional).
 
 ## Como rodar no Windows
@@ -70,6 +71,7 @@ Esses pontos estão previstos nas fases 2 e 3.
 
 - [Guia do usuário](docs/GUIA-DO-USUARIO.md): instalar, usar, Gerenciar Dock, widgets, privacidade do clima e problemas comuns.
 - [Arquitetura](docs/ARQUITETURA.md): como o código está organizado e como criar um widget.
+- [Traduções](docs/TRADUCAO.md): como corrigir um texto ou acrescentar um idioma.
 - [Testes](docs/TESTES.md): testes automáticos (`dotnet test tests/Dockbox.Tests`, só no Windows) e checklist de teste manual.
 
 ## Versões

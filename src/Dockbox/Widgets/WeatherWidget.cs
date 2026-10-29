@@ -18,8 +18,8 @@ public sealed class WeatherWidget : DockWidget
     private string? _lastCity;
 
     public override string Kind => "weather";
-    public override string DisplayName => "Clima";
-    public override string Description => "Temperatura e condição atual da sua cidade.";
+    public override string DisplayName => Loc.T("W_Weather_Name");
+    public override string Description => Loc.T("W_Weather_Desc");
     public override TimeSpan Interval => _info == null ? TimeSpan.FromMinutes(1) : TimeSpan.FromMinutes(15);
 
     public override void Build()
@@ -36,7 +36,7 @@ public sealed class WeatherWidget : DockWidget
         _tile.Child = g;
         Visual.Children.Add(_tile);
         Draw(WeatherKind.PartlyCloudy, true);
-        Label = "Clima: carregando…";
+        Label = Loc.T("W_Weather_Loading");
     }
 
     public override async Task UpdateAsync()
@@ -49,14 +49,14 @@ public sealed class WeatherWidget : DockWidget
         {
             _info = null;
             _temp.Text = "--°";
-            Label = "Clima: defina sua cidade em Gerenciar Dock › Widgets";
+            Label = Loc.T("W_Weather_NoCity");
             return;
         }
 
         var info = await WeatherService.GetAsync(city);
         if (info == null)
         {
-            if (_info == null) Label = "Clima indisponível (sem internet ou cidade não encontrada)";
+            if (_info == null) Label = Loc.T("W_Weather_Unavailable");
             return;
         }
         _info = info;
@@ -73,7 +73,7 @@ public sealed class WeatherWidget : DockWidget
     public override void OnClick(FrameworkElement anchor)
     {
         string q = _info?.City is { Length: > 0 } c ? c : SettingsStore.Current.WeatherCity;
-        AppLauncher.Open("https://www.google.com/search?q=" + Uri.EscapeDataString("previsão do tempo " + q));
+        AppLauncher.Open("https://www.google.com/search?q=" + Uri.EscapeDataString(Loc.F("W_Weather_Search", q)));
     }
 
     // ---------- Ícones desenhados ----------

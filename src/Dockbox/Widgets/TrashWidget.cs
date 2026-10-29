@@ -1,3 +1,4 @@
+using Dockbox.Core;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -14,8 +15,8 @@ public sealed class TrashWidget : DockWidget
     private long _count = -1;
 
     public override string Kind => "trash";
-    public override string DisplayName => "Lixeira";
-    public override string Description => "Clique para abrir; arraste arquivos para cá para apagá-los.";
+    public override string DisplayName => Loc.T("W_Trash_Name");
+    public override string Description => Loc.T("W_Trash_Desc");
     public override TimeSpan Interval => TimeSpan.FromSeconds(4);
     public override bool AcceptsFiles => true;
 
@@ -74,9 +75,9 @@ public sealed class TrashWidget : DockWidget
             _papers.Visibility = count > 0 ? Visibility.Visible : Visibility.Collapsed;
             Label = count switch
             {
-                0 => "Lixeira (vazia)",
-                1 => "Lixeira · 1 item",
-                _ => $"Lixeira · {count} itens",
+                0 => Loc.T("W_Trash_Empty"),
+                1 => Loc.T("W_Trash_One"),
+                _ => Loc.F("W_Trash_Many", count),
             };
         }
         return Task.CompletedTask;
@@ -86,14 +87,14 @@ public sealed class TrashWidget : DockWidget
 
     public override IEnumerable<(string Header, Action Action)> MenuItems()
     {
-        yield return ("Abrir Lixeira", RecycleBin.Open);
-        yield return ("Esvaziar Lixeira...", () => { RecycleBin.Empty(); NextUpdate = DateTime.MinValue; });
+        yield return (Loc.T("W_Trash_Open"), RecycleBin.Open);
+        yield return (Loc.T("W_Trash_EmptyAction"), () => { RecycleBin.Empty(); NextUpdate = DateTime.MinValue; });
     }
 
     public override void OnFilesDropped(string[] files)
     {
-        string what = files.Length == 1 ? $"\"{System.IO.Path.GetFileName(files[0].TrimEnd('\\'))}\"" : $"{files.Length} itens";
-        var r = MessageBox.Show($"Mover {what} para a Lixeira?", "Dockbox", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+        string what = files.Length == 1 ? $"\"{System.IO.Path.GetFileName(files[0].TrimEnd('\\'))}\"" : Loc.F("W_Trash_NItems", files.Length);
+        var r = MessageBox.Show(Loc.F("W_Trash_Confirm", what), "Dockbox", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
         if (r != MessageBoxResult.Yes) return;
         RecycleBin.Delete(files);
         NextUpdate = DateTime.MinValue;

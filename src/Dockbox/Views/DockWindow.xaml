@@ -1,6 +1,7 @@
 <Window x:Class="Dockbox.Views.DockWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:Dockbox.Views"
         Title="Dockbox"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -56,7 +57,7 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock x:Name="UndoText" FontSize="13" FontFamily="Segoe UI Variable Text, Segoe UI" VerticalAlignment="Center"/>
                 <Border x:Name="UndoButton" CornerRadius="6" Padding="9,2,9,3" Margin="10,0,0,0">
-                    <TextBlock Text="Desfazer" FontSize="13" FontWeight="SemiBold" FontFamily="Segoe UI Variable Text, Segoe UI"/>
+                    <TextBlock Text="{l:T Undo_Button}" FontSize="13" FontWeight="SemiBold" FontFamily="Segoe UI Variable Text, Segoe UI"/>
                 </Border>
             </StackPanel>
         </Border>

@@ -1,3 +1,4 @@
+using Dockbox.Core;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,13 +10,12 @@ namespace Dockbox.Widgets;
 /// <summary>Ícone de calendário com o dia de hoje; clique abre um mini calendário.</summary>
 public sealed class CalendarWidget : DockWidget
 {
-    private static readonly CultureInfo Pt = CultureInfo.GetCultureInfo("pt-BR");
     private TextBlock _weekday = null!, _day = null!;
     private Popup? _popup;
 
     public override string Kind => "calendar";
-    public override string DisplayName => "Calendário";
-    public override string Description => "Dia de hoje; clique para ver o mês.";
+    public override string DisplayName => Loc.T("W_Calendar_Name");
+    public override string Description => Loc.T("W_Calendar_Desc");
     public override TimeSpan Interval => TimeSpan.FromSeconds(30);
 
     public override void Build()
@@ -47,9 +47,10 @@ public sealed class CalendarWidget : DockWidget
     private void Tick()
     {
         var now = DateTime.Now;
-        _weekday.Text = now.ToString("ddd", Pt).TrimEnd('.').ToUpperInvariant();
-        _day.Text = now.Day.ToString(Pt);
-        Label = Pt.TextInfo.ToTitleCase(now.ToString("dddd, d 'de' MMMM 'de' yyyy", Pt));
+        var c = Loc.Culture;
+        _weekday.Text = now.ToString("ddd", c).TrimEnd('.').ToUpper(c);
+        _day.Text = now.Day.ToString(c);
+        Label = Loc.Capitalize(now.ToString("D", c));
     }
 
     public override void OnClick(FrameworkElement anchor)
@@ -64,8 +65,8 @@ public sealed class CalendarWidget : DockWidget
         {
             DisplayDate = DateTime.Today,
             SelectedDate = DateTime.Today,
-            Language = System.Windows.Markup.XmlLanguage.GetLanguage("pt-BR"),
-            FirstDayOfWeek = DayOfWeek.Sunday,
+            Language = System.Windows.Markup.XmlLanguage.GetLanguage(Loc.Culture.IetfLanguageTag),
+            FirstDayOfWeek = Loc.Culture.DateTimeFormat.FirstDayOfWeek,
         };
         var box = new Border
         {

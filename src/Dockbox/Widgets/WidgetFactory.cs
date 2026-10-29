@@ -1,3 +1,5 @@
+using Dockbox.Core;
+
 namespace Dockbox.Widgets;
 
 public static class WidgetFactory
@@ -21,25 +23,25 @@ public static class WidgetFactory
 
     public static string DisplayName(string kind) => kind switch
     {
-        "clock" => "Relógio",
-        "calendar" => "Calendário",
-        "weather" => "Clima",
-        "system" => "Monitor do sistema",
-        "battery" => "Bateria",
-        "media" => "Mídia",
-        "trash" => "Lixeira",
+        "clock" => Loc.T("W_Clock_Name"),
+        "calendar" => Loc.T("W_Calendar_Name"),
+        "weather" => Loc.T("W_Weather_Name"),
+        "system" => Loc.T("W_System_Name"),
+        "battery" => Loc.T("W_Battery_Name"),
+        "media" => Loc.T("W_Media_Name"),
+        "trash" => Loc.T("W_Trash_Name"),
         _ => kind,
     };
 
     public static string Description(string kind) => kind switch
     {
-        "clock" => "Relógio analógico; mostra data e hora ao passar o mouse.",
-        "calendar" => "Dia de hoje; clique para ver o mês.",
-        "weather" => "Temperatura e condição atual da sua cidade.",
-        "system" => "Uso de CPU e memória RAM. Clique abre o Gerenciador de Tarefas.",
-        "battery" => "Nível de carga (só aparece em notebooks).",
-        "media" => "Música ou vídeo tocando agora, com controles.",
-        "trash" => "Abre a Lixeira; arraste arquivos para apagá-los.",
+        "clock" => Loc.T("W_Clock_Desc"),
+        "calendar" => Loc.T("W_Calendar_Desc"),
+        "weather" => Loc.T("W_Weather_Desc"),
+        "system" => Loc.T("W_System_Desc"),
+        "battery" => Loc.T("W_Battery_Desc"),
+        "media" => Loc.T("W_Media_Desc"),
+        "trash" => Loc.T("W_Trash_Desc"),
         _ => "",
     };
 

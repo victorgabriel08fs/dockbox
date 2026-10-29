@@ -1,3 +1,4 @@
+using Dockbox.Core;
 using System.Globalization;
 using System.Net.Http;
 using System.Text.Json;
@@ -40,7 +41,7 @@ public static class WeatherService
             int code = cur.GetProperty("weather_code").GetInt32();
             bool day = cur.GetProperty("is_day").GetInt32() == 1;
             var (kind, desc) = Describe(code);
-            return new WeatherInfo(name, temp, kind, day, desc);
+            return new WeatherInfo(name, temp, kind, day, desc == "" ? "—" : Loc.T(desc));
         }
         catch
         {
@@ -50,7 +51,7 @@ public static class WeatherService
 
     private static async Task<(double, double, string)?> GeocodeAsync(string city)
     {
-        string url = "https://geocoding-api.open-meteo.com/v1/search?count=1&language=pt&name=" + Uri.EscapeDataString(city);
+        string url = "https://geocoding-api.open-meteo.com/v1/search?count=1&language=" + Loc.Culture.TwoLetterISOLanguageName + "&name=" + Uri.EscapeDataString(city);
         using var doc = JsonDocument.Parse(await Http.GetStringAsync(url));
         if (!doc.RootElement.TryGetProperty("results", out var results) || results.GetArrayLength() == 0) return null;
         var r = results[0];
@@ -68,17 +69,17 @@ public static class WeatherService
 
     private static (WeatherKind, string) Describe(int code) => code switch
     {
-        0 => (WeatherKind.Clear, "Céu limpo"),
-        1 => (WeatherKind.Clear, "Predominantemente limpo"),
-        2 => (WeatherKind.PartlyCloudy, "Parcialmente nublado"),
-        3 => (WeatherKind.Cloudy, "Nublado"),
-        45 or 48 => (WeatherKind.Fog, "Neblina"),
-        >= 51 and <= 57 => (WeatherKind.Drizzle, "Garoa"),
-        >= 61 and <= 67 => (WeatherKind.Rain, "Chuva"),
-        >= 71 and <= 77 => (WeatherKind.Snow, "Neve"),
-        >= 80 and <= 82 => (WeatherKind.Rain, "Pancadas de chuva"),
-        85 or 86 => (WeatherKind.Snow, "Pancadas de neve"),
-        >= 95 => (WeatherKind.Thunder, "Tempestade"),
-        _ => (WeatherKind.Cloudy, "—"),
+        0 => (WeatherKind.Clear, "Wx_Clear"),
+        1 => (WeatherKind.Clear, "Wx_MainlyClear"),
+        2 => (WeatherKind.PartlyCloudy, "Wx_PartlyCloudy"),
+        3 => (WeatherKind.Cloudy, "Wx_Cloudy"),
+        45 or 48 => (WeatherKind.Fog, "Wx_Fog"),
+        >= 51 and <= 57 => (WeatherKind.Drizzle, "Wx_Drizzle"),
+        >= 61 and <= 67 => (WeatherKind.Rain, "Wx_Rain"),
+        >= 71 and <= 77 => (WeatherKind.Snow, "Wx_Snow"),
+        >= 80 and <= 82 => (WeatherKind.Rain, "Wx_RainShowers"),
+        85 or 86 => (WeatherKind.Snow, "Wx_SnowShowers"),
+        >= 95 => (WeatherKind.Thunder, "Wx_Thunder"),
+        _ => (WeatherKind.Cloudy, ""),
     };
 }

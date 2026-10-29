@@ -63,6 +63,8 @@ public sealed class DockSettings
     public List<WidgetConfig> Widgets { get; set; } = new();
     public Appearance Appearance { get; set; } = new();
     /// <summary>Cidade do widget de clima; vazio = detectar pela internet.</summary>
+    /// <summary>Idioma da interface: "pt-BR", "en", "es" ou vazio = idioma do Windows.</summary>
+    public string Language { get; set; } = "";
     public string WeatherCity { get; set; } = "";
     public bool Clock24h { get; set; } = true;
     /// <summary>Com a cidade vazia, descobrir a localização pelo IP (ipwho.is). Desligado por padrão.</summary>
@@ -111,11 +113,11 @@ public static class SettingsStore
             try
             {
                 File.Copy(FilePath, copy, false);
-                LoadWarning = $"O arquivo de configurações estava com erro e o Dockbox voltou aos padrões.\n\nUma cópia do arquivo antigo foi guardada em:\n{copy}";
+                LoadWarning = Loc.F("Msg_SettingsCorruptCopy", Loc.T("Msg_SettingsCorrupt"), copy);
             }
             catch
             {
-                LoadWarning = "O arquivo de configurações estava com erro e o Dockbox voltou aos padrões.";
+                LoadWarning = Loc.T("Msg_SettingsCorrupt");
             }
         }
 
@@ -167,7 +169,7 @@ public static class SettingsStore
         }
 
         bool firstFailure = LastSaveError == null;
-        LastSaveError = $"Não foi possível salvar as configurações: {Describe(last!)}.\n\nArquivo: {FilePath}";
+        LastSaveError = Loc.F("Msg_SaveError", Describe(last!), FilePath);
         Log(last!);
         if (firstFailure) SaveFailed?.Invoke(LastSaveError);
         return false;
@@ -197,10 +199,10 @@ public static class SettingsStore
     /// <summary>Explica a falha em palavras simples.</summary>
     public static string Describe(Exception ex) => ex switch
     {
-        UnauthorizedAccessException => "o arquivo está como somente leitura ou falta permissão na pasta",
-        IOException io when (io.HResult & 0xFFFF) == 0x70 => "o disco está cheio",
-        IOException io when (io.HResult & 0xFFFF) is 0x20 or 0x21 => "o arquivo está em uso por outro programa (OneDrive, antivírus ou backup)",
-        DirectoryNotFoundException => "a pasta de configurações não existe e não pôde ser criada",
+        UnauthorizedAccessException => Loc.T("Err_ReadOnly"),
+        IOException io when (io.HResult & 0xFFFF) == 0x70 => Loc.T("Err_DiskFull"),
+        IOException io when (io.HResult & 0xFFFF) is 0x20 or 0x21 => Loc.T("Err_InUse"),
+        DirectoryNotFoundException => Loc.T("Err_NoFolder"),
         _ => ex.Message.TrimEnd('.'),
     };
 
@@ -223,6 +225,7 @@ public static class SettingsStore
     internal static void Normalize(DockSettings s)
     {
         s.Items ??= new();
+        s.Language = Loc.Normalize(s.Language) ?? "";
         s.Items.RemoveAll(i => i == null || string.IsNullOrWhiteSpace(i.Path));
         s.Widgets ??= new();
         s.Widgets.RemoveAll(w => w == null || !AllWidgetKinds.Contains(w.Kind));
@@ -274,12 +277,12 @@ public static class SettingsStore
 
         var candidates = new List<DockEntry>
         {
-            new() { Name = "Explorador de Arquivos", Path = System.IO.Path.Combine(win, "explorer.exe") },
+            new() { Name = Loc.T("Item_FileExplorer"), Path = System.IO.Path.Combine(win, "explorer.exe") },
             new() { Name = "Microsoft Edge", Path = System.IO.Path.Combine(pf86, @"Microsoft\Edge\Application\msedge.exe") },
             new() { Name = "Google Chrome", Path = System.IO.Path.Combine(pf, @"Google\Chrome\Application\chrome.exe") },
             new() { Name = "Google Chrome", Path = System.IO.Path.Combine(local, @"Google\Chrome\Application\chrome.exe") },
-            new() { Name = "Bloco de Notas", Path = System.IO.Path.Combine(sys, "notepad.exe") },
-            new() { Name = "Calculadora", Path = System.IO.Path.Combine(sys, "calc.exe") },
+            new() { Name = Loc.T("Item_Notepad"), Path = System.IO.Path.Combine(sys, "notepad.exe") },
+            new() { Name = Loc.T("Item_Calculator"), Path = System.IO.Path.Combine(sys, "calc.exe") },
             new() { Name = "Paint", Path = System.IO.Path.Combine(sys, "mspaint.exe") },
             TerminalEntry(sys, local),
         };

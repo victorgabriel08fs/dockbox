@@ -106,7 +106,12 @@ cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição
   de outro monitor e o Dock vai para lá. Bordas encostadas em outro monitor não contam.
 
 **Comportamento**: mostrar nome, ponto de app aberto, animação de pulo, separador, ocultar automaticamente
-(com o tempo até aparecer), reservar espaço na tela (janelas maximizadas param antes do Dock), iniciar com o Windows e o atalho do teclado.
+(com o tempo até aparecer), reservar espaço na tela (janelas maximizadas param antes do Dock), iniciar com o Windows, o idioma e o atalho do teclado.
+
+**Idioma** (em Comportamento): **Automático** segue o idioma do Windows (português, inglês ou espanhol; outros
+idiomas ficam em inglês). Ou escolha **Português**, **English** ou **Español**. A troca vale na hora para menus,
+Gerenciar Dock, bandeja e widgets; as datas do relógio e do calendário seguem o idioma escolhido. Os nomes dos seus
+itens não mudam: um item padrão criado em português continua "Bloco de Notas" (dá para renomear em Item selecionado).
 
 Com **Ocultar e mostrar o Dock automaticamente**, o Dock sai da tela quando o mouse vai embora e volta quando
 você encosta o mouse na borda, na altura do Dock. Também dá para ligar e desligar pelo botão direito no Dock.

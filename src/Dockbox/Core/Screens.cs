@@ -14,7 +14,7 @@ internal sealed record ScreenInfo(string Device, RECT Bounds, RECT Work, bool Pr
     public int Number => Screens.NumberOf(Device);
 
     public string Label =>
-        (Number > 0 ? $"{Number} · " : "") + $"{Width}×{Height}" + (Primary ? " (principal)" : "");
+        (Number > 0 ? $"{Number} · " : "") + $"{Width}×{Height}" + (Primary ? $" ({Loc.T("Monitor_Primary")})" : "");
 }
 
 /// <summary>Regras de qual monitor recebe o Dock. Sem chamadas ao Windows, para poder testar.</summary>

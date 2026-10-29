@@ -1,3 +1,4 @@
+using Dockbox.Core;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -14,8 +15,8 @@ public sealed class BatteryWidget : DockWidget
     private bool _available = SystemStats.Battery() != null;
 
     public override string Kind => "battery";
-    public override string DisplayName => "Bateria";
-    public override string Description => "Nível de carga e se está carregando (só aparece em notebooks).";
+    public override string DisplayName => Loc.T("W_Battery_Name");
+    public override string Description => Loc.T("W_Battery_Desc");
     public override bool IsAvailable => _available;
     public override TimeSpan Interval => TimeSpan.FromSeconds(20);
 
@@ -63,7 +64,7 @@ public sealed class BatteryWidget : DockWidget
         _fill.Fill = Solid(percent <= 15 && !charging ? "#FF453A" : percent <= 30 && !charging ? "#FFD60A" : "#30D158");
         _bolt.Visibility = charging ? Visibility.Visible : Visibility.Collapsed;
         _percent.Text = $"{percent}%";
-        Label = charging ? $"Bateria {percent}% · carregando" : $"Bateria {percent}%";
+        Label = Loc.F(charging ? "W_Battery_Charging" : "W_Battery_Level", percent);
         return Task.CompletedTask;
     }
 

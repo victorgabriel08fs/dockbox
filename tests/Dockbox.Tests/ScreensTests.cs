@@ -3,6 +3,7 @@ using static Dockbox.Interop.NativeMethods;
 
 namespace Dockbox.Tests;
 
+[Collection(SettingsCollection.Name)] // usa o idioma (Loc), que é global
 public sealed class ScreensTests
 {
     private static RECT R(int l, int t, int r, int b) => new() { Left = l, Top = t, Right = r, Bottom = b };
@@ -23,6 +24,7 @@ public sealed class ScreensTests
     [Fact]
     public void Label_MostraNumeroResolucaoEPrincipal()
     {
+        Loc.Apply("pt-BR");
         Assert.Equal("1 · 1920×1080 (principal)", Main.Label);
         Assert.Equal("2 · 2560×1440", Second.Label);
     }

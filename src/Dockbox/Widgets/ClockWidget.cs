@@ -15,8 +15,8 @@ public sealed class ClockWidget : DockWidget
     private readonly RotateTransform _second = new(0, 32, 32);
 
     public override string Kind => "clock";
-    public override string DisplayName => "Relógio";
-    public override string Description => "Relógio analógico; mostra data e hora ao passar o mouse.";
+    public override string DisplayName => Loc.T("W_Clock_Name");
+    public override string Description => Loc.T("W_Clock_Desc");
 
     public override void Build()
     {
@@ -78,8 +78,8 @@ public sealed class ClockWidget : DockWidget
         _minute.Angle = now.Minute * 6 + now.Second * 0.1;
         _hour.Angle = (now.Hour % 12) * 30 + now.Minute * 0.5;
 
-        var pt = CultureInfo.GetCultureInfo("pt-BR");
-        string time = SettingsStore.Current.Clock24h ? now.ToString("HH:mm", pt) : now.ToString("h:mm tt", CultureInfo.InvariantCulture);
-        Label = $"{time} · {pt.TextInfo.ToTitleCase(now.ToString("dddd, d 'de' MMMM", pt))}";
+        var c = Loc.Culture;
+        string time = SettingsStore.Current.Clock24h ? now.ToString("HH:mm", c) : now.ToString("h:mm tt", CultureInfo.InvariantCulture);
+        Label = $"{time} · {Loc.Capitalize(now.ToString("dddd, " + c.DateTimeFormat.MonthDayPattern, c))}";
     }
 }

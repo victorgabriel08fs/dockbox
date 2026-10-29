@@ -34,7 +34,7 @@ public static class AppLauncher
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Não foi possível abrir \"{entry.Name}\":\n{ex.Message}", "Dockbox",
+            MessageBox.Show(Loc.F("Msg_OpenFailed", entry.Name, ex.Message), "Dockbox",
                 MessageBoxButton.OK, MessageBoxImage.Warning);
             return false;
         }
@@ -68,8 +68,7 @@ public static class AppLauncher
         var risk = Assess(entry.Path, entry.Arguments);
         if (risk == LaunchRisk.Blocked)
         {
-            MessageBox.Show($"\"{entry.Name}\" foi bloqueado por segurança.\n\n{entry.Path}\n\n" +
-                "Este tipo de link já foi usado para atacar computadores com Windows. Remova o item do Dock.",
+            MessageBox.Show(Loc.F("Msg_Blocked", entry.Name, entry.Path),
                 "Dockbox", MessageBoxButton.OK, MessageBoxImage.Stop);
             return false;
         }
@@ -85,10 +84,9 @@ public static class AppLauncher
     public static bool ConfirmRisky(string name, string path, string? arguments, bool pinning)
     {
         string what = string.IsNullOrWhiteSpace(arguments) ? path : $"{path} {arguments}";
-        string question = pinning ? "Fixar no Dock mesmo assim?" : "Abrir mesmo assim? O Dockbox não vai perguntar de novo para este item.";
+        string question = Loc.T(pinning ? "Msg_Risky_PinQuestion" : "Msg_Risky_OpenQuestion");
         var answer = MessageBox.Show(
-            $"\"{name}\" executa um script, comando ou protocolo que pode alterar o seu computador:\n\n{what}\n\n" +
-            $"Só continue se você sabe de onde veio este item.\n\n{question}",
+            Loc.F("Msg_Risky", name, what, question),
             "Dockbox", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
         return answer == MessageBoxResult.Yes;
     }

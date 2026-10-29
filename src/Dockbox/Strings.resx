@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gerado por tools/i18n/build_resx.py a partir de tools/i18n/strings.py. Não edite à mão. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Common_Off" xml:space="preserve"><value>Off</value></data>
+  <data name="Key_Space" xml:space="preserve"><value>Space</value></data>
+  <data name="Monitor_Primary" xml:space="preserve"><value>primary</value></data>
+  <data name="W_Battery_Name" xml:space="preserve"><value>Battery</value></data>
+  <data name="W_Battery_Desc" xml:space="preserve"><value>Charge level (only shows on laptops).</value></data>
+  <data name="W_Battery_Level" xml:space="preserve"><value>Battery {0}%</value></data>
+  <data name="W_Battery_Charging" xml:space="preserve"><value>Battery {0}% · charging</value></data>
+  <data name="W_Calendar_Name" xml:space="preserve"><value>Calendar</value></data>
+  <data name="W_Calendar_Desc" xml:space="preserve"><value>Today's date; click to see the month.</value></data>
+  <data name="W_Clock_Name" xml:space="preserve"><value>Clock</value></data>
+  <data name="W_Clock_Desc" xml:space="preserve"><value>Analog clock; shows the date and time on hover.</value></data>
+  <data name="W_Media_Name" xml:space="preserve"><value>Media</value></data>
+  <data name="W_Media_Desc" xml:space="preserve"><value>Music or video playing now, with controls.</value></data>
+  <data name="W_Media_Nothing" xml:space="preserve"><value>Nothing playing</value></data>
+  <data name="W_System_Name" xml:space="preserve"><value>System monitor</value></data>
+  <data name="W_System_Desc" xml:space="preserve"><value>CPU and RAM usage. Click to open Task Manager.</value></data>
+  <data name="W_System_Label" xml:space="preserve"><value>CPU {0:0}% · RAM {1:0.0} of {2:0} GB</value></data>
+  <data name="W_Trash_Name" xml:space="preserve"><value>Recycle Bin</value></data>
+  <data name="W_Trash_Desc" xml:space="preserve"><value>Opens the Recycle Bin; drag files here to delete them.</value></data>
+  <data name="W_Trash_Empty" xml:space="preserve"><value>Recycle Bin (empty)</value></data>
+  <data name="W_Trash_One" xml:space="preserve"><value>Recycle Bin · 1 item</value></data>
+  <data name="W_Trash_Many" xml:space="preserve"><value>Recycle Bin · {0} items</value></data>
+  <data name="W_Trash_Open" xml:space="preserve"><value>Open Recycle Bin</value></data>
+  <data name="W_Trash_EmptyAction" xml:space="preserve"><value>Empty Recycle Bin...</value></data>
+  <data name="W_Trash_NItems" xml:space="preserve"><value>{0} items</value></data>
+  <data name="W_Trash_Confirm" xml:space="preserve"><value>Move {0} to the Recycle Bin?</value></data>
+  <data name="W_Weather_Name" xml:space="preserve"><value>Weather</value></data>
+  <data name="W_Weather_Desc" xml:space="preserve"><value>Current temperature and conditions in your city.</value></data>
+  <data name="W_Weather_Loading" xml:space="preserve"><value>Weather: loading…</value></data>
+  <data name="W_Weather_NoCity" xml:space="preserve"><value>Weather: set your city in Manage Dock › Widgets</value></data>
+  <data name="W_Weather_Unavailable" xml:space="preserve"><value>Weather unavailable (no internet or city not found)</value></data>
+  <data name="W_Weather_Search" xml:space="preserve"><value>weather {0}</value></data>
+  <data name="Wx_Clear" xml:space="preserve"><value>Clear sky</value></data>
+  <data name="Wx_MainlyClear" xml:space="preserve"><value>Mainly clear</value></data>
+  <data name="Wx_PartlyCloudy" xml:space="preserve"><value>Partly cloudy</value></data>
+  <data name="Wx_Cloudy" xml:space="preserve"><value>Cloudy</value></data>
+  <data name="Wx_Fog" xml:space="preserve"><value>Fog</value></data>
+  <data name="Wx_Drizzle" xml:space="preserve"><value>Drizzle</value></data>
+  <data name="Wx_Rain" xml:space="preserve"><value>Rain</value></data>
+  <data name="Wx_Snow" xml:space="preserve"><value>Snow</value></data>
+  <data name="Wx_RainShowers" xml:space="preserve"><value>Rain showers</value></data>
+  <data name="Wx_SnowShowers" xml:space="preserve"><value>Snow showers</value></data>
+  <data name="Wx_Thunder" xml:space="preserve"><value>Thunderstorm</value></data>
+  <data name="Msg_SaveFailed_Body" xml:space="preserve"><value>{0}
+
+Your changes stay in effect while Dockbox is open, but they will be lost when it closes.
+
+Fix the problem and click Yes to try saving again.</value></data>
+  <data name="Msg_StillCannotSave" xml:space="preserve"><value>Still couldn't save. You can try again from Manage Dock.</value></data>
+  <data name="Msg_OpenFailed" xml:space="preserve"><value>Couldn't open "{0}":
+{1}</value></data>
+  <data name="Msg_Blocked" xml:space="preserve"><value>"{0}" was blocked for your safety.
+
+{1}
+
+This kind of link has been used to attack Windows computers. Remove the item from the Dock.</value></data>
+  <data name="Msg_Risky" xml:space="preserve"><value>"{0}" runs a script, command or protocol that can change your computer:
+
+{1}
+
+Only continue if you know where this item came from.
+
+{2}</value></data>
+  <data name="Msg_Risky_PinQuestion" xml:space="preserve"><value>Pin to the Dock anyway?</value></data>
+  <data name="Msg_Risky_OpenQuestion" xml:space="preserve"><value>Open anyway? Dockbox won't ask again for this item.</value></data>
+  <data name="Msg_SettingsCorrupt" xml:space="preserve"><value>The settings file was damaged, so Dockbox went back to the defaults.</value></data>
+  <data name="Msg_SettingsCorruptCopy" xml:space="preserve"><value>{0}
+
+A copy of the old file was saved to:
+{1}</value></data>
+  <data name="Msg_SaveError" xml:space="preserve"><value>Couldn't save the settings: {0}.
+
+File: {1}</value></data>
+  <data name="Err_ReadOnly" xml:space="preserve"><value>the file is read-only or the folder lacks permission</value></data>
+  <data name="Err_DiskFull" xml:space="preserve"><value>the disk is full</value></data>
+  <data name="Err_InUse" xml:space="preserve"><value>the file is in use by another program (OneDrive, antivirus or backup)</value></data>
+  <data name="Err_NoFolder" xml:space="preserve"><value>the settings folder doesn't exist and couldn't be created</value></data>
+  <data name="Item_FileExplorer" xml:space="preserve"><value>File Explorer</value></data>
+  <data name="Item_Notepad" xml:space="preserve"><value>Notepad</value></data>
+  <data name="Item_Calculator" xml:space="preserve"><value>Calculator</value></data>
+  <data name="Dock_TileHelp" xml:space="preserve"><value>Enter opens. Shift+F10 opens the menu.</value></data>
+  <data name="Undo_Removed" xml:space="preserve"><value>“{0}” removed</value></data>
+  <data name="Undo_Button" xml:space="preserve"><value>Undo</value></data>
+  <data name="Drag_Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="Shortcut_InUse" xml:space="preserve"><value>The shortcut {0} is already used by another program. Pick another one.</value></data>
+  <data name="A11y_Open" xml:space="preserve"><value>{0}, open</value></data>
+  <data name="A11y_OpenUnpinned" xml:space="preserve"><value>{0}, open, not pinned</value></data>
+  <data name="Menu_DockOptions" xml:space="preserve"><value>Dock options</value></data>
+  <data name="Menu_RemoveWidget" xml:space="preserve"><value>Remove widget</value></data>
+  <data name="Menu_Minimized" xml:space="preserve"><value>{0}  (minimized)</value></data>
+  <data name="Menu_NewWindow" xml:space="preserve"><value>New window</value></data>
+  <data name="Menu_Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Menu_ShowFolderInExplorer" xml:space="preserve"><value>Show folder in File Explorer</value></data>
+  <data name="Menu_ShowInExplorer" xml:space="preserve"><value>Show in File Explorer</value></data>
+  <data name="Menu_KeepInDock" xml:space="preserve"><value>Keep in Dock</value></data>
+  <data name="Menu_RemoveFromDock" xml:space="preserve"><value>Remove from Dock</value></data>
+  <data name="Menu_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Menu_CloseAll" xml:space="preserve"><value>Close all windows ({0})</value></data>
+  <data name="Menu_ManageDock" xml:space="preserve"><value>Manage Dock...</value></data>
+  <data name="Menu_MagnifyOff" xml:space="preserve"><value>Turn magnification off</value></data>
+  <data name="Menu_MagnifyOn" xml:space="preserve"><value>Turn magnification on</value></data>
+  <data name="Menu_AutoHideOff" xml:space="preserve"><value>Turn auto-hide off</value></data>
+  <data name="Menu_AutoHideOn" xml:space="preserve"><value>Turn auto-hide on</value></data>
+  <data name="Menu_Position" xml:space="preserve"><value>Position on screen</value></data>
+  <data name="Menu_Quit" xml:space="preserve"><value>Quit Dockbox</value></data>
+  <data name="Edge_Bottom" xml:space="preserve"><value>Bottom</value></data>
+  <data name="Edge_Left" xml:space="preserve"><value>Left</value></data>
+  <data name="Edge_Right" xml:space="preserve"><value>Right</value></data>
+  <data name="Edge_Top" xml:space="preserve"><value>Top</value></data>
+  <data name="Item_NoName" xml:space="preserve"><value>(no name)</value></data>
+  <data name="Dlg_PickApp" xml:space="preserve"><value>Choose an app or file</value></data>
+  <data name="Dlg_FilterApps" xml:space="preserve"><value>Apps and shortcuts (*.exe;*.lnk;*.url)|*.exe;*.lnk;*.url|All files (*.*)|*.*</value></data>
+  <data name="Dlg_FilterAppsLnk" xml:space="preserve"><value>Apps and shortcuts (*.exe;*.lnk)|*.exe;*.lnk|All files (*.*)|*.*</value></data>
+  <data name="Dlg_PickFolder" xml:space="preserve"><value>Choose a folder</value></data>
+  <data name="Move_BeforeLeft" xml:space="preserve"><value>Move earlier (further left in the Dock)</value></data>
+  <data name="Move_BeforeUp" xml:space="preserve"><value>Move earlier (higher in the Dock)</value></data>
+  <data name="Move_AfterRight" xml:space="preserve"><value>Move later (further right in the Dock)</value></data>
+  <data name="Move_AfterDown" xml:space="preserve"><value>Move later (lower in the Dock)</value></data>
+  <data name="Move_Up" xml:space="preserve"><value>Move up</value></data>
+  <data name="Move_Down" xml:space="preserve"><value>Move down</value></data>
+  <data name="Shortcut_A11y" xml:space="preserve"><value>Keyboard shortcut: {0}</value></data>
+  <data name="Monitor_Missing" xml:space="preserve"><value>The chosen monitor isn't connected. The Dock stays on the primary monitor until it comes back.</value></data>
+  <data name="Monitor_OnlyOne" xml:space="preserve"><value>Only one monitor is connected right now.</value></data>
+  <data name="Monitor_FollowBottom" xml:space="preserve"><value>Rest the mouse on the bottom edge of another monitor for half a second and the Dock moves there.</value></data>
+  <data name="Monitor_FollowTop" xml:space="preserve"><value>Rest the mouse on the top edge of another monitor for half a second and the Dock moves there.</value></data>
+  <data name="Monitor_FollowLeft" xml:space="preserve"><value>Rest the mouse on the left edge of another monitor for half a second and the Dock moves there.</value></data>
+  <data name="Monitor_FollowRight" xml:space="preserve"><value>Rest the mouse on the right edge of another monitor for half a second and the Dock moves there.</value></data>
+  <data name="Reserve_AutoHideTip" xml:space="preserve"><value>With auto-hide on, the Dock doesn't reserve screen space.</value></data>
+  <data name="Autostart_Volatile_Ask" xml:space="preserve"><value>Dockbox is running from
+{0}
+
+If the file is moved or deleted from there, it stops starting with Windows, and any program can replace files in that folder.
+
+Copy Dockbox to
+{1}
+and start it from there?
+
+Yes: copy it, turn on automatic start and reopen Dockbox from there.
+No: turn it on anyway, using the current folder.</value></data>
+  <data name="Autostart_CopyFailed" xml:space="preserve"><value>Couldn't copy Dockbox: {0}
+Automatic start will use the current folder.</value></data>
+  <data name="Autostart_FolderWarn" xml:space="preserve"><value>Dockbox is running from
+{0}
+
+If the folder is moved or deleted, it stops starting with Windows. Consider moving the Dockbox folder somewhere permanent first.</value></data>
+  <data name="Reset_Confirm" xml:space="preserve"><value>Restore style, widgets and behavior to the defaults?
+Your pinned apps will be kept.</value></data>
+  <data name="Language_Auto" xml:space="preserve"><value>Automatic ({0})</value></data>
+  <data name="S_WindowTitle" xml:space="preserve"><value>Manage Dock · Dockbox</value></data>
+  <data name="S_ManageDock" xml:space="preserve"><value>Manage Dock</value></data>
+  <data name="S_NavItems" xml:space="preserve"><value>Dock items</value></data>
+  <data name="S_NavWidgets" xml:space="preserve"><value>Widgets</value></data>
+  <data name="S_NavStyle" xml:space="preserve"><value>Style</value></data>
+  <data name="S_NavBehavior" xml:space="preserve"><value>Behavior</value></data>
+  <data name="S_OpenSettingsFolder" xml:space="preserve"><value>Open settings folder</value></data>
+  <data name="S_RestoreDefaults" xml:space="preserve"><value>Restore defaults</value></data>
+  <data name="S_RetrySave" xml:space="preserve"><value>Try saving again</value></data>
+  <data name="S_ItemsSub" xml:space="preserve"><value>Pinned apps, folders and files. You can also drag any file onto the Dock.</value></data>
+  <data name="S_AddApp" xml:space="preserve"><value>Add app</value></data>
+  <data name="S_AddFile" xml:space="preserve"><value>Add file...</value></data>
+  <data name="S_AddFolder" xml:space="preserve"><value>Add folder...</value></data>
+  <data name="S_SelectedItem" xml:space="preserve"><value>Selected item</value></data>
+  <data name="S_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="S_ItemName" xml:space="preserve"><value>Item name</value></data>
+  <data name="S_Path" xml:space="preserve"><value>Path</value></data>
+  <data name="S_ItemPath" xml:space="preserve"><value>Item path</value></data>
+  <data name="S_Browse" xml:space="preserve"><value>Browse...</value></data>
+  <data name="S_Arguments" xml:space="preserve"><value>Arguments</value></data>
+  <data name="S_ItemArguments" xml:space="preserve"><value>Item arguments</value></data>
+  <data name="S_WidgetsSub" xml:space="preserve"><value>Live icons at the end of the Dock, after the separator. Turn them on or off and change their order.</value></data>
+  <data name="S_WidgetOptions" xml:space="preserve"><value>Widget options</value></data>
+  <data name="S_WeatherCity" xml:space="preserve"><value>Weather city</value></data>
+  <data name="S_Apply" xml:space="preserve"><value>Apply</value></data>
+  <data name="S_AutoLocate" xml:space="preserve"><value>No city: detect it online (sends your IP to the ipwho.is service)</value></data>
+  <data name="S_Clock24h" xml:space="preserve"><value>24-hour clock</value></data>
+  <data name="S_StyleSub" xml:space="preserve"><value>Changes show up in the Dock right away.</value></data>
+  <data name="S_Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="S_Automatic" xml:space="preserve"><value>Automatic</value></data>
+  <data name="S_Light" xml:space="preserve"><value>Light</value></data>
+  <data name="S_Dark" xml:space="preserve"><value>Dark</value></data>
+  <data name="S_Custom" xml:space="preserve"><value>Custom</value></data>
+  <data name="S_BackgroundColor" xml:space="preserve"><value>Background color</value></data>
+  <data name="S_BackgroundColorHex" xml:space="preserve"><value>Background color in hexadecimal</value></data>
+  <data name="S_AccentColor" xml:space="preserve"><value>Accent color (rings, selection, buttons)</value></data>
+  <data name="S_AccentColorHex" xml:space="preserve"><value>Accent color in hexadecimal</value></data>
+  <data name="S_Background" xml:space="preserve"><value>Background</value></data>
+  <data name="S_Opacity" xml:space="preserve"><value>Opacity</value></data>
+  <data name="S_BackgroundOpacity" xml:space="preserve"><value>Background opacity</value></data>
+  <data name="S_Corners" xml:space="preserve"><value>Rounded corners</value></data>
+  <data name="S_Size" xml:space="preserve"><value>Size</value></data>
+  <data name="S_IconSize" xml:space="preserve"><value>Icon size</value></data>
+  <data name="S_Magnify" xml:space="preserve"><value>Magnify on hover</value></data>
+  <data name="S_MagnifyAmount" xml:space="preserve"><value>Magnification amount</value></data>
+  <data name="S_Position" xml:space="preserve"><value>Position on screen</value></data>
+  <data name="S_Bottom" xml:space="preserve"><value>Bottom</value></data>
+  <data name="S_Left" xml:space="preserve"><value>Left</value></data>
+  <data name="S_Right" xml:space="preserve"><value>Right</value></data>
+  <data name="S_Top" xml:space="preserve"><value>Top</value></data>
+  <data name="S_Monitor" xml:space="preserve"><value>Monitor</value></data>
+  <data name="S_MonitorPrimary" xml:space="preserve"><value>Primary</value></data>
+  <data name="S_MonitorChoose" xml:space="preserve"><value>Choose</value></data>
+  <data name="S_MonitorFollow" xml:space="preserve"><value>Follow the mouse</value></data>
+  <data name="S_BehaviorSub" xml:space="preserve"><value>How the Dock reacts to your clicks and apps.</value></data>
+  <data name="S_ShowLabels" xml:space="preserve"><value>Show the name on hover</value></data>
+  <data name="S_ShowIndicator" xml:space="preserve"><value>Open app indicator (dot under the icon)</value></data>
+  <data name="S_ShowRunning" xml:space="preserve"><value>Show open apps that aren't pinned</value></data>
+  <data name="S_Bounce" xml:space="preserve"><value>Bounce when opening an app</value></data>
+  <data name="S_Separator" xml:space="preserve"><value>Separator between apps and widgets</value></data>
+  <data name="S_AutoHide" xml:space="preserve"><value>Automatically hide and show the Dock</value></data>
+  <data name="S_AutoHideDelay" xml:space="preserve"><value>Time with the mouse at the edge before it appears</value></data>
+  <data name="S_AutoHideDelayA11y" xml:space="preserve"><value>Time until the Dock appears</value></data>
+  <data name="S_Reserve" xml:space="preserve"><value>Reserve screen space (maximized windows stop before the Dock)</value></data>
+  <data name="S_Autostart" xml:space="preserve"><value>Start Dockbox with Windows</value></data>
+  <data name="S_Keyboard" xml:space="preserve"><value>Keyboard</value></data>
+  <data name="S_KeyboardSub" xml:space="preserve"><value>Shortcut to use the Dock without a mouse. After it: arrows choose, Enter opens, Shift+F10 opens the menu and Esc returns to where you were.</value></data>
+  <data name="S_A11yNote" xml:space="preserve"><value>With "Show animations" turned off in Windows, the Dock doesn't magnify or bounce. With high contrast on, it uses the Windows colors.</value></data>
+  <data name="S_Language" xml:space="preserve"><value>Language</value></data>
+  <data name="S_LanguageSub" xml:space="preserve"><value>Language of menus, settings and widgets. Automatic follows the Windows language.</value></data>
+  <data name="S_Tips" xml:space="preserve"><value>Tips</value></data>
+  <data name="S_TipsBody" xml:space="preserve"><value>• Click an open app to bring it to the front; click again to minimize it.
+• Ctrl + click opens a new window of the app.
+• Drop files on an app to open them with it, or on the Recycle Bin to delete them.
+• Right-click the Dock for position, magnification and more options.</value></data>
+  <data name="P_WindowTitle" xml:space="preserve"><value>Add apps to the Dock</value></data>
+  <data name="P_Title" xml:space="preserve"><value>Add apps</value></data>
+  <data name="P_Sub" xml:space="preserve"><value>Apps from the Start menu. Select one or more (Ctrl + click).</value></data>
+  <data name="P_Search" xml:space="preserve"><value>Search apps</value></data>
+  <data name="P_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="P_Add" xml:space="preserve"><value>Add</value></data>
+</root>

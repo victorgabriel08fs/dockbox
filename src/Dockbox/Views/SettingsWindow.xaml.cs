@@ -28,7 +28,7 @@ public sealed class ItemVm : INotifyPropertyChanged
         _icon = IconLoader.LoadForDisplay(entry.Path, 30);
     }
 
-    public string Name => string.IsNullOrWhiteSpace(Entry.Name) ? "(sem nome)" : Entry.Name;
+    public string Name => string.IsNullOrWhiteSpace(Entry.Name) ? Loc.T("Item_NoName") : Entry.Name;
     public string Path => Entry.Path;
     public ImageSource? Icon => _icon;
 
@@ -97,6 +97,7 @@ public partial class SettingsWindow : Window
         };
         SourceInitialized += (_, _) => ApplyTitleBarTheme();
         SettingsStore.Changed += OnExternalChange;
+        Loc.Changed += OnLanguageChanged;
         Action<string> onFail = _ => Dispatcher.BeginInvoke(UpdateSaveBanner);
         Action onRecover = () => Dispatcher.BeginInvoke(UpdateSaveBanner);
         SettingsStore.SaveFailed += onFail;
@@ -111,6 +112,7 @@ public partial class SettingsWindow : Window
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged -= onDisplay;
             DockWindow.ShortcutStatusChanged -= onShortcut;
             SettingsStore.Changed -= OnExternalChange;
+            Loc.Changed -= OnLanguageChanged;
             SettingsStore.SaveFailed -= onFail;
             SettingsStore.SaveRecovered -= onRecover;
             if (_commitDebounce.IsEnabled) { _commitDebounce.Stop(); SettingsStore.Commit(); }
@@ -240,6 +242,7 @@ public partial class SettingsWindow : Window
             UpdateAutoHideControls();
             AutostartToggle.IsChecked = Autostart.IsEnabled;
             BuildShortcutChoices();
+            BuildLanguageChoices();
         }
         finally
         {
@@ -337,8 +340,8 @@ public partial class SettingsWindow : Window
     {
         var dlg = new OpenFileDialog
         {
-            Title = "Escolha um app ou arquivo",
-            Filter = "Apps e atalhos (*.exe;*.lnk;*.url)|*.exe;*.lnk;*.url|Todos os arquivos (*.*)|*.*",
+            Title = Loc.T("Dlg_PickApp"),
+            Filter = Loc.T("Dlg_FilterApps"),
             Multiselect = true,
         };
         if (dlg.ShowDialog(this) == true)
@@ -347,7 +350,7 @@ public partial class SettingsWindow : Window
 
     private void AddFolder_Click(object sender, RoutedEventArgs e)
     {
-        var dlg = new OpenFolderDialog { Title = "Escolha uma pasta", Multiselect = true };
+        var dlg = new OpenFolderDialog { Title = Loc.T("Dlg_PickFolder"), Multiselect = true };
         if (dlg.ShowDialog(this) == true)
             AddEntries(dlg.FolderNames.Select(f => new DockEntry { Name = new DirectoryInfo(f).Name, Path = f }));
     }
@@ -355,7 +358,7 @@ public partial class SettingsWindow : Window
     private void BrowsePath_Click(object sender, RoutedEventArgs e)
     {
         if (Selected == null) return;
-        var dlg = new OpenFileDialog { Filter = "Apps e atalhos (*.exe;*.lnk)|*.exe;*.lnk|Todos os arquivos (*.*)|*.*" };
+        var dlg = new OpenFileDialog { Filter = Loc.T("Dlg_FilterAppsLnk") };
         if (dlg.ShowDialog(this) == true)
         {
             EditPath.Text = dlg.FileName;
@@ -379,8 +382,8 @@ public partial class SettingsWindow : Window
     private void UpdateMoveTooltips()
     {
         bool horizontal = A.Edge is DockEdge.Bottom or DockEdge.Top;
-        MoveUpButton.ToolTip = horizontal ? "Mover para antes (mais à esquerda no Dock)" : "Mover para antes (mais acima no Dock)";
-        MoveDownButton.ToolTip = horizontal ? "Mover para depois (mais à direita no Dock)" : "Mover para depois (mais abaixo no Dock)";
+        MoveUpButton.ToolTip = Loc.T(horizontal ? "Move_BeforeLeft" : "Move_BeforeUp");
+        MoveDownButton.ToolTip = Loc.T(horizontal ? "Move_AfterRight" : "Move_AfterDown");
         System.Windows.Automation.AutomationProperties.SetName(MoveUpButton, (string)MoveUpButton.ToolTip);
         System.Windows.Automation.AutomationProperties.SetName(MoveDownButton, (string)MoveDownButton.ToolTip);
     }
@@ -448,8 +451,8 @@ public partial class SettingsWindow : Window
 
             var arrows = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 14, 0), VerticalAlignment = VerticalAlignment.Center };
             int index = idx;
-            arrows.Children.Add(IconButton("", "Mover para cima", () => MoveWidget(index, -1)));
-            arrows.Children.Add(IconButton("", "Mover para baixo", () => MoveWidget(index, +1)));
+            arrows.Children.Add(IconButton("", Loc.T("Move_Up"), () => MoveWidget(index, -1)));
+            arrows.Children.Add(IconButton("", Loc.T("Move_Down"), () => MoveWidget(index, +1)));
 
             var toggle = new CheckBox { Style = (Style)FindResource("UiToggle"), IsChecked = cfg.Enabled, VerticalAlignment = VerticalAlignment.Center };
             toggle.Click += (_, _) => { cfg.Enabled = toggle.IsChecked == true; Commit(); };
@@ -593,6 +596,51 @@ public partial class SettingsWindow : Window
         Commit();
     }
 
+    private void BuildLanguageChoices()
+    {
+        LanguageChoices.Children.Clear();
+        var style = (Style)FindResource("UiSegment");
+        var options = new List<(string Code, string Name)> { ("", Loc.F("Language_Auto", Loc.AutoName)) };
+        options.AddRange(Loc.Languages);
+        foreach (var (code, name) in options)
+        {
+            var rb = new RadioButton
+            {
+                Style = style,
+                GroupName = "language",
+                Content = name,
+                IsChecked = S.Language == code,
+            };
+            // Nome do idioma na própria língua, para quem não entende a atual achar o seu.
+            System.Windows.Automation.AutomationProperties.SetName(rb, code == "" ? name : $"{Loc.T("S_Language")}: {name}");
+            rb.Checked += (_, _) =>
+            {
+                if (_loading || S.Language == code) return;
+                S.Language = code;
+                Commit();
+            };
+            LanguageChoices.Children.Add(rb);
+        }
+    }
+
+    /// <summary>Idioma mudou: reabre a janela no mesmo lugar e na mesma página, com os textos novos.</summary>
+    private void OnLanguageChanged()
+    {
+        Dispatcher.BeginInvoke(() =>
+        {
+            var bounds = (Left, Top, Width, Height, WindowState);
+            string page = NavItems.IsChecked == true ? "items" : NavWidgets.IsChecked == true ? "widgets"
+                : NavStyle.IsChecked == true ? "style" : "behavior";
+            Close();
+            ShowSingle();
+            if (_instance is not SettingsWindow w) return;
+            w.WindowStartupLocation = WindowStartupLocation.Manual;
+            (w.Left, w.Top, w.Width, w.Height) = (bounds.Left, bounds.Top, bounds.Width, bounds.Height);
+            if (bounds.WindowState == WindowState.Maximized) w.WindowState = WindowState.Maximized;
+            (page switch { "items" => w.NavItems, "widgets" => w.NavWidgets, "style" => w.NavStyle, _ => w.NavBehavior }).IsChecked = true;
+        });
+    }
+
     private void BuildShortcutChoices()
     {
         ShortcutChoices.Children.Clear();
@@ -606,7 +654,7 @@ public partial class SettingsWindow : Window
                 Content = Hotkey.Display(choice),
                 IsChecked = string.Equals(choice, A.KeyboardShortcut, StringComparison.OrdinalIgnoreCase),
             };
-            System.Windows.Automation.AutomationProperties.SetName(rb, "Atalho do teclado: " + Hotkey.Display(choice));
+            System.Windows.Automation.AutomationProperties.SetName(rb, Loc.F("Shortcut_A11y", Hotkey.Display(choice)));
             rb.Checked += (_, _) =>
             {
                 if (_loading || A.KeyboardShortcut == choice) return;
@@ -679,21 +727,21 @@ public partial class SettingsWindow : Window
             }
         }
 
-        string edge = A.Edge switch
+        string followHint = A.Edge switch
         {
-            DockEdge.Top => "de cima",
-            DockEdge.Left => "da esquerda",
-            DockEdge.Right => "da direita",
-            _ => "de baixo",
+            DockEdge.Top => "Monitor_FollowTop",
+            DockEdge.Left => "Monitor_FollowLeft",
+            DockEdge.Right => "Monitor_FollowRight",
+            _ => "Monitor_FollowBottom",
         };
         MonitorHint.Text = A.Monitor switch
         {
             MonitorMode.Choose when Screens.Find(screens, A.MonitorDevice) == null =>
-                "O monitor escolhido não está conectado. O Dock fica no principal até ele voltar.",
+                Loc.T("Monitor_Missing"),
             MonitorMode.FollowMouse when screens.Count < 2 =>
-                "Só há um monitor conectado agora.",
+                Loc.T("Monitor_OnlyOne"),
             MonitorMode.FollowMouse =>
-                $"Pare o mouse na borda {edge} de outro monitor por meio segundo e o Dock vai para lá.",
+                Loc.T(followHint),
             _ => "",
         };
         MonitorHint.Visibility = MonitorHint.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -745,7 +793,7 @@ public partial class SettingsWindow : Window
         AutoHideDelaySlider.IsEnabled = on;
         AutoHideDelayRow.Opacity = on ? 1 : 0.5;
         ReserveToggle.IsEnabled = !on;
-        ReserveToggle.ToolTip = on ? "Com o auto-ocultar ligado o Dock não reserva espaço na tela." : null;
+        ReserveToggle.ToolTip = on ? Loc.T("Reserve_AutoHideTip") : null;
     }
 
     private void Autostart_Click(object sender, RoutedEventArgs e)
@@ -759,9 +807,7 @@ public partial class SettingsWindow : Window
             if (Autostart.IsSingleFile(exe))
             {
                 var answer = MessageBox.Show(this,
-                    $"O Dockbox está rodando de\n{folder}\n\nSe o arquivo for movido ou apagado dali, ele deixa de abrir com o Windows, " +
-                    $"e qualquer programa pode trocar arquivos nessa pasta.\n\nCopiar o Dockbox para\n{System.IO.Path.GetDirectoryName(Autostart.InstallPath)}\n" +
-                    "e iniciar de lá?\n\nSim: copia, liga o início automático e reabre o Dockbox de lá.\nNão: liga assim mesmo, usando a pasta atual.",
+                    Loc.F("Autostart_Volatile_Ask", folder, System.IO.Path.GetDirectoryName(Autostart.InstallPath)),
                     "Dockbox", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.Yes);
                 if (answer == MessageBoxResult.Cancel) { AutostartToggle.IsChecked = Autostart.IsEnabled; return; }
                 if (answer == MessageBoxResult.Yes)
@@ -775,15 +821,14 @@ public partial class SettingsWindow : Window
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(this, $"Não foi possível copiar o Dockbox: {ex.Message}\nO início automático vai usar a pasta atual.",
+                        MessageBox.Show(this, Loc.F("Autostart_CopyFailed", ex.Message),
                             "Dockbox", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
             }
             else
             {
-                MessageBox.Show(this, $"O Dockbox está rodando de\n{folder}\n\nSe a pasta for movida ou apagada, ele deixa de abrir com o Windows. " +
-                    "Considere mover a pasta do Dockbox para um lugar fixo antes.", "Dockbox", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(this, Loc.F("Autostart_FolderWarn", folder), "Dockbox", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
         Autostart.Set(enable);
@@ -798,7 +843,7 @@ public partial class SettingsWindow : Window
 
     private void Reset_Click(object sender, RoutedEventArgs e)
     {
-        var r = MessageBox.Show(this, "Restaurar estilo, widgets e comportamento para o padrão?\nSeus apps fixados serão mantidos.",
+        var r = MessageBox.Show(this, Loc.T("Reset_Confirm"),
             "Dockbox", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (r != MessageBoxResult.Yes) return;
         S.Appearance = new Appearance();
