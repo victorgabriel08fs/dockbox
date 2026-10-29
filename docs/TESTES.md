@@ -196,6 +196,16 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Comportamento → desligue **Mostrar contadores nos ícones**: os contadores somem em até 1 s.
 - [ ] Título com número no meio ("Documento (1).docx") não mostra contador.
 
+### 8a6. Ícones personalizados
+- [ ] Botão direito num app → **Trocar ícone…** → escolha um PNG grande (ex.: 1024 px): o ícone muda na hora e fica nítido, sem serrilhado.
+- [ ] Escolha um .ico com vários tamanhos: usa o maior.
+- [ ] Escolha `C:\Windows\System32\shell32.dll`: abre a janela "Trocar ícone" do Windows; o escolhido aparece no Dock.
+- [ ] Apague ou mova o PNG original e reinicie o Dockbox: o ícone continua.
+- [ ] Gerenciar Dock → selecione o item: o ícone novo aparece na lista; **Restaurar padrão** fica ativo e volta ao ícone do app.
+- [ ] Botão direito → **Restaurar ícone padrão** (só aparece com ícone personalizado).
+- [ ] Pasta com "Mostrar no Dock como: Item mais recente" e ícone personalizado: o personalizado vale.
+- [ ] Arquivo que não é imagem renomeado para .png: aparece um aviso e o ícone não muda.
+
 ### 8a5. Pilhas de pastas
 - [ ] Instalação nova (sem settings.json): a pasta **Downloads** aparece no fim dos apps, com o ícone do último download.
 - [ ] Clique em Downloads com poucos itens e o Dock embaixo: abre o **leque**, do mais novo para o mais velho, com "Abrir no Explorador" no topo.

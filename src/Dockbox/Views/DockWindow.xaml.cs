@@ -495,7 +495,7 @@ public partial class DockWindow : Window
     {
         var s = SettingsStore.Current;
         var sb = new System.Text.StringBuilder();
-        foreach (var e in s.Items) sb.Append(e.Name).Append('\u0001').Append(e.Path).Append('\u0001').Append(e.Arguments).Append(e.StackShowsLatest ? '+' : '-').Append('\u0002');
+        foreach (var e in s.Items) sb.Append(e.Name).Append('\u0001').Append(e.Path).Append('\u0001').Append(e.Arguments).Append(e.StackShowsLatest ? '+' : '-').Append(e.Icon).Append('\u0002');
         foreach (var w in s.Widgets) sb.Append(w.Kind).Append(w.Enabled ? '+' : '-');
         sb.Append(A.ShowSeparator).Append(A.ShowRunningUnpinned);
         return sb.ToString();
@@ -587,7 +587,8 @@ public partial class DockWindow : Window
             _iconCache[entry.Path] = icon;
         }
 
-        if (entry.StackShowsLatest && Directory.Exists(Environment.ExpandEnvironmentVariables(entry.Path))) icon = FolderIcon(entry, icon);
+        if (CustomIcons.Load(entry.Icon) is ImageSource custom) icon = custom; // escolhido pelo usuário vale mais
+        else if (entry.StackShowsLatest && Directory.Exists(Environment.ExpandEnvironmentVariables(entry.Path))) icon = FolderIcon(entry, icon);
         var img = new Image { Source = icon, Stretch = Stretch.Uniform, Cursor = Cursors.Hand, Focusable = true, FocusVisualStyle = null };
         AutomationProperties.SetHelpText(img, Loc.T("Dock_TileHelp"));
         RenderOptions.SetBitmapScalingMode(img, BitmapScalingMode.HighQuality);
@@ -1573,7 +1574,12 @@ public partial class DockWindow : Window
             () => AppLauncher.ShowInExplorer(entry.Path)));
         menu.Items.Add(new Separator());
         if (tile.Kind == TileKind.Running) menu.Items.Add(Item(Loc.T("Menu_KeepInDock"), () => PinRunning(tile)));
-        else menu.Items.Add(Item(Loc.T("Menu_RemoveFromDock"), () => RemoveEntry(entry)));
+        else
+        {
+            menu.Items.Add(Item(Loc.T("Menu_ChangeIcon"), () => { if (CustomIcons.Choose(null, entry)) SettingsStore.Commit(); }));
+            if (entry.Icon != null) menu.Items.Add(Item(Loc.T("Menu_RestoreIcon"), () => { CustomIcons.Restore(entry); SettingsStore.Commit(); }));
+            menu.Items.Add(Item(Loc.T("Menu_RemoveFromDock"), () => RemoveEntry(entry)));
+        }
 
         if (windows.Count > 0)
         {

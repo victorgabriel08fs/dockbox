@@ -111,6 +111,14 @@ da ampliação, onde o Dock deixa de segurar o mouse, para não haver vão no ca
 quantas miniaturas cabem na tela (encolhe até 60% antes de esconder as que sobram) e o encaixe de cada uma, sem
 chamadas ao Windows, para os testes.
 
+## Ícones personalizados
+
+`DockEntry.Icon` guarda só o nome de um PNG em `%APPDATA%\Dockbox\icons`. `Services/CustomIcons` importa
+imagens (`BitmapDecoder`, maior quadro de um .ico) ou um ícone de .exe/.dll (`PickIconDlg` para escolher e
+`PrivateExtractIcons` em 256 px), reduz com `BitmapScalingMode.HighQuality` até 256 px e grava com nome novo
+(GUID). O Dock e o Gerenciar Dock usam o ícone personalizado antes do ícone do app. Restaurar apaga a cópia se
+nenhum outro item a usa.
+
 ## Pilhas de pastas
 
 Clicar num item fixado que é uma pasta abre `Views/StackWindow` (em vez do Explorador). É uma janela WPF

@@ -110,6 +110,12 @@ quer salvar). Janelas minimizadas aparecem com o ícone do app. Passe o mouse pa
 na hora; tire o mouse do ícone e do painel para ele sumir. **Tempo com o mouse no ícone até aparecer** ajusta a
 espera (0 a 1,5 s). O botão direito no ícone continua listando as janelas.
 
+**Ícones personalizados**: botão direito num item → **Trocar ícone…** (ou, no Gerenciar Dock, selecione o item e
+clique em **Trocar ícone…**). Escolha uma imagem (.png, .jpg, .bmp, .gif, .ico) ou um programa ou biblioteca
+(.exe, .dll); nesse caso, a janela do Windows mostra os ícones que ele tem. A imagem é copiada para a pasta do
+Dockbox (`%APPDATA%\Dockbox\icons`) e reduzida para no máximo 256 px, então pode apagar ou mover o original.
+**Restaurar ícone padrão** volta ao ícone do app. SVG não é aceito: converta para PNG antes.
+
 **Pilhas de pastas**: clique numa pasta fixada no Dock (por exemplo, Downloads, que já vem no Dock) e o
 conteúdo abre por cima dele, sem abrir o Explorador.
 - **Leque**: os itens sobem a partir do ícone numa curva, com o nome ao lado (com até 10 itens e o Dock embaixo).

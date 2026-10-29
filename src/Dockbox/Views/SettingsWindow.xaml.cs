@@ -25,8 +25,10 @@ public sealed class ItemVm : INotifyPropertyChanged
     public ItemVm(DockEntry entry)
     {
         Entry = entry;
-        _icon = IconLoader.LoadForDisplay(entry.Path, 30);
+        _icon = LoadIcon(entry);
     }
+
+    private static ImageSource? LoadIcon(DockEntry e) => CustomIcons.Load(e.Icon) ?? IconLoader.LoadForDisplay(e.Path, 30);
 
     public string Name => string.IsNullOrWhiteSpace(Entry.Name) ? Loc.T("Item_NoName") : Entry.Name;
     public string Path => Entry.Path;
@@ -34,7 +36,7 @@ public sealed class ItemVm : INotifyPropertyChanged
 
     public void Refresh(bool reloadIcon)
     {
-        if (reloadIcon) _icon = IconLoader.LoadForDisplay(Entry.Path, 30);
+        if (reloadIcon) _icon = LoadIcon(Entry);
         OnChanged(nameof(Name));
         OnChanged(nameof(Path));
         if (reloadIcon) OnChanged(nameof(Icon));
@@ -282,6 +284,7 @@ public partial class SettingsWindow : Window
         EditName.Text = vm?.Entry.Name ?? "";
         EditPath.Text = vm?.Entry.Path ?? "";
         EditArgs.Text = vm?.Entry.Arguments ?? "";
+        RestoreIconButton.IsEnabled = vm?.Entry.Icon != null;
         _loading = false;
     }
 
@@ -362,6 +365,23 @@ public partial class SettingsWindow : Window
         var dlg = new OpenFolderDialog { Title = Loc.T("Dlg_PickFolder"), Multiselect = true };
         if (dlg.ShowDialog(this) == true)
             AddEntries(dlg.FolderNames.Select(f => new DockEntry { Name = new DirectoryInfo(f).Name, Path = f }));
+    }
+
+    private void ChangeIcon_Click(object sender, RoutedEventArgs e)
+    {
+        if (Selected is not ItemVm vm || !CustomIcons.Choose(this, vm.Entry)) return;
+        vm.Refresh(reloadIcon: true);
+        RestoreIconButton.IsEnabled = true;
+        Commit();
+    }
+
+    private void RestoreIcon_Click(object sender, RoutedEventArgs e)
+    {
+        if (Selected is not ItemVm vm || vm.Entry.Icon == null) return;
+        CustomIcons.Restore(vm.Entry);
+        vm.Refresh(reloadIcon: true);
+        RestoreIconButton.IsEnabled = false;
+        Commit();
     }
 
     private void BrowsePath_Click(object sender, RoutedEventArgs e)
