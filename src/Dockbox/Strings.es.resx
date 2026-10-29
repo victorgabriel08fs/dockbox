@@ -92,6 +92,7 @@ taskkill /F /IM Dockbox.exe
 
 Luego vuelve a abrir este.</value></data>
   <data name="Item_FileExplorer" xml:space="preserve"><value>Explorador de archivos</value></data>
+  <data name="Item_Downloads" xml:space="preserve"><value>Descargas</value></data>
   <data name="Item_Notepad" xml:space="preserve"><value>Bloc de notas</value></data>
   <data name="Item_Calculator" xml:space="preserve"><value>Calculadora</value></data>
   <data name="Dock_TileHelp" xml:space="preserve"><value>Enter abre. Mayús+F10 abre el menú.</value></data>
@@ -243,6 +244,25 @@ Tus aplicaciones ancladas se mantendrán.</value></data>
   <data name="S_BadgesHint" xml:space="preserve"><value>El número viene del título de las ventanas, como en "(3) WhatsApp". El progreso de descargas no aparece: Windows no permite que otros programas lo lean.</value></data>
   <data name="A11y_WithBadge" xml:space="preserve"><value>{0}, {1} sin leer</value></data>
   <data name="A11y_WithAttention" xml:space="preserve"><value>{0}, requiere atención</value></data>
+  <data name="Stack_Back" xml:space="preserve"><value>Atrás</value></data>
+  <data name="Stack_OpenInExplorer" xml:space="preserve"><value>Abrir en el Explorador</value></data>
+  <data name="Stack_More" xml:space="preserve"><value>+{0} elementos: abre en el Explorador para verlos todos</value></data>
+  <data name="Stack_Empty" xml:space="preserve"><value>Carpeta vacía</value></data>
+  <data name="Stack_ItemHelp" xml:space="preserve"><value>Enter abre; arrastra para llevarlo a otra aplicación</value></data>
+  <data name="Stack_FolderHelp" xml:space="preserve"><value>Enter entra en la carpeta; Retroceso vuelve</value></data>
+  <data name="Stack_ViewAs" xml:space="preserve"><value>Ver contenido como</value></data>
+  <data name="Stack_Auto" xml:space="preserve"><value>Automático</value></data>
+  <data name="Stack_Fan" xml:space="preserve"><value>Abanico</value></data>
+  <data name="Stack_Grid" xml:space="preserve"><value>Cuadrícula</value></data>
+  <data name="Stack_List" xml:space="preserve"><value>Lista</value></data>
+  <data name="Stack_SortBy" xml:space="preserve"><value>Ordenar por</value></data>
+  <data name="Stack_SortName" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Stack_SortAdded" xml:space="preserve"><value>Fecha de incorporación</value></data>
+  <data name="Stack_SortModified" xml:space="preserve"><value>Fecha de modificación</value></data>
+  <data name="Stack_SortKind" xml:space="preserve"><value>Tipo</value></data>
+  <data name="Stack_ShowAs" xml:space="preserve"><value>Mostrar en el Dock como</value></data>
+  <data name="Stack_ShowFolder" xml:space="preserve"><value>Carpeta</value></data>
+  <data name="Stack_ShowLatest" xml:space="preserve"><value>Elemento más reciente</value></data>
   <data name="S_Previews" xml:space="preserve"><value>Mostrar miniaturas de las ventanas al pasar el ratón</value></data>
   <data name="S_PreviewsHint" xml:space="preserve"><value>Aparece en apps con más de una ventana abierta. Haz clic en una miniatura para traer esa ventana.</value></data>
   <data name="S_PreviewDelay" xml:space="preserve"><value>Tiempo con el ratón sobre el icono hasta que aparecen</value></data>

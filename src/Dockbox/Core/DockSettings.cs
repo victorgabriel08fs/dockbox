@@ -15,6 +15,12 @@ public sealed class DockEntry
     public string? Arguments { get; set; }
     /// <summary>O usuário já confirmou que este item (script, protocolo...) pode abrir. Zera ao mudar caminho ou argumentos.</summary>
     public bool Trusted { get; set; }
+    /// <summary>Pasta: como a pilha aparece ao clicar.</summary>
+    public StackView StackView { get; set; } = StackView.Auto;
+    /// <summary>Pasta: ordem dos itens na pilha.</summary>
+    public StackSort StackSort { get; set; } = StackSort.Name;
+    /// <summary>Pasta: o ícone no Dock mostra o item mais recente em vez do ícone da pasta (como Downloads no macOS).</summary>
+    public bool StackShowsLatest { get; set; }
 }
 
 public sealed class WidgetConfig
@@ -258,6 +264,11 @@ public static class SettingsStore
         if (!Enum.IsDefined(a.Edge)) a.Edge = DockEdge.Bottom;
         if (!Enum.IsDefined(a.Theme)) a.Theme = ThemeMode.Auto;
         if (!Enum.IsDefined(a.Monitor)) a.Monitor = MonitorMode.Primary;
+        foreach (var e in s.Items)
+        {
+            if (!Enum.IsDefined(e.StackView)) e.StackView = StackView.Auto;
+            if (!Enum.IsDefined(e.StackSort)) e.StackSort = StackSort.Name;
+        }
         if (!Enum.IsDefined(a.MinimizeEffect)) a.MinimizeEffect = MinimizeEffect.Scale;
         a.MonitorDevice ??= "";
         a.KeyboardShortcut ??= "";
@@ -303,9 +314,25 @@ public static class SettingsStore
             TerminalEntry(sys, local),
         };
 
-        return candidates
+        var items = candidates
             .Where(a => a.Path.StartsWith("shell:", StringComparison.OrdinalIgnoreCase) || File.Exists(a.Path))
             .GroupBy(a => a.Name).Select(g => g.First()).ToList();
+        // Downloads no fim dos apps, perto da Lixeira, como no macOS.
+        if (DownloadsEntry(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)) is DockEntry downloads) items.Add(downloads);
+        return items;
+    }
+
+    /// <summary>Pasta Downloads como pilha: mais recentes primeiro e o ícone mostrando o último download. Null se não existe.</summary>
+    public static DockEntry? DownloadsEntry(string userProfile)
+    {
+        if (string.IsNullOrEmpty(userProfile)) return null;
+        string path = System.IO.Path.Combine(userProfile, "Downloads");
+        if (!Directory.Exists(path)) return null;
+        return new DockEntry
+        {
+            Name = Loc.T("Item_Downloads"), Path = path,
+            StackView = StackView.Auto, StackSort = StackSort.DateAdded, StackShowsLatest = true,
+        };
     }
 
     /// <summary>"Terminal": Windows Terminal quando instalado; senão PowerShell; por último o cmd.</summary>

@@ -196,6 +196,26 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Comportamento → desligue **Mostrar contadores nos ícones**: os contadores somem em até 1 s.
 - [ ] Título com número no meio ("Documento (1).docx") não mostra contador.
 
+### 8a5. Pilhas de pastas
+- [ ] Instalação nova (sem settings.json): a pasta **Downloads** aparece no fim dos apps, com o ícone do último download.
+- [ ] Clique em Downloads com poucos itens e o Dock embaixo: abre o **leque**, do mais novo para o mais velho, com "Abrir no Explorador" no topo.
+- [ ] Botão direito → Ver conteúdo como → **Grade**: abre o painel com ícones; com mais de 30 itens, aparece a rolagem e o painel abre na hora (os ícones vão aparecendo).
+- [ ] Pasta com mais de 400 itens: mostra os 400 primeiros e "+N itens: abra no Explorador".
+- [ ] Na grade, clique numa subpasta: entra nela; **‹** e Backspace voltam; Esc volta e, na raiz, fecha.
+- [ ] **Lista**: nomes longos aparecem cortados com "…", subpastas com "›".
+- [ ] Clique num arquivo: abre no app padrão e a pilha fecha. Um .bat pergunta antes de rodar (mesma regra dos itens fixados).
+- [ ] Arraste um arquivo da pilha para a área de trabalho ou para um e-mail: o arquivo vai junto.
+- [ ] Com a pilha aberta, baixe um arquivo (ou crie um arquivo na pasta): aparece em menos de 1 s.
+- [ ] Clique fora ou em outra janela: fecha. Clique de novo na mesma pasta no Dock: fecha. Clique em outro app no Dock: fecha a pilha e abre o app.
+- [ ] Ctrl + clique na pasta: abre no Explorador.
+- [ ] Ordenar por nome, data de adição, data de modificação e tipo: a ordem muda e fica salva por pasta.
+- [ ] Mostrar no Dock como → **Item mais recente**: o ícone da pasta vira o do último arquivo e muda quando chega outro.
+- [ ] Solte um arquivo do mesmo disco na pasta do Dock: é movido (janela do Windows se já existir um com o mesmo nome). De um pendrive: é copiado. Com Ctrl: copia. Com Shift: move.
+- [ ] Soltar a própria pasta em cima dela: nada acontece.
+- [ ] Dock em cima, à esquerda e à direita: grade ou lista encostada no ícone, dentro da tela (leque só com o Dock embaixo).
+- [ ] Teclado: Tab e setas andam pelos itens, Enter abre, o Narrador lê o nome de cada item.
+- [ ] Com ocultar automaticamente: o Dock não some enquanto a pilha está aberta.
+
 ### 8b. Reservar espaço na tela
 - [ ] Com a opção ligada (padrão), maximize uma janela: ela para antes do Dock nas 4 posições.
 - [ ] Mude o tamanho dos ícones: a área reservada acompanha na hora.

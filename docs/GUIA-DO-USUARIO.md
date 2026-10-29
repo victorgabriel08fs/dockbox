@@ -110,6 +110,21 @@ quer salvar). Janelas minimizadas aparecem com o ícone do app. Passe o mouse pa
 na hora; tire o mouse do ícone e do painel para ele sumir. **Tempo com o mouse no ícone até aparecer** ajusta a
 espera (0 a 1,5 s). O botão direito no ícone continua listando as janelas.
 
+**Pilhas de pastas**: clique numa pasta fixada no Dock (por exemplo, Downloads, que já vem no Dock) e o
+conteúdo abre por cima dele, sem abrir o Explorador.
+- **Leque**: os itens sobem a partir do ícone numa curva, com o nome ao lado (com até 10 itens e o Dock embaixo).
+- **Grade**: ícones grandes, com rolagem para pastas grandes. Clique numa subpasta para entrar nela; **‹** ou
+  Backspace volta.
+- **Lista**: nomes com ícones pequenos, bom para pastas com nomes longos.
+- **Automático** (padrão): leque com poucos itens, grade com muitos.
+- Clique num item para abrir. Arraste um item para outro app (por exemplo, um anexo para o e-mail). **Abrir no
+  Explorador** fica no fim. Esc ou clicar fora fecha. Ctrl + clique na pasta abre direto no Explorador.
+- O conteúdo se atualiza sozinho: um download que termina aparece na hora.
+- Botão direito na pasta: **Ver conteúdo como**, **Ordenar por** (nome, data de adição, data de modificação ou
+  tipo) e **Mostrar no Dock como** (o ícone da pasta ou o do item mais recente, como no Downloads).
+- Solte arquivos em cima da pasta no Dock para colocá-los nela: no mesmo disco eles são movidos, em outro disco
+  copiados, como no Explorador (segure Ctrl para copiar ou Shift para mover).
+
 **Ao minimizar uma janela** (em Comportamento): a janela encolhe até o ícone do app no Dock, como no macOS.
 - **Escala** (padrão): a janela diminui direto até o ícone.
 - **Gênio**: a janela primeiro se estreita e depois desce até o ícone, como se fosse sugada.

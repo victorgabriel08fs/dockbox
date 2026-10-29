@@ -169,6 +169,8 @@ public partial class DockWindow : Window
         {
             _blur?.Close();
             _preview?.Close();
+            CloseStack();
+            foreach (var w in _latestWatchers.Values) w.Dispose();
             ReleaseMinimizeEffect();
             ReleaseAppBar();
             var h = new WindowInteropHelper(this).Handle;
@@ -493,7 +495,7 @@ public partial class DockWindow : Window
     {
         var s = SettingsStore.Current;
         var sb = new System.Text.StringBuilder();
-        foreach (var e in s.Items) sb.Append(e.Name).Append('\u0001').Append(e.Path).Append('\u0001').Append(e.Arguments).Append('\u0002');
+        foreach (var e in s.Items) sb.Append(e.Name).Append('\u0001').Append(e.Path).Append('\u0001').Append(e.Arguments).Append(e.StackShowsLatest ? '+' : '-').Append('\u0002');
         foreach (var w in s.Widgets) sb.Append(w.Kind).Append(w.Enabled ? '+' : '-');
         sb.Append(A.ShowSeparator).Append(A.ShowRunningUnpinned);
         return sb.ToString();
@@ -567,6 +569,7 @@ public partial class DockWindow : Window
             else ExitKeyboard(restoreFocus: true);
         }
         RemapPreview();
+        WatchLatestFolders();
         Layout();
     }
 
@@ -584,6 +587,7 @@ public partial class DockWindow : Window
             _iconCache[entry.Path] = icon;
         }
 
+        if (entry.StackShowsLatest && Directory.Exists(Environment.ExpandEnvironmentVariables(entry.Path))) icon = FolderIcon(entry, icon);
         var img = new Image { Source = icon, Stretch = Stretch.Uniform, Cursor = Cursors.Hand, Focusable = true, FocusVisualStyle = null };
         AutomationProperties.SetHelpText(img, Loc.T("Dock_TileHelp"));
         RenderOptions.SetBitmapScalingMode(img, BitmapScalingMode.HighQuality);
@@ -807,6 +811,12 @@ public partial class DockWindow : Window
         switch (tile.Kind)
         {
             case TileKind.App:
+                if (IsFolder(tile) && !Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+                {
+                    ToggleStack(tile); // Ctrl+clique abre direto no Explorador
+                    return;
+                }
+                CloseStack();
                 bool newInstance = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
                 if (!newInstance && tile.ExeKey != null && tile.Running && RunningApps.ToggleWindows(tile.ExeKey))
                     return;
@@ -815,6 +825,7 @@ public partial class DockWindow : Window
                 break;
 
             case TileKind.Running:
+                CloseStack();
                 if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) || tile.ExeKey == null || !RunningApps.ToggleWindows(tile.ExeKey))
                     AppLauncher.Launch(tile.Entry!);
                 break;
@@ -1133,7 +1144,7 @@ public partial class DockWindow : Window
     {
         bool waiting = false;
         if (!A.AutoHide) _shown = true;
-        else if (_hovering || _menuOpen || _kbTile != null || PreviewOpen || UndoToast.Visibility == Visibility.Visible) _leaveSince = -1;
+        else if (_hovering || _menuOpen || _kbTile != null || PreviewOpen || StackOpen || UndoToast.Visibility == Visibility.Visible) _leaveSince = -1;
         else if (_shown)
         {
             if (_leaveSince < 0) _leaveSince = now;
@@ -1294,7 +1305,7 @@ public partial class DockWindow : Window
         if (A.ShowLabels && _hovering && !_menuOpen && _pressTile == null && _externalSlot < 0 && mouse is (double main, double)) hot = TileAt(main);
         if (hot == null && A.ShowLabels && _kbTile != null && !_hovering && !_menuOpen) hot = _kbTile;
         if (_dragTile != null) hot = _dragTile;
-        else if (PreviewOpen) hot = null; // o painel de miniaturas já mostra os títulos
+        else if (PreviewOpen || StackOpen) hot = null; // o painel de miniaturas já mostra os títulos
         string text = _dragTile != null && _dragRemove ? Loc.T("Drag_Remove") : hot?.Label ?? "";
 
         if (hot == null || string.IsNullOrEmpty(text))
@@ -1533,6 +1544,12 @@ public partial class DockWindow : Window
     {
         var entry = tile.Entry!;
         menu.Items.Add(Header(entry.Name));
+        if (IsFolder(tile))
+        {
+            menu.Items.Add(Item(Loc.T("Stack_OpenInExplorer"), () => AppLauncher.Launch(entry)));
+            AddStackItems(menu, entry);
+            menu.Items.Add(new Separator());
+        }
 
         var windows = tile.Running && tile.ExeKey != null ? RunningApps.WindowsOf(tile.ExeKey) : new();
         if (windows.Count > 0)
@@ -1687,6 +1704,7 @@ public partial class DockWindow : Window
         StartAnimating();
         var t = DropTarget(out double main);
         if (t?.Widget is { AcceptsFiles: true }) e.Effects = DragDropEffects.Move;
+        else if (CanDropInto(t, files)) e.Effects = FolderDropEffect(t!, files);
         else if (t?.Kind is TileKind.App or TileKind.Running && !files.All(IsPinnable)) e.Effects = DragDropEffects.Copy;
         else e.Effects = DragDropEffects.Link;
 
@@ -1705,6 +1723,11 @@ public partial class DockWindow : Window
         if (t?.Widget is { AcceptsFiles: true } w)
         {
             w.OnFilesDropped(files);
+            return;
+        }
+        if (CanDropInto(t, files))
+        {
+            DropIntoFolder(t!, files);
             return;
         }
         if (t?.Kind is TileKind.App or TileKind.Running && !files.All(IsPinnable))
