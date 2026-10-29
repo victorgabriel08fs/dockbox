@@ -242,7 +242,7 @@ public static class SettingsStore
     }
 
     public static readonly string[] AllWidgetKinds =
-        { "clock", "calendar", "weather", "system", "battery", "media", "trash" };
+        { "clock", "calendar", "weather", "system", "battery", "media", "volume", "network", "notes", "timer", "clipboard", "trash" };
 
     internal static void Normalize(DockSettings s)
     {
@@ -258,7 +258,11 @@ public static class SettingsStore
             {
                 // Padrão: relógio, calendário, clima e lixeira ligados
                 bool on = kind is "clock" or "calendar" or "weather" or "trash";
-                s.Widgets.Add(new WidgetConfig { Kind = kind, Enabled = on });
+                // Widget novo de uma versão nova entra antes da Lixeira quando ela está no fim (como no macOS);
+                // se o usuário mudou a Lixeira de lugar, vai para o fim.
+                var cfg = new WidgetConfig { Kind = kind, Enabled = on };
+                if (s.Widgets.Count > 0 && s.Widgets[^1].Kind == "trash") s.Widgets.Insert(s.Widgets.Count - 1, cfg);
+                else s.Widgets.Add(cfg);
             }
         }
 

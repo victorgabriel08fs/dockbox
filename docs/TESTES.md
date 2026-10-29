@@ -196,6 +196,17 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Comportamento → desligue **Mostrar contadores nos ícones**: os contadores somem em até 1 s.
 - [ ] Título com número no meio ("Documento (1).docx") não mostra contador.
 
+### 8a8. Novos widgets
+Ligue os cinco em Gerenciar Dock → Widgets. Eles aparecem antes da Lixeira.
+- [ ] **Volume**: role o mouse sobre ele: o volume do Windows muda de 2 em 2% e a barra acompanha. No touchpad, a rolagem com dois dedos também funciona. Clique: silencia (ícone riscado, "mudo"); clique de novo: volta. O rótulo mostra o nome do alto-falante. Troque o dispositivo padrão (ex.: fone Bluetooth): em até 1 s, o rótulo muda.
+- [ ] Volume sem nenhum dispositivo de saída (desative nas configurações de som): o rótulo mostra "Nenhuma saída de som" e o Dock não trava.
+- [ ] **Rede**: com o Wi-Fi ligado, aparecem o ícone de Wi-Fi e o nome da rede no rótulo; durante um download grande, a velocidade ↓ sobe. Com cabo, aparece o ícone de cabo. Com o modo avião ligado, aparece "sem rede". Clique: abre o status de rede do Windows.
+- [ ] **Notas rápidas**: clique: abre o bloquinho amarelo perto do ícone. Digite, feche com Esc e reabra: o texto continua. O ícone mostra o começo da nota. Reinicie o Dockbox: a nota continua. Botão direito → **Abrir arquivo das notas** abre o `notas.txt`.
+- [ ] **Temporizador**: clique: começa em 25 min e o anel vai enchendo. Clique: pausa (o rótulo diz "pausado"); clique: continua. Botão direito → **5 minutos**: recomeça com 5. Escolha 5 min e espere terminar: toca um som, o ícone fica vermelho e o rótulo diz "Tempo esgotado!". Clique: zera.
+- [ ] **Área de transferência**: copie três textos (Ctrl + C) e clique no widget: aparecem os três, o mais novo primeiro. Clique no mais antigo: ele é copiado e sobe para o topo. Botão direito → **Pausar histórico**: o que você copiar depois não entra. **Limpar histórico** esvazia.
+- [ ] Copie uma senha num gerenciador de senhas (ex.: Bitwarden, 1Password ou KeePass): ela não aparece no histórico.
+- [ ] Reinicie o Dockbox: o histórico da área de transferência começa vazio (nada foi gravado em disco).
+
 ### 8a7. Temas e backup
 - [ ] Estilo → **Temas** → clique em **Sonoma escuro**, **Grafite**, **Transparente** e **Sonoma claro**: o Dock muda na hora; o tamanho dos ícones e a ampliação não mudam.
 - [ ] Ajuste cores, opacidade e tamanho → **Exportar tema…** → salve `Teste.dockbox-theme`.

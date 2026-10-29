@@ -78,12 +78,24 @@ escala junto com a ampliação) e pode sobrescrever:
 | `Interval` / `UpdateAsync()` | Atualização periódica (o Dock chama no timer lento) |
 | `Label` | Texto do rótulo ao passar o mouse |
 | `OnClick`, `MenuItems()` | Clique e itens do menu de botão direito |
+| `OnMouseWheel(delta)` | Rodinha do mouse sobre o widget (Volume); devolve true se usou |
 | `AcceptsFiles`, `OnFilesDropped` | Receber arquivos arrastados (Lixeira) |
 | `IsAvailable`, `AvailabilityChanged` | Esconder quando não se aplica (Bateria em desktop) |
 | `OnThemeChanged`, `Dispose` | Tema e limpeza |
 
 Para criar um widget novo: crie a classe em `Widgets/`, registre o nome em `WidgetFactory.Create`,
-`DisplayName`, `Description` e `Glyph`, e acrescente o nome em `SettingsStore.AllWidgetKinds`.
+`DisplayName`, `Description` e `Glyph`, e acrescente o nome em `SettingsStore.AllWidgetKinds` (antes de
+`trash`). Em quem já usa o Dockbox, `Normalize` coloca o widget novo antes da Lixeira se ela estiver no fim.
+
+Os widgets da #30 deixam as contas fora do WPF, para os testes: `Core/WidgetMath` (passo do volume, velocidade
+de rede), `Core/FocusTimer` (temporizador, recebe a hora por parâmetro), `Core/ClipboardHistory` (últimos 10
+textos, só na memória) e `Core/QuickNotes` (lê e grava `notas.txt` via `.tmp`). O Volume usa Core Audio
+(`Services/AudioVolume`: `IMMDeviceEnumerator` → dispositivo padrão → `IAudioEndpointVolume` e o nome pelo
+`IPropertyStore`). A Rede usa `NetworkInterface` (interface ligada com gateway, bytes enviados e recebidos) e o
+perfil de conexão do WinRT para o nome da rede, que não pede permissão de localização. A área de transferência
+consulta `GetClipboardSequenceNumber` a cada segundo e só lê o texto quando ele muda. Ela ignora os formatos
+`ExcludeClipboardContentFromMonitorProcessing` e `CanIncludeInClipboardHistory = 0`, que os gerenciadores de
+senha usam.
 
 ## Desfoque
 

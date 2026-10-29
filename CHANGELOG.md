@@ -12,6 +12,12 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 
 - Pilhas de pastas: clicar numa pasta fixada abre o conteúdo por cima do Dock em leque, grade (com rolagem) ou lista, com ordenação por nome, data de adição, data de modificação ou tipo; subpastas, arrastar itens para outros apps, atualização ao vivo e ícone do item mais recente. Soltar arquivos numa pasta do Dock move ou copia para ela. A pasta Downloads vem no Dock em instalações novas (#27).
 - Ícones personalizados: "Trocar ícone…" no botão direito e no Gerenciar Dock aceita imagens (.png, .jpg, .ico...) e ícones de programas (.exe, .dll); a imagem é copiada e reduzida para 256 px, então continua funcionando se o original sumir. "Restaurar ícone padrão" volta ao ícone do app (#28).
+- Novos widgets (vêm desligados; ligue em Gerenciar Dock → Widgets) (#30):
+  - Volume: rolar ajusta, clique silencia e o rótulo mostra o dispositivo de saída.
+  - Rede: Wi-Fi ou cabo, nome da rede e velocidade de download e upload.
+  - Notas rápidas: um bloquinho flutuante que salva sozinho em `%APPDATA%\Dockbox\notas.txt`.
+  - Temporizador: Pomodoro de 25 min, com 5, 15 e 50 min no botão direito, e som ao terminar.
+  - Área de transferência: os últimos 10 textos copiados, guardados só na memória; ignora o que os gerenciadores de senha pedem para não guardar.
 - Temas: em Estilo, temas prontos (Sonoma claro, Sonoma escuro, Grafite, Transparente) e "Importar tema…"/"Exportar tema…" em arquivos `.dockbox-theme`; o tema importado aparece no Dock antes de confirmar e "Não" volta ao anterior (#29).
 - Backup completo: em Comportamento, "Exportar tudo…"/"Importar tudo…" salva e restaura apps, pastas, widgets, estilo e opções num arquivo `.dockbox-backup`, com os ícones personalizados dentro. Itens importados pedem confirmação de novo antes de abrir scripts e links. Arquivo inválido mostra o motivo e não muda nada (#29).
 
