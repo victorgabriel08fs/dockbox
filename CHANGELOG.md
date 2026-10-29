@@ -38,6 +38,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Scripts, protocolos desconhecidos e interpretadores com argumentos pedem confirmação antes de abrir (uma vez por item); protocolos usados em ataques, como `ms-msdt:` e `search-ms:`, são bloqueados (#13).
 - Iniciar com o Windows a partir de Downloads, Temp ou Área de Trabalho oferece copiar o Dockbox para `%LOCALAPPDATA%\Programs\Dockbox`; se o exe foi movido, o início automático é corrigido ao abrir (#14).
 - Resposta do serviço de clima limitada a 1 MB e 10 s; `erros.log` com data, hora e versão em cada registro e rotação para `erros.1.log` ao passar de 1 MB (#15).
+- GitHub Actions fixadas por hash do commit e Dependabot semanal para Actions e NuGet; o build não guarda mais a credencial do checkout (#17).
 
 ### Alterado
 
