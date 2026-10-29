@@ -41,5 +41,24 @@
             </Border.Effect>
             <TextBlock x:Name="NameLabelText" FontSize="13" FontFamily="Segoe UI Variable Text, Segoe UI"/>
         </Border>
+
+        <!-- Aviso "Item removido · Desfazer" -->
+        <Border x:Name="UndoToast"
+                Visibility="Collapsed"
+                CornerRadius="9"
+                Padding="12,6,8,6"
+                BorderThickness="1"
+                Cursor="Hand"
+                Panel.ZIndex="90">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.3" Color="Black"/>
+            </Border.Effect>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="UndoText" FontSize="13" FontFamily="Segoe UI Variable Text, Segoe UI" VerticalAlignment="Center"/>
+                <Border x:Name="UndoButton" CornerRadius="6" Padding="9,2,9,3" Margin="10,0,0,0">
+                    <TextBlock Text="Desfazer" FontSize="13" FontWeight="SemiBold" FontFamily="Segoe UI Variable Text, Segoe UI"/>
+                </Border>
+            </StackPanel>
+        </Border>
     </Canvas>
 </Window>

@@ -39,6 +39,10 @@ O Dock some sozinho durante vídeo, jogo ou apresentação em tela cheia e volta
 
 - **Reordenar**: arraste um ícone do Dock para o lado; os vizinhos abrem espaço e ele entra onde você soltar.
 - **Remover**: arraste o ícone para longe do Dock até aparecer **Remover** e solte.
+- **Desfazer**: depois de remover (por arraste, menu ou Gerenciar Dock) aparece por 6 segundos o aviso
+  **"Item" removido · Desfazer** acima do Dock. No Gerenciar Dock, **Ctrl+Z** também desfaz.
+- **Sem duplicados**: fixar de novo algo que já está no Dock (o mesmo arquivo ou um atalho para o mesmo app)
+  não cria outro ícone; o existente pula para mostrar onde está.
 - Um clique rápido continua abrindo o app; o arraste só começa depois que o mouse anda alguns pixels.
 - Os widgets ficam fixos depois dos apps; reordene-os em Gerenciar Dock → Widgets.
 
