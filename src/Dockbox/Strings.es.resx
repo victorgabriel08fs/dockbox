@@ -293,6 +293,45 @@ Tus aplicaciones ancladas se mantendrán.</value></data>
 • Ctrl + clic abre una nueva ventana de la aplicación.
 • Suelta archivos sobre una aplicación para abrirlos con ella, o sobre la Papelera para eliminarlos.
 • Clic derecho en el Dock abre el menú con posición, ampliación y más opciones.</value></data>
+  <data name="S_Themes" xml:space="preserve"><value>Temas</value></data>
+  <data name="S_ThemesSub" xml:space="preserve"><value>Empieza con un tema incluido, o guarda tu estilo en un archivo para reutilizarlo o compartirlo.</value></data>
+  <data name="S_ImportTheme" xml:space="preserve"><value>Importar tema…</value></data>
+  <data name="S_ExportTheme" xml:space="preserve"><value>Exportar tema…</value></data>
+  <data name="Theme_SonomaLight" xml:space="preserve"><value>Sonoma claro</value></data>
+  <data name="Theme_SonomaDark" xml:space="preserve"><value>Sonoma oscuro</value></data>
+  <data name="Theme_Graphite" xml:space="preserve"><value>Grafito</value></data>
+  <data name="Theme_Transparent" xml:space="preserve"><value>Transparente</value></data>
+  <data name="Theme_Untitled" xml:space="preserve"><value>Tema sin nombre</value></data>
+  <data name="Theme_DefaultFileName" xml:space="preserve"><value>Mi tema</value></data>
+  <data name="Theme_Keep" xml:space="preserve"><value>El Dock muestra el tema "{0}".
+
+¿Mantener este tema? Elige No para volver al anterior.</value></data>
+  <data name="Theme_Filter" xml:space="preserve"><value>Tema de Dockbox|*.dockbox-theme</value></data>
+  <data name="S_Backup" xml:space="preserve"><value>Copia de seguridad</value></data>
+  <data name="S_BackupSub" xml:space="preserve"><value>Guarda todo en un archivo (aplicaciones, carpetas, widgets, estilo y opciones, con los iconos personalizados) para llevarlo a otro PC o restaurarlo después.</value></data>
+  <data name="S_ExportAll" xml:space="preserve"><value>Exportar todo…</value></data>
+  <data name="S_ImportAll" xml:space="preserve"><value>Importar todo…</value></data>
+  <data name="Backup_DefaultFileName" xml:space="preserve"><value>Copia de Dockbox {0}</value></data>
+  <data name="Backup_Filter" xml:space="preserve"><value>Copia de Dockbox|*.dockbox-backup</value></data>
+  <data name="Backup_Confirm" xml:space="preserve"><value>¿Reemplazar todos los elementos, widgets y ajustes del Dock por los del archivo?
+
+El archivo tiene {0} elementos y {1} widgets. Los scripts y enlaces del archivo volverán a pedir confirmación antes de abrirse.</value></data>
+  <data name="Backup_Done" xml:space="preserve"><value>Listo. El Dock ahora usa los ajustes del archivo.</value></data>
+  <data name="Backup_Exported" xml:space="preserve"><value>Copia guardada en:
+{0}</value></data>
+  <data name="ThemeFile_CantRead" xml:space="preserve"><value>No se pudo leer el archivo.
+
+{0}</value></data>
+  <data name="ThemeFile_CantWrite" xml:space="preserve"><value>No se pudo guardar el archivo.
+
+{0}</value></data>
+  <data name="ThemeFile_TooBig" xml:space="preserve"><value>Este archivo es demasiado grande para ser un tema o copia de Dockbox. No se cambió nada.</value></data>
+  <data name="ThemeFile_NotJson" xml:space="preserve"><value>Este archivo no es un tema ni una copia de Dockbox (el contenido está dañado o es de otro tipo). No se cambió nada.</value></data>
+  <data name="ThemeFile_WrongFormat" xml:space="preserve"><value>Este archivo no es de Dockbox. No se cambió nada.</value></data>
+  <data name="ThemeFile_Newer" xml:space="preserve"><value>Este archivo fue creado por una versión más reciente de Dockbox. Actualiza Dockbox para importarlo. No se cambió nada.</value></data>
+  <data name="ThemeFile_BadValues" xml:space="preserve"><value>El archivo tiene valores que Dockbox no entiende. No se cambió nada.</value></data>
+  <data name="ThemeFile_IsBackup" xml:space="preserve"><value>Este archivo es una copia completa, no un tema. Usa "Importar todo…" en Comportamiento. No se cambió nada.</value></data>
+  <data name="ThemeFile_IsTheme" xml:space="preserve"><value>Este archivo es un tema, no una copia. Usa "Importar tema…" en Estilo. No se cambió nada.</value></data>
   <data name="P_WindowTitle" xml:space="preserve"><value>Añadir aplicaciones al Dock</value></data>
   <data name="P_Title" xml:space="preserve"><value>Añadir aplicaciones</value></data>
   <data name="P_Sub" xml:space="preserve"><value>Aplicaciones del menú Inicio. Selecciona una o varias (Ctrl + clic).</value></data>
