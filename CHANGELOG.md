@@ -24,6 +24,10 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Ocultar automaticamente: o Dock sai da tela e volta ao encostar o mouse na borda, com tempo configurável (#5).
 - Reordenar arrastando um ícone no Dock e remover arrastando para fora, com indicador de onde o item entra, também ao arrastar arquivos de fora (#6).
 
+### Segurança
+
+- Scripts, protocolos desconhecidos e interpretadores com argumentos pedem confirmação antes de abrir (uma vez por item); protocolos usados em ataques, como `ms-msdt:` e `search-ms:`, são bloqueados (#13).
+
 ### Alterado
 
 - Configurações agora ficam em `%APPDATA%\Dockbox\settings.json`; o `pinned.json` antigo é importado.

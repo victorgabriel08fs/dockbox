@@ -12,24 +12,29 @@ public static class ShellLinks
 {
     private static readonly ConcurrentDictionary<string, string?> Cache = new(StringComparer.OrdinalIgnoreCase);
 
-    public static string? ResolveTarget(string lnkPath) => Cache.GetOrAdd(lnkPath, Resolve);
+    public static string? ResolveTarget(string lnkPath) => Cache.GetOrAdd(lnkPath, p => Read(p).Target);
 
-    private static string? Resolve(string lnkPath)
+    /// <summary>Lê destino e argumentos do atalho, sem cache (usado na checagem de segurança).</summary>
+    public static (string? Target, string? Arguments) Read(string lnkPath)
     {
-        if (!File.Exists(lnkPath)) return null;
+        if (!File.Exists(lnkPath)) return (null, null);
         object? obj = null;
         try
         {
             obj = new ShellLinkCoClass();
             ((IPersistFile)obj).Load(lnkPath, 0);
+            var link = (IShellLinkW)obj;
             var sb = new StringBuilder(1024);
-            ((IShellLinkW)obj).GetPath(sb, sb.Capacity, IntPtr.Zero, 0);
+            link.GetPath(sb, sb.Capacity, IntPtr.Zero, 0);
             string target = sb.ToString();
-            return string.IsNullOrWhiteSpace(target) ? null : Environment.ExpandEnvironmentVariables(target);
+            var args = new StringBuilder(4096);
+            link.GetArguments(args, args.Capacity);
+            return (string.IsNullOrWhiteSpace(target) ? null : Environment.ExpandEnvironmentVariables(target),
+                    args.Length == 0 ? null : args.ToString());
         }
         catch
         {
-            return null;
+            return (null, null);
         }
         finally
         {

@@ -145,6 +145,15 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Deixe aberto por 1 h trocando de apps: memória do Dockbox no Gerenciador de Tarefas estável.
 - [ ] Após algum erro, existe `erros.log` com detalhes.
 
+### 10b. Segurança dos itens
+- [ ] Apps, pastas, arquivos comuns e um `.url` de site abrem sem pergunta.
+- [ ] Fixe um `.bat` arrastando: aparece o aviso; **Não** não fixa, **Sim** fixa e o primeiro clique já abre sem perguntar.
+- [ ] Adicione um `.bat` pelo Gerenciar Dock → Arquivos: o primeiro clique pergunta; depois de **Sim**, não pergunta mais.
+- [ ] Mude o caminho ou os argumentos desse item no Gerenciar Dock: pergunta de novo.
+- [ ] Item `cmd.exe` com argumentos `/k echo oi`: pergunta. Sem argumentos: abre direto.
+- [ ] No `settings.json`, um item com caminho `ms-msdt:/id PCWDiagnostic`: clicar mostra "bloqueado" e nada abre.
+- [ ] Item `steam://open/games` (com a Steam instalada): pergunta uma vez.
+
 ### 11. Monitores
 - [ ] Com dois monitores, o Dock fica no principal (limitação conhecida).
 - [ ] Trocar qual é o monitor principal ou desconectar um: anote o comportamento.

@@ -83,6 +83,21 @@ você encosta o mouse na borda, na altura do Dock. Também dá para ligar e desl
 Se a barra de tarefas estiver na mesma borda, encoste o mouse logo acima dela.
 **Restaurar padrões** volta estilo, widgets e comportamento ao original, mas mantém seus apps.
 
+## Segurança dos itens
+
+Apps (`.exe`), atalhos, pastas, arquivos comuns e links `http`/`https` abrem direto. Para o resto o Dockbox
+pergunta antes, uma vez por item:
+
+- **Scripts e instaladores** (`.bat`, `.cmd`, `.ps1`, `.vbs`, `.js`, `.hta`, `.msi`, `.reg`...), inclusive por trás de um atalho.
+- **Protocolos desconhecidos** (por exemplo `steam://`) e arquivos `.url` que não apontam para um site.
+- **Interpretadores com argumentos**, como `powershell.exe -c ...` ou `cmd.exe /c ...`.
+
+Se você confirmar, o Dockbox lembra e não pergunta mais para aquele item; mudar o caminho ou os argumentos
+no Gerenciar Dock faz perguntar de novo. Fixar um script arrastando também mostra o aviso.
+
+Protocolos que já foram usados em ataques ao Windows (`ms-msdt:`, `search-ms:`, `ms-officecmd:`, links
+`ms-word:` e parecidos) nunca são abertos pelo Dock.
+
 ## Onde ficam as configurações
 
 Tudo fica em `%APPDATA%\Dockbox\` (botão **Abrir pasta de configurações** no Gerenciar Dock):
