@@ -244,6 +244,17 @@ Your pinned apps will be kept.</value></data>
   <data name="S_BadgesHint" xml:space="preserve"><value>The number comes from window titles, as in "(3) WhatsApp". Download progress doesn't show: Windows doesn't let other programs read it.</value></data>
   <data name="A11y_WithBadge" xml:space="preserve"><value>{0}, {1} unread</value></data>
   <data name="A11y_WithAttention" xml:space="preserve"><value>{0}, needs attention</value></data>
+  <data name="S_Icon" xml:space="preserve"><value>Icon</value></data>
+  <data name="S_ChangeIcon" xml:space="preserve"><value>Change icon…</value></data>
+  <data name="S_RestoreIcon" xml:space="preserve"><value>Restore default</value></data>
+  <data name="Menu_ChangeIcon" xml:space="preserve"><value>Change icon…</value></data>
+  <data name="Menu_RestoreIcon" xml:space="preserve"><value>Restore default icon</value></data>
+  <data name="Icon_PickTitle" xml:space="preserve"><value>Choose an image or a program with icons</value></data>
+  <data name="Icon_Filter" xml:space="preserve"><value>Images and icons|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.ico;*.tif;*.tiff;*.exe;*.dll;*.icl|Images|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|Icons|*.ico|Programs and libraries|*.exe;*.dll;*.icl</value></data>
+  <data name="Icon_NoneInFile" xml:space="preserve"><value>This file has no icons.</value></data>
+  <data name="Icon_Failed" xml:space="preserve"><value>Couldn't use this image as an icon.
+
+{0}</value></data>
   <data name="Stack_Back" xml:space="preserve"><value>Back</value></data>
   <data name="Stack_OpenInExplorer" xml:space="preserve"><value>Open in File Explorer</value></data>
   <data name="Stack_More" xml:space="preserve"><value>+{0} items: open in File Explorer to see all</value></data>

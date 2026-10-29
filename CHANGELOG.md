@@ -8,6 +8,11 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 
 ## [Não lançado]
 
+### Adicionado
+
+- Pilhas de pastas: clicar numa pasta fixada abre o conteúdo por cima do Dock em leque, grade (com rolagem) ou lista, com ordenação por nome, data de adição, data de modificação ou tipo; subpastas, arrastar itens para outros apps, atualização ao vivo e ícone do item mais recente. Soltar arquivos numa pasta do Dock move ou copia para ela. A pasta Downloads vem no Dock em instalações novas (#27).
+- Ícones personalizados: "Trocar ícone…" no botão direito e no Gerenciar Dock aceita imagens (.png, .jpg, .ico...) e ícones de programas (.exe, .dll); a imagem é copiada e reduzida para 256 px, então continua funcionando se o original sumir. "Restaurar ícone padrão" volta ao ícone do app (#28).
+
 ## [0.4.0] - 2026-10-29
 
 Reúne as etapas v0.2, v0.3 e v0.4 do roadmap, que não foram lançadas separadamente.

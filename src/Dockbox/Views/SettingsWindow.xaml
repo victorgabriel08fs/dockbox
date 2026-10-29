@@ -139,6 +139,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Text="{l:T S_SelectedItem}" Style="{StaticResource UiH2}" Grid.ColumnSpan="3" Margin="0,0,0,12"/>
 
@@ -151,6 +152,12 @@
 
                             <TextBlock Grid.Row="3" Text="{l:T S_Arguments}" VerticalAlignment="Center" Foreground="{DynamicResource UiSubFg}"/>
                             <TextBox x:Name="EditArgs" AutomationProperties.Name="{l:T S_ItemArguments}" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource UiTextBox}" TextChanged="Edit_TextChanged"/>
+
+                            <TextBlock Grid.Row="4" Text="{l:T S_Icon}" VerticalAlignment="Center" Foreground="{DynamicResource UiSubFg}" Margin="0,8,0,0"/>
+                            <StackPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,8,0,0">
+                                <Button Style="{StaticResource UiButton}" Content="{l:T S_ChangeIcon}" Click="ChangeIcon_Click" Margin="0,0,8,0"/>
+                                <Button x:Name="RestoreIconButton" Style="{StaticResource UiButton}" Content="{l:T S_RestoreIcon}" Click="RestoreIcon_Click" IsEnabled="False"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </StackPanel>

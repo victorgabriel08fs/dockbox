@@ -295,6 +295,15 @@ internal static class NativeMethods
 
     [DllImport("user32.dll")]
     public static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint flags);
+    // ---- Ícones personalizados ----
+    /// <summary>Janela "Trocar ícone" do Windows (a mesma das propriedades de um atalho).</summary>
+    [DllImport("shell32.dll", EntryPoint = "#62", CharSet = CharSet.Unicode)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool PickIconDlg(IntPtr owner, System.Text.StringBuilder path, int size, ref int index);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public static extern uint PrivateExtractIcons(string file, int index, int cx, int cy, IntPtr[] icons, uint[] ids, uint count, uint flags);
+
     // ---- Avisos do shell (janela piscando pedindo atenção) ----
     public const int HSHELL_WINDOWDESTROYED = 2, HSHELL_WINDOWACTIVATED = 4, HSHELL_RUDEAPPACTIVATED = 0x8004, HSHELL_FLASH = 0x8006;
     public const uint GA_ROOTOWNER = 3;

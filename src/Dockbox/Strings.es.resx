@@ -244,6 +244,17 @@ Tus aplicaciones ancladas se mantendrán.</value></data>
   <data name="S_BadgesHint" xml:space="preserve"><value>El número viene del título de las ventanas, como en "(3) WhatsApp". El progreso de descargas no aparece: Windows no permite que otros programas lo lean.</value></data>
   <data name="A11y_WithBadge" xml:space="preserve"><value>{0}, {1} sin leer</value></data>
   <data name="A11y_WithAttention" xml:space="preserve"><value>{0}, requiere atención</value></data>
+  <data name="S_Icon" xml:space="preserve"><value>Icono</value></data>
+  <data name="S_ChangeIcon" xml:space="preserve"><value>Cambiar icono…</value></data>
+  <data name="S_RestoreIcon" xml:space="preserve"><value>Restaurar predeterminado</value></data>
+  <data name="Menu_ChangeIcon" xml:space="preserve"><value>Cambiar icono…</value></data>
+  <data name="Menu_RestoreIcon" xml:space="preserve"><value>Restaurar icono predeterminado</value></data>
+  <data name="Icon_PickTitle" xml:space="preserve"><value>Elige una imagen o un programa con iconos</value></data>
+  <data name="Icon_Filter" xml:space="preserve"><value>Imágenes e iconos|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.ico;*.tif;*.tiff;*.exe;*.dll;*.icl|Imágenes|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tif;*.tiff|Iconos|*.ico|Programas y bibliotecas|*.exe;*.dll;*.icl</value></data>
+  <data name="Icon_NoneInFile" xml:space="preserve"><value>Este archivo no tiene iconos.</value></data>
+  <data name="Icon_Failed" xml:space="preserve"><value>No se pudo usar esta imagen como icono.
+
+{0}</value></data>
   <data name="Stack_Back" xml:space="preserve"><value>Atrás</value></data>
   <data name="Stack_OpenInExplorer" xml:space="preserve"><value>Abrir en el Explorador</value></data>
   <data name="Stack_More" xml:space="preserve"><value>+{0} elementos: abre en el Explorador para verlos todos</value></data>

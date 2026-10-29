@@ -15,6 +15,8 @@ public sealed class DockEntry
     public string? Arguments { get; set; }
     /// <summary>O usuário já confirmou que este item (script, protocolo...) pode abrir. Zera ao mudar caminho ou argumentos.</summary>
     public bool Trusted { get; set; }
+    /// <summary>Ícone personalizado: nome do arquivo em %APPDATA%\Dockbox\icons (cópia, não depende do original). Null = ícone do app.</summary>
+    public string? Icon { get; set; }
     /// <summary>Pasta: como a pilha aparece ao clicar.</summary>
     public StackView StackView { get; set; } = StackView.Auto;
     /// <summary>Pasta: ordem dos itens na pilha.</summary>

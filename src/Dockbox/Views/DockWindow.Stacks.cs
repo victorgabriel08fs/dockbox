@@ -128,7 +128,7 @@ public partial class DockWindow
     private void RefreshFolderIcon(DockEntry entry)
     {
         var t = _tiles.FirstOrDefault(x => x.Entry == entry);
-        if (t?.Visual is not Image img) return;
+        if (t?.Visual is not Image img || entry.Icon != null) return; // ícone escolhido pelo usuário não muda
         _iconCache.TryGetValue(entry.Path, out var folderIcon);
         img.Source = FolderIcon(entry, folderIcon);
     }
