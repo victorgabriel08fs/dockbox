@@ -34,12 +34,7 @@ public partial class App : Application
         DispatcherUnhandledException += (_, args) =>
         {
             // Não deixa um erro inesperado fechar o Dock; registra para diagnóstico.
-            try
-            {
-                System.IO.File.AppendAllText(System.IO.Path.Combine(SettingsStore.FolderPath, "erros.log"),
-                    $"[{DateTime.Now:s}] {args.Exception}\n\n");
-            }
-            catch { }
+            ErrorLog.Write("Erro inesperado", args.Exception);
             args.Handled = true;
         };
         base.OnStartup(e);

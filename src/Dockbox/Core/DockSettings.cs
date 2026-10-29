@@ -200,11 +200,7 @@ public static class SettingsStore
 
     private static void Log(Exception ex)
     {
-        try
-        {
-            File.AppendAllText(System.IO.Path.Combine(FolderPath, "erros.log"), $"[{DateTime.Now:s}] Falha ao salvar: {ex}\n\n");
-        }
-        catch { }
+        ErrorLog.Write("Falha ao salvar", ex);
     }
 
     /// <summary>Salva e avisa o Dock para se redesenhar.</summary>

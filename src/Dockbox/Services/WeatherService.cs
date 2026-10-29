@@ -11,7 +11,12 @@ public sealed record WeatherInfo(string City, double Temperature, WeatherKind Ki
 /// <summary>Clima atual via Open-Meteo (gratuito, sem chave).</summary>
 public static class WeatherService
 {
-    private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(10) };
+    // Respostas do clima têm poucos KB: limita a 1 MB e 10 s para uma resposta anormal não pesar.
+    private static readonly HttpClient Http = new()
+    {
+        Timeout = TimeSpan.FromSeconds(10),
+        MaxResponseContentBufferSize = 1024 * 1024,
+    };
 
     static WeatherService()
     {

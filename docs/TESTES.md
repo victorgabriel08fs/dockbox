@@ -179,7 +179,8 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
       **Não** liga usando Downloads; **Cancelar** não liga.
 - [ ] Ligue a opção com o exe numa pasta fixa, feche, mova o exe para outra pasta e abra: o registro passa a apontar para o novo lugar.
 - [ ] Deixe aberto por 1 h trocando de apps: memória do Dockbox no Gerenciador de Tarefas estável.
-- [ ] Após algum erro, existe `erros.log` com detalhes.
+- [ ] Após algum erro, existe `erros.log` com detalhes, data/hora e versão em cada registro.
+- [ ] Encha o `erros.log` até passar de 1 MB e provoque outro erro: o antigo vira `erros.1.log` e um novo começa.
 
 ### 10b. Segurança dos itens
 - [ ] Apps, pastas, arquivos comuns e um `.url` de site abrem sem pergunta.
