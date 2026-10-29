@@ -20,6 +20,7 @@ public partial class App : Application
             return;
         }
 
+        SettingsStore.SaveFailed += message => Dispatcher.BeginInvoke(() => ShowSaveError(message));
         SettingsStore.Load();
         DispatcherUnhandledException += (_, args) =>
         {
@@ -41,8 +42,23 @@ public partial class App : Application
             Dispatcher.BeginInvoke(() => MessageBox.Show(warning, "Dockbox", MessageBoxButton.OK, MessageBoxImage.Information));
     }
 
+    /// <summary>Avisa que as configurações não foram salvas e oferece tentar de novo.</summary>
+    private static void ShowSaveError(string message)
+    {
+        var answer = MessageBox.Show(
+            message + "\n\nSuas mudanças continuam valendo enquanto o Dockbox estiver aberto, mas se perdem ao fechar.\n\n" +
+            "Corrija o problema e clique em Sim para tentar salvar de novo.",
+            "Dockbox", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes);
+        if (answer != MessageBoxResult.Yes) return;
+        if (!SettingsStore.Save())
+            MessageBox.Show("Ainda não foi possível salvar. Dá para tentar de novo pelo Gerenciar Dock.",
+                "Dockbox", MessageBoxButton.OK, MessageBoxImage.Warning);
+    }
+
     protected override void OnExit(ExitEventArgs e)
     {
+        // Última tentativa de não perder mudanças que falharam ao salvar.
+        if (SettingsStore.LastSaveError != null) SettingsStore.Save();
         _tray?.Dispose();
         _singleInstance?.Dispose();
         base.OnExit(e);

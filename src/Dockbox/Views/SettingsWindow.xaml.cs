@@ -97,9 +97,16 @@ public partial class SettingsWindow : Window
         };
         SourceInitialized += (_, _) => ApplyTitleBarTheme();
         SettingsStore.Changed += OnExternalChange;
+        Action<string> onFail = _ => Dispatcher.BeginInvoke(UpdateSaveBanner);
+        Action onRecover = () => Dispatcher.BeginInvoke(UpdateSaveBanner);
+        SettingsStore.SaveFailed += onFail;
+        SettingsStore.SaveRecovered += onRecover;
+        Loaded += (_, _) => UpdateSaveBanner();
         Closed += (_, _) =>
         {
             SettingsStore.Changed -= OnExternalChange;
+            SettingsStore.SaveFailed -= onFail;
+            SettingsStore.SaveRecovered -= onRecover;
             if (_commitDebounce.IsEnabled) { _commitDebounce.Stop(); SettingsStore.Commit(); }
         };
 
@@ -116,6 +123,20 @@ public partial class SettingsWindow : Window
             DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref dark, sizeof(int));
         }
         catch { }
+    }
+
+    /// <summary>Mostra ou esconde a faixa de "não foi possível salvar".</summary>
+    private void UpdateSaveBanner()
+    {
+        string? error = SettingsStore.LastSaveError;
+        SaveErrorBanner.Visibility = error == null ? Visibility.Collapsed : Visibility.Visible;
+        SaveErrorText.Text = error?.Replace("\n\n", " ") ?? "";
+    }
+
+    private void RetrySave_Click(object sender, RoutedEventArgs e)
+    {
+        SettingsStore.Save();
+        UpdateSaveBanner();
     }
 
     private void OnExternalChange()

@@ -123,25 +123,88 @@ public static class SettingsStore
         Save();
     }
 
-    public static void Save()
+    /// <summary>Motivo da última falha ao salvar (com o caminho do arquivo), ou null se salvou.</summary>
+    public static string? LastSaveError { get; private set; }
+
+    /// <summary>Disparado quando salvar falha depois das novas tentativas. Recebe a mensagem para o usuário.</summary>
+    public static event Action<string>? SaveFailed;
+
+    /// <summary>Disparado quando volta a salvar depois de uma falha.</summary>
+    public static event Action? SaveRecovered;
+
+    /// <summary>Quantas vezes tenta gravar antes de desistir (o arquivo pode estar travado por um instante).</summary>
+    private const int SaveAttempts = 3;
+
+    /// <summary>
+    /// Grava o settings.json. Se falhar (somente leitura, disco cheio, OneDrive ou antivírus travando),
+    /// tenta de novo e, se continuar falhando, avisa por <see cref="SaveFailed"/>. As mudanças
+    /// continuam em memória, então dá para tentar salvar de novo.
+    /// </summary>
+    public static bool Save()
     {
+        Exception? last = null;
+        for (int attempt = 1; attempt <= SaveAttempts; attempt++)
+        {
+            try
+            {
+                WriteFile();
+                bool recovered = LastSaveError != null;
+                LastSaveError = null;
+                if (recovered) SaveRecovered?.Invoke();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                last = ex;
+                if (attempt < SaveAttempts) Thread.Sleep(120 * attempt);
+            }
+        }
+
+        bool firstFailure = LastSaveError == null;
+        LastSaveError = $"Não foi possível salvar as configurações: {Describe(last!)}.\n\nArquivo: {FilePath}";
+        Log(last!);
+        if (firstFailure) SaveFailed?.Invoke(LastSaveError);
+        return false;
+    }
+
+    private static void WriteFile()
+    {
+        Directory.CreateDirectory(FolderPath);
+        // Escrita atômica: grava num .tmp e troca, assim uma queda no meio não corrompe o arquivo.
+        string tmp = FilePath + ".tmp";
+        File.WriteAllText(tmp, JsonSerializer.Serialize(Current, JsonOptions));
         try
         {
-            Directory.CreateDirectory(FolderPath);
-            // Escrita atômica: grava num .tmp e troca, assim uma queda no meio não corrompe o arquivo.
-            string tmp = FilePath + ".tmp";
-            File.WriteAllText(tmp, JsonSerializer.Serialize(Current, JsonOptions));
             if (!File.Exists(FilePath)) File.Move(tmp, FilePath);
             else
             {
                 try { File.Replace(tmp, FilePath, FilePath + ".bak", ignoreMetadataErrors: true); }
-                catch (IOException) { File.Copy(tmp, FilePath, true); File.Delete(tmp); }
+                catch (IOException) { File.Copy(tmp, FilePath, true); }
             }
         }
-        catch
+        finally
         {
-            // sem permissão de escrita: o Dock continua funcionando
+            try { if (File.Exists(tmp)) File.Delete(tmp); } catch { }
         }
+    }
+
+    /// <summary>Explica a falha em palavras simples.</summary>
+    public static string Describe(Exception ex) => ex switch
+    {
+        UnauthorizedAccessException => "o arquivo está como somente leitura ou falta permissão na pasta",
+        IOException io when (io.HResult & 0xFFFF) == 0x70 => "o disco está cheio",
+        IOException io when (io.HResult & 0xFFFF) is 0x20 or 0x21 => "o arquivo está em uso por outro programa (OneDrive, antivírus ou backup)",
+        DirectoryNotFoundException => "a pasta de configurações não existe e não pôde ser criada",
+        _ => ex.Message.TrimEnd('.'),
+    };
+
+    private static void Log(Exception ex)
+    {
+        try
+        {
+            File.AppendAllText(System.IO.Path.Combine(FolderPath, "erros.log"), $"[{DateTime.Now:s}] Falha ao salvar: {ex}\n\n");
+        }
+        catch { }
     }
 
     /// <summary>Salva e avisa o Dock para se redesenhar.</summary>
