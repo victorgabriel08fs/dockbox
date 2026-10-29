@@ -25,7 +25,7 @@ public sealed class ItemVm : INotifyPropertyChanged
     public ItemVm(DockEntry entry)
     {
         Entry = entry;
-        _icon = IconLoader.Load(entry.Path, 64);
+        _icon = IconLoader.LoadForDisplay(entry.Path, 30);
     }
 
     public string Name => string.IsNullOrWhiteSpace(Entry.Name) ? "(sem nome)" : Entry.Name;
@@ -34,7 +34,7 @@ public sealed class ItemVm : INotifyPropertyChanged
 
     public void Refresh(bool reloadIcon)
     {
-        if (reloadIcon) _icon = IconLoader.Load(Entry.Path, 64);
+        if (reloadIcon) _icon = IconLoader.LoadForDisplay(Entry.Path, 30);
         OnChanged(nameof(Name));
         OnChanged(nameof(Path));
         if (reloadIcon) OnChanged(nameof(Icon));

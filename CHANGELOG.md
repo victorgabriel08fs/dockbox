@@ -30,6 +30,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Desfazer remoção: aviso "Desfazer" no Dock por 6 segundos e Ctrl+Z no Gerenciar Dock; fixar algo que já está no Dock não duplica, o item existente é destacado (#9).
 - Aviso quando não dá para salvar as configurações (somente leitura, disco cheio, arquivo em uso), com o motivo, o caminho e "Tentar salvar de novo"; antes de avisar, tenta de novo algumas vezes (#10).
 - Vários monitores: o Dock fica no principal, num monitor escolhido ou segue o mouse até a borda de outro monitor; reage a monitor conectado/desconectado e a mudança de resolução ou escala sem reiniciar (#19).
+- Ícones nítidos em telas com escala (125%, 150%, 200%): o Gerenciar Dock e a lista de apps pedem o ícone no tamanho certo para a maior escala entre os monitores; quando o Windows não dá o ícone grande, o Dockbox usa o de 48 px em vez do de 32 px (#20).
 
 ### Segurança
 

@@ -137,6 +137,18 @@ internal static class NativeMethods
     public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes,
         ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
 
+    // Ícone 48 px da lista de imagens do sistema (reserva quando a fábrica de imagens do Shell falha).
+    public const uint SHGFI_SYSICONINDEX = 0x000004000;
+    public const int SHIL_EXTRALARGE = 2;
+    public const uint ILD_TRANSPARENT = 0x00000001;
+    public static Guid IID_IImageList = new("46EB5926-582E-4017-9FDF-E8998DAA0950");
+
+    [DllImport("shell32.dll")]
+    public static extern int SHGetImageList(int iImageList, ref Guid riid, out IntPtr ppv);
+
+    [DllImport("comctl32.dll")]
+    public static extern IntPtr ImageList_GetIcon(IntPtr himl, int i, uint flags);
+
     // ---- Janelas em execução ----
 
     public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);

@@ -203,3 +203,10 @@ Precisa de dois monitores (dá para usar uma TV ou um monitor emprestado).
 - [ ] Com **Reservar espaço** ligado, no secundário: janelas maximizadas nele param antes do Dock, e o principal volta a usar a tela toda.
 - [ ] Com **Ocultar automaticamente** no secundário: o Dock some e volta ao encostar na borda dele.
 - [ ] Dock em outra borda (ex.: esquerda) com Seguir o mouse: a dica fala da borda certa e funciona do mesmo jeito.
+
+### 11b. Escala da tela (DPI)
+Em Configurações do Windows → Sistema → Tela → Escala. Dá para testar com um monitor só.
+- [ ] A 100%, 125%, 150% e 200%: ícones do Dock nítidos, também ampliados ao passar o mouse.
+- [ ] Nas mesmas escalas: ícones da lista do Gerenciar Dock e da janela "Adicionar apps" nítidos, sem borrão.
+- [ ] Mudar a escala com o Dockbox aberto: o Dock se ajusta sem reiniciar (os ícones do Gerenciar Dock ficam nítidos ao reabrir a janela).
+- [ ] Com dois monitores de escalas diferentes: o Dock tem o mesmo tamanho visual nos dois ao trocar.
