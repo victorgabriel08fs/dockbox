@@ -5,6 +5,7 @@
         Width="520" Height="600"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
+        UseLayoutRounding="True"
         Background="{DynamicResource UiWindowBg}"
         Foreground="{DynamicResource UiFg}"
         FontFamily="{StaticResource UiFont}"

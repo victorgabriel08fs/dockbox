@@ -52,7 +52,7 @@ public partial class AppPickerWindow : Window
                 var item = queue.Dequeue();
                 if (item.IconRequested) continue;
                 item.IconRequested = true;
-                item.Icon = IconLoader.Load(item.App.Path, 48);
+                item.Icon = IconLoader.LoadForDisplay(item.App.Path, 26);
             }
             if (queue.Count == 0 || !IsLoaded) timer.Stop();
         };

@@ -45,6 +45,9 @@ O Dock escuta `Changed` e se redesenha (`ApplyTheme` + `RebuildTiles` + `Positio
   escolhe o do Dock (principal, escolhido ou o último para onde o mouse levou), voltando ao principal se o
   monitor sumir. A janela é posicionada em pixels físicos com `SetWindowPos`, porque cada monitor pode ter
   outra escala; em `DpiChanged`, `WM_DISPLAYCHANGE` e `DisplaySettingsChanged` a posição é refeita.
+- **DPI**: o app é `PerMonitorV2` (`app.manifest`). Os ícones do Dock são extraídos a 256 px; nas janelas,
+  `IconLoader.LoadForDisplay` pede o menor tamanho padrão que cubra o tamanho em DIPs vezes a maior escala
+  entre os monitores. Se a fábrica de imagens do Shell falhar, usa o ícone de 48 px da lista do sistema.
 - **Hover**: `HitArea` ganha alfa 1 enquanto o mouse está no Dock, para o mouse não "cair" entre ícones ampliados.
 - **Animação**: parado, um `DispatcherTimer` de 50 ms só verifica o mouse. Com o mouse no Dock, a animação
   roda em `CompositionTarget.Rendering` e para sozinha quando tudo assenta.
