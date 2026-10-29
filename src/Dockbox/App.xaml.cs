@@ -40,8 +40,9 @@ public partial class App : Application
         Loc.Apply(SettingsStore.Current.Language);
         // Se a última sessão escondeu a barra de tarefas e não a trouxe de volta (travou, foi encerrada), traz agora.
         Services.Taskbar.RecoverAfterCrash();
-        AppDomain.CurrentDomain.ProcessExit += (_, _) => Services.Taskbar.Restore();
-        AppDomain.CurrentDomain.UnhandledException += (_, _) => Services.Taskbar.Restore();
+        Services.SystemMinimizeAnimation.RecoverAfterCrash();
+        AppDomain.CurrentDomain.ProcessExit += (_, _) => { Services.Taskbar.Restore(); Services.SystemMinimizeAnimation.Restore(); };
+        AppDomain.CurrentDomain.UnhandledException += (_, _) => { Services.Taskbar.Restore(); Services.SystemMinimizeAnimation.Restore(); };
         // Antes das janelas se inscreverem: quando elas redesenham, o idioma novo já vale.
         SettingsStore.Changed += () =>
         {
@@ -98,6 +99,7 @@ public partial class App : Application
         // Última tentativa de não perder mudanças que falharam ao salvar.
         if (SettingsStore.LastSaveError != null) SettingsStore.Save();
         Services.Taskbar.Restore();
+        Services.SystemMinimizeAnimation.Restore();
         _tray?.Dispose();
         try { _singleInstance?.ReleaseMutex(); } catch { /* não era desta thread */ }
         _singleInstance?.Dispose();

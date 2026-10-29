@@ -42,6 +42,8 @@ public sealed class Appearance
     public bool ShowLabels { get; set; } = true;
     public bool ShowRunning { get; set; } = true;
     public bool BounceOnLaunch { get; set; } = true;
+    /// <summary>Efeito ao minimizar uma janela: encolhe até o ícone do app no Dock.</summary>
+    public MinimizeEffect MinimizeEffect { get; set; } = MinimizeEffect.Scale;
     /// <summary>O ícone pula enquanto o app pisca pedindo atenção.</summary>
     public bool BounceOnAttention { get; set; } = true;
     /// <summary>Contador vermelho no ícone, lido do título das janelas ("(3) WhatsApp").</summary>
@@ -256,6 +258,7 @@ public static class SettingsStore
         if (!Enum.IsDefined(a.Edge)) a.Edge = DockEdge.Bottom;
         if (!Enum.IsDefined(a.Theme)) a.Theme = ThemeMode.Auto;
         if (!Enum.IsDefined(a.Monitor)) a.Monitor = MonitorMode.Primary;
+        if (!Enum.IsDefined(a.MinimizeEffect)) a.MinimizeEffect = MinimizeEffect.Scale;
         a.MonitorDevice ??= "";
         a.KeyboardShortcut ??= "";
         if (a.KeyboardShortcut.Length > 0 && Hotkey.Parse(a.KeyboardShortcut) == null) a.KeyboardShortcut = Hotkey.Default;

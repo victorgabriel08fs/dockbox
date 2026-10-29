@@ -26,6 +26,7 @@
 - Ícone na área de notificação (bandeja) com atalhos para Gerenciar Dock e Sair.
 - Acessível: **Win+Shift+D** leva o foco ao Dock (setas, Enter, Shift+F10, Esc), nomes para o Narrador/NVDA,
   sem animações quando o Windows pede e cores do alto contraste.
+- Minimizar "suga" a janela para o ícone do app no Dock (efeitos Escala e Gênio).
 - Ícone pula quando um app pede atenção e mostra contador vermelho (lido do título, como "(3) WhatsApp").
 - Miniaturas ao vivo das janelas ao passar o mouse num app com várias janelas (clique traz, X fecha).
 - Fundo de vidro com desfoque de verdade do que está atrás (Windows 10 e 11).

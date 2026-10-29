@@ -238,6 +238,9 @@ public partial class SettingsWindow : Window
             PreviewsToggle.IsChecked = A.WindowPreviews;
             PreviewDelaySlider.Value = A.PreviewDelay;
             BounceToggle.IsChecked = A.BounceOnLaunch;
+            MinimizeNone.IsChecked = A.MinimizeEffect == MinimizeEffect.None;
+            MinimizeScale.IsChecked = A.MinimizeEffect == MinimizeEffect.Scale;
+            MinimizeGenie.IsChecked = A.MinimizeEffect == MinimizeEffect.Genie;
             AttentionToggle.IsChecked = A.BounceOnAttention;
             BadgesToggle.IsChecked = A.ShowBadges;
             SeparatorToggle.IsChecked = A.ShowSeparator;
@@ -588,6 +591,15 @@ public partial class SettingsWindow : Window
                 : ThemeCustom.IsChecked == true ? ThemeMode.Custom
                 : ThemeMode.Auto;
         CustomColorPanel.Visibility = A.Theme == ThemeMode.Custom ? Visibility.Visible : Visibility.Collapsed;
+        Commit();
+    }
+
+    private void MinimizeEffect_Checked(object sender, RoutedEventArgs e)
+    {
+        if (_loading) return;
+        A.MinimizeEffect = MinimizeNone.IsChecked == true ? MinimizeEffect.None
+                         : MinimizeGenie.IsChecked == true ? MinimizeEffect.Genie
+                         : MinimizeEffect.Scale;
         Commit();
     }
 

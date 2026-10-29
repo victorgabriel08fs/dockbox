@@ -163,6 +163,19 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Comportamento → desligue **Mostrar miniaturas das janelas**: o painel não aparece mais. Mude o tempo para 0 s e 1,5 s e confira a espera.
 - [ ] Clicar no painel não tira o foco da janela que você estava usando (a não ser a janela escolhida).
 
+### 8a4. Animação ao minimizar
+- [ ] Comportamento → **Ao minimizar uma janela: Escala** (padrão). Minimize o Bloco de Notas (fixado no Dock): a janela encolhe até o ícone dele, sem a animação do Windows indo para a barra de tarefas.
+- [ ] Minimize uma janela maximizada e uma janela pequena num canto: as duas saem do lugar certo.
+- [ ] **Gênio**: a janela se estreita primeiro e depois desce até o ícone.
+- [ ] Nas 4 posições do Dock: vai até o ícone certo (no Gênio com o Dock do lado, estreita a altura primeiro).
+- [ ] App aberto que não está fixado (com "Mostrar apps abertos" ligado): vai até o ícone dele na parte de apps abertos. Com essa opção desligada: vai para o meio do Dock.
+- [ ] Segundo monitor e escala 150%: a animação sai da janela e chega no ícone sem pular.
+- [ ] Minimizar pelo botão, pela tecla Win+↓ e pelo clique no ícone do Dock: todos animam.
+- [ ] Restaurar a janela: aparece direto, sem animação (a do Windows está desligada enquanto o efeito está ligado).
+- [ ] **Nenhum**: a animação do Windows volta (minimizar vai para a barra de tarefas).
+- [ ] Feche o Dockbox com o efeito ligado: a animação do Windows volta. Encerre o Dockbox pelo Gerenciador de Tarefas e abra de novo: volta também.
+- [ ] Configurações do Windows → Acessibilidade → Efeitos visuais → **Efeitos de animação** desligado: sem efeito do Dockbox.
+- [ ] Minimizar várias janelas rápido (Win+M): não trava; cada uma anima ou some.
 ### 8a3. Pedidos de atenção e contadores
 - [ ] Pulo por atenção: abra o Bloco de Notas, deixe outra janela na frente e rode no PowerShell:
   ```powershell

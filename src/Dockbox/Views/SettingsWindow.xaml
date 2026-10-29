@@ -293,6 +293,15 @@
                             <Slider x:Name="PreviewDelaySlider" AutomationProperties.Name="{l:T S_PreviewDelayA11y}" Style="{StaticResource UiSlider}" Minimum="0" Maximum="1.5" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
                             <CheckBox x:Name="UnpinnedToggle" Style="{StaticResource UiToggle}" Content="{l:T S_ShowRunning}" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="BounceToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Bounce}" Click="Toggle_Click" Margin="0,0,0,14"/>
+                            <TextBlock Text="{l:T S_MinimizeEffect}" Foreground="{DynamicResource UiSubFg}" Margin="0,0,0,6"/>
+                            <Border Background="{DynamicResource UiInputBg}" CornerRadius="8" HorizontalAlignment="Left" Padding="2" AutomationProperties.Name="{l:T S_MinimizeEffect}">
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton x:Name="MinimizeNone" Style="{StaticResource UiSegment}" GroupName="minimizeEffect" Content="{l:T S_MinimizeNone}" Checked="MinimizeEffect_Checked"/>
+                                    <RadioButton x:Name="MinimizeScale" Style="{StaticResource UiSegment}" GroupName="minimizeEffect" Content="{l:T S_MinimizeScale}" Checked="MinimizeEffect_Checked"/>
+                                    <RadioButton x:Name="MinimizeGenie" Style="{StaticResource UiSegment}" GroupName="minimizeEffect" Content="{l:T S_MinimizeGenie}" Checked="MinimizeEffect_Checked"/>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,6,0,14" Text="{l:T S_MinimizeHint}"/>
                             <CheckBox x:Name="AttentionToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Attention}" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="BadgesToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Badges}" Click="Toggle_Click" Margin="0,0,0,4"/>
                             <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,0,0,14" Text="{l:T S_BadgesHint}"/>

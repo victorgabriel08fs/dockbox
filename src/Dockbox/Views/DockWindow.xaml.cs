@@ -169,6 +169,7 @@ public partial class DockWindow : Window
         {
             _blur?.Close();
             _preview?.Close();
+            ReleaseMinimizeEffect();
             ReleaseAppBar();
             var h = new WindowInteropHelper(this).Handle;
             if (h != IntPtr.Zero) UnregisterHotKey(h, HotkeyId);
@@ -381,6 +382,7 @@ public partial class DockWindow : Window
         PositionWindow();
         RegisterShortcut();
         ApplyTaskbar();
+        ApplyMinimizeEffect();
         StartAnimating();
     }
 
