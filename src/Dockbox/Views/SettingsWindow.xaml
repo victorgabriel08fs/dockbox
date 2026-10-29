@@ -8,7 +8,7 @@
         Background="{DynamicResource UiWindowBg}"
         Foreground="{DynamicResource UiFg}"
         FontFamily="{StaticResource UiFont}"
-        Icon="/Assets/Dockbox.ico"
+        Icon="pack://application:,,,/Dockbox;component/Assets/Dockbox.ico"
         UseLayoutRounding="True">
 
     <Grid>
@@ -21,7 +21,7 @@
         <Border Background="{DynamicResource UiSidebarBg}" BorderBrush="{DynamicResource UiCardBorder}" BorderThickness="0,0,1,0">
             <DockPanel Margin="14,18,14,14">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="6,0,0,22">
-                    <Image Source="/Assets/Dockbox-128.png" Width="38" Height="38" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="pack://application:,,,/Dockbox;component/Assets/Dockbox-128.png" Width="38" Height="38" RenderOptions.BitmapScalingMode="HighQuality"/>
                     <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
                         <TextBlock Text="Dockbox" FontSize="16" FontWeight="SemiBold"/>
                         <TextBlock Text="{l:T S_ManageDock}" FontSize="11.5" Foreground="{DynamicResource UiSubFg}"/>
