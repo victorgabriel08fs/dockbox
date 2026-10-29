@@ -4,6 +4,7 @@ Cada pasta guarda o executável pronto de uma versão, para baixar sem compilar.
 
 | Versão | Data | Arquivo | Notas |
 |---|---|---|---|
+| [v0.5.0](https://github.com/victorgabriel08fs/dockbox/releases/tag/v0.5.0) | 2026-10-29 | `Dockbox-v0.5.0-win-x64.zip` | Pilhas de pastas, ícones personalizados, novos widgets, busca, atalhos, temas e backup |
 | [v0.4.0](v0.4.0/) | 2026-10-29 | `Dockbox-v0.4.0-win-x64.zip` | Visual, Gerenciar Dock, widgets, vários monitores, idiomas, desfoque, miniaturas, badges e animação ao minimizar |
 | [v0.1.0](v0.1.0/) | 2026-10-29 | `Dockbox-v0.1.0-win-x64.zip` | MVP (Fase 1) |
 
@@ -21,7 +22,7 @@ As mesmas versões também aparecem na página
 Para conferir se o download veio inteiro, compare o hash com o `SHA256SUMS.txt` da pasta:
 
 ```powershell
-Get-FileHash .\Dockbox-v0.4.0-win-x64.zip -Algorithm SHA256
+Get-FileHash .\Dockbox-v0.5.0-win-x64.zip -Algorithm SHA256
 ```
 
 ## Como lançar uma versão nova

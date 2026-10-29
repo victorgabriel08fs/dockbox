@@ -8,6 +8,8 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 
 ## [Não lançado]
 
+## [0.5.0] - 2026-10-29
+
 ### Adicionado
 
 - Pilhas de pastas: clicar numa pasta fixada abre o conteúdo por cima do Dock em leque, grade (com rolagem) ou lista, com ordenação por nome, data de adição, data de modificação ou tipo; subpastas, arrastar itens para outros apps, atualização ao vivo e ícone do item mais recente. Soltar arquivos numa pasta do Dock move ou copia para ela. A pasta Downloads vem no Dock em instalações novas (#27).
@@ -97,6 +99,7 @@ Primeira versão (Fase 1, MVP).
 - Menu do botão direito: editar apps fixados, recarregar e sair.
 - Apps fixados salvos em `%APPDATA%\Dockbox\pinned.json`.
 
-[Não lançado]: https://github.com/victorgabriel08fs/dockbox/compare/v0.4.0...HEAD
+[Não lançado]: https://github.com/victorgabriel08fs/dockbox/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/victorgabriel08fs/dockbox/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/victorgabriel08fs/dockbox/compare/v0.1.0...v0.4.0
 [0.1.0]: https://github.com/victorgabriel08fs/dockbox/releases/tag/v0.1.0
