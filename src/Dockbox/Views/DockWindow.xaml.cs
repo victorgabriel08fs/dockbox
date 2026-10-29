@@ -58,6 +58,8 @@ public partial class DockWindow : Window
     private bool _menuOpen;
     private double _dockStart, _dockLength; // no eixo principal
     private DockTheme _theme = DockTheme.From(new Appearance());
+    private AppBar? _appBar;
+    private bool _positioning;
 
     private Appearance A => SettingsStore.Current.Appearance;
     private double BaseSize => A.IconSize;
@@ -96,8 +98,13 @@ public partial class DockWindow : Window
         SettingsStore.Changed += ApplySettings;
         SystemParameters.StaticPropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(SystemParameters.WorkArea)) Dispatcher.BeginInvoke(PositionWindow);
+            // Com a AppBar ativa, a reserva só é refeita se a borda ou a espessura mudaram (ver ReserveArea).
+            if (e.PropertyName == nameof(SystemParameters.WorkArea)) Dispatcher.BeginInvoke(() => PositionWindow());
         };
+        Closed += (_, _) => ReleaseAppBar();
+        // Se o processo cair, devolve a área de trabalho inteira.
+        AppDomain.CurrentDomain.UnhandledException += (_, _) => ReleaseAppBar();
+        AppDomain.CurrentDomain.ProcessExit += (_, _) => ReleaseAppBar();
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += (_, _) =>
         {
             if (A.Theme == ThemeMode.Auto) Dispatcher.BeginInvoke(ApplyTheme);
@@ -112,34 +119,88 @@ public partial class DockWindow : Window
         int ex = GetWindowLong(hwnd, GWL_EXSTYLE);
         SetWindowLong(hwnd, GWL_EXSTYLE, ex | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
         HwndSource.FromHwnd(hwnd)?.AddHook(WndProc);
+        _appBar = new AppBar(hwnd);
+        PositionWindow();
     }
 
-    private static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (msg == WM_MOUSEACTIVATE)
         {
             handled = true;
             return new IntPtr(MA_NOACTIVATE);
         }
+        if (_appBar != null && msg == _appBar.CallbackMessage)
+        {
+            // Outra AppBar (ex.: barra de tarefas) mudou de lugar ou tamanho: recalcula a reserva.
+            if (wParam.ToInt64() == ABN_POSCHANGED) Dispatcher.BeginInvoke(() => PositionWindow(force: true));
+            handled = true;
+        }
         return IntPtr.Zero;
+    }
+
+    private void ReleaseAppBar()
+    {
+        try { _appBar?.Remove(); } catch { }
     }
 
     /// <summary>Espessura da janela (perpendicular à borda): ícone ampliado + pulo + rótulo.</summary>
     private double WindowThickness =>
         EdgeMargin + Pad * 2 + BaseSize * Math.Max(MaxScale, 1.0) + BaseSize * 0.5 + (Horizontal ? 40 : 240);
 
-    private void PositionWindow()
+    /// <summary>Faixa reservada na tela: o fundo do Dock com uma margem dos dois lados.</summary>
+    private double ReservedThickness => EdgeMargin * 2 + BackgroundThickness;
+
+    private void PositionWindow() => PositionWindow(force: false);
+
+    private void PositionWindow(bool force)
     {
-        Rect wa = SystemParameters.WorkArea; // monitor principal, em DIPs
-        double t = WindowThickness;
-        switch (A.Edge)
+        if (_positioning) return;
+        _positioning = true;
+        try
         {
-            case DockEdge.Bottom: Left = wa.Left; Top = wa.Bottom - t; Width = wa.Width; Height = t; break;
-            case DockEdge.Top: Left = wa.Left; Top = wa.Top; Width = wa.Width; Height = t; break;
-            case DockEdge.Left: Left = wa.Left; Top = wa.Top; Width = t; Height = wa.Height; break;
-            case DockEdge.Right: Left = wa.Right - t; Top = wa.Top; Width = t; Height = wa.Height; break;
+            // Área onde a janela encosta, em DIPs. Com a AppBar, é a faixa reservada; sem ela, a área de trabalho.
+            Rect area = ReserveArea(force) ?? SystemParameters.WorkArea;
+            double t = WindowThickness;
+            switch (A.Edge)
+            {
+                case DockEdge.Bottom: Left = area.Left; Top = area.Bottom - t; Width = area.Width; Height = t; break;
+                case DockEdge.Top: Left = area.Left; Top = area.Top; Width = area.Width; Height = t; break;
+                case DockEdge.Left: Left = area.Left; Top = area.Top; Width = t; Height = area.Height; break;
+                case DockEdge.Right: Left = area.Right - t; Top = area.Top; Width = t; Height = area.Height; break;
+            }
+            Layout();
         }
-        Layout();
+        finally
+        {
+            _positioning = false;
+        }
+    }
+
+    /// <summary>
+    /// Reserva (ou libera) a faixa do Dock na tela. Devolve a faixa em DIPs, ou null quando
+    /// não há reserva e a janela deve usar a área de trabalho normal.
+    /// </summary>
+    private Rect? ReserveArea(bool force)
+    {
+        if (_appBar == null) return null;
+        if (!A.ReserveSpace)
+        {
+            _appBar.Remove();
+            return null;
+        }
+
+        var toDevice = PresentationSource.FromVisual(this)?.CompositionTarget?.TransformToDevice;
+        if (toDevice is not Matrix m || m.M11 <= 0 || m.M22 <= 0) return null;
+        if (!_appBar.Register()) return null;
+
+        int px = (int)Math.Ceiling(ReservedThickness * (Horizontal ? m.M22 : m.M11));
+        // Só chama o Windows quando algo mudou, para não entrar em ciclo com a mudança da área de trabalho.
+        if (force || _appBar.Edge != A.Edge || _appBar.Thickness != px)
+            _appBar.SetPos(A.Edge, px);
+
+        var rc = _appBar.Bounds;
+        return new Rect(rc.Left / m.M11, rc.Top / m.M22, (rc.Right - rc.Left) / m.M11, (rc.Bottom - rc.Top) / m.M22);
     }
 
     // ================= Configurações → Dock =================

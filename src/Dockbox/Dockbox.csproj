@@ -22,6 +22,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
+    <InternalsVisibleTo Include="Dockbox.Tests" />
+=======
     <!-- Evita conflitos de nomes entre WPF e WinForms (Application, MessageBox, Color...). -->
     <Using Remove="System.Windows.Forms" />
     <Using Remove="System.Drawing" />
@@ -30,6 +33,7 @@
   <ItemGroup>
     <Resource Include="Assets\Dockbox.ico" />
     <Resource Include="Assets\Dockbox-128.png" />
+>>>>>>> origin/main
   </ItemGroup>
 
 </Project>

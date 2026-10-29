@@ -20,8 +20,12 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Widgets: relógio, calendário, clima, CPU/RAM, bateria, mídia tocando agora e Lixeira.
 - Soltar arquivos sobre um app abre os arquivos com ele; soltar na Lixeira apaga.
 - Opção de iniciar junto com o Windows.
+<<<<<<< HEAD
+- Reservar espaço na tela: as janelas maximizadas param antes do Dock em qualquer borda; opção em Comportamento (#4).
+=======
 - Identidade visual: logo e ícone próprios no `Dockbox.exe`, nas janelas, na bandeja e no README (#40).
 - Ícone na área de notificação com atalhos para Gerenciar Dock e Sair (#40).
+>>>>>>> origin/main
 
 ### Alterado
 

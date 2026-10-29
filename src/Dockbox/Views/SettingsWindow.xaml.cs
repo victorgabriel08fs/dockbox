@@ -188,6 +188,7 @@ public partial class SettingsWindow : Window
             RunningToggle.IsChecked = A.ShowRunning;
             BounceToggle.IsChecked = A.BounceOnLaunch;
             SeparatorToggle.IsChecked = A.ShowSeparator;
+            ReserveToggle.IsChecked = A.ReserveSpace;
             AutostartToggle.IsChecked = Autostart.IsEnabled;
         }
         finally
@@ -535,6 +536,7 @@ public partial class SettingsWindow : Window
         A.ShowRunning = RunningToggle.IsChecked == true;
         A.BounceOnLaunch = BounceToggle.IsChecked == true;
         A.ShowSeparator = SeparatorToggle.IsChecked == true;
+        A.ReserveSpace = ReserveToggle.IsChecked == true;
         Commit();
     }
 

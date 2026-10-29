@@ -105,6 +105,15 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Escala de tela 100%, 125%, 150% e 200%: ícones nítidos, Dock no lugar certo.
 - [ ] **Restaurar padrões**: estilo volta, apps continuam.
 
+### 8b. Reservar espaço na tela
+- [ ] Com a opção ligada (padrão), maximize uma janela: ela para antes do Dock nas 4 posições.
+- [ ] Mude o tamanho dos ícones: a área reservada acompanha na hora.
+- [ ] Barra de tarefas embaixo, em cima e à esquerda: o Dock e a reserva não ficam por cima dela.
+- [ ] Desligue a opção: a janela maximizada volta a ocupar a tela toda (o Dock fica por cima).
+- [ ] Saia pelo menu: a área de trabalho volta ao tamanho inteiro.
+- [ ] Encerre o `Dockbox.exe` pelo Gerenciador de Tarefas e anote se a área volta sozinha (pode precisar abrir e fechar de novo).
+- [ ] Vídeo em tela cheia: o Dock some e não aparece faixa vazia.
+
 ### 9. Widgets
 - [ ] Relógio: ponteiros na hora certa; rótulo com dia da semana; opção 24 h muda o formato.
 - [ ] Calendário: dia certo; clique abre o mês; clique fora fecha; vira o dia à meia-noite.
