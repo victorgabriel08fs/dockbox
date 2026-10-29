@@ -1,6 +1,6 @@
 name: release
 
-# Roda ao enviar uma tag de versão (git tag v0.2.0 && git push origin v0.2.0) ou ao
+# Roda ao enviar uma tag de versão (git tag vX.Y.Z && git push origin vX.Y.Z) ou ao
 # criar a release pelo site. Também dá para rodar à mão em Actions > release >
 # Run workflow, informando uma tag que já existe.
 on:
