@@ -10,6 +10,14 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        // Reaberto de outra pasta (ao ligar o início automático): espera a instância antiga fechar.
+        int afterIdx = Array.IndexOf(e.Args, "--after-pid");
+        if (afterIdx >= 0 && afterIdx + 1 < e.Args.Length && int.TryParse(e.Args[afterIdx + 1], out int oldPid))
+        {
+            try { System.Diagnostics.Process.GetProcessById(oldPid).WaitForExit(8000); }
+            catch { /* já fechou */ }
+        }
+
         // Só uma instância do Dock por vez.
         _singleInstance = new Mutex(true, @"Local\Dockbox.SingleInstance", out bool isNew);
         if (!isNew)
@@ -20,6 +28,7 @@ public partial class App : Application
 
         SettingsStore.SaveFailed += message => Dispatcher.BeginInvoke(() => ShowSaveError(message));
         SettingsStore.Load();
+        Services.Autostart.RepairIfMoved();
         DispatcherUnhandledException += (_, args) =>
         {
             // Não deixa um erro inesperado fechar o Dock; registra para diagnóstico.

@@ -630,7 +630,43 @@ public partial class SettingsWindow : Window
 
     private void Autostart_Click(object sender, RoutedEventArgs e)
     {
-        Autostart.Set(AutostartToggle.IsChecked == true);
+        bool enable = AutostartToggle.IsChecked == true;
+        string? exe = Environment.ProcessPath;
+        if (enable && exe != null && Autostart.IsInFolders(exe, Autostart.VolatileFolders()))
+        {
+            // Rodando de Downloads, Temp ou Área de Trabalho: o arquivo pode sumir ou ser trocado.
+            string folder = System.IO.Path.GetDirectoryName(exe) ?? exe;
+            if (Autostart.IsSingleFile(exe))
+            {
+                var answer = MessageBox.Show(this,
+                    $"O Dockbox está rodando de\n{folder}\n\nSe o arquivo for movido ou apagado dali, ele deixa de abrir com o Windows, " +
+                    $"e qualquer programa pode trocar arquivos nessa pasta.\n\nCopiar o Dockbox para\n{System.IO.Path.GetDirectoryName(Autostart.InstallPath)}\n" +
+                    "e iniciar de lá?\n\nSim: copia, liga o início automático e reabre o Dockbox de lá.\nNão: liga assim mesmo, usando a pasta atual.",
+                    "Dockbox", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.Yes);
+                if (answer == MessageBoxResult.Cancel) { AutostartToggle.IsChecked = Autostart.IsEnabled; return; }
+                if (answer == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        if (_commitDebounce.IsEnabled) { _commitDebounce.Stop(); SettingsStore.Commit(); }
+                        Autostart.InstallAndRelaunch(exe);
+                        Application.Current.Shutdown();
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(this, $"Não foi possível copiar o Dockbox: {ex.Message}\nO início automático vai usar a pasta atual.",
+                            "Dockbox", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show(this, $"O Dockbox está rodando de\n{folder}\n\nSe a pasta for movida ou apagada, ele deixa de abrir com o Windows. " +
+                    "Considere mover a pasta do Dockbox para um lugar fixo antes.", "Dockbox", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        Autostart.Set(enable);
         AutostartToggle.IsChecked = Autostart.IsEnabled;
     }
 
