@@ -12,6 +12,12 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 
 - Pilhas de pastas: clicar numa pasta fixada abre o conteúdo por cima do Dock em leque, grade (com rolagem) ou lista, com ordenação por nome, data de adição, data de modificação ou tipo; subpastas, arrastar itens para outros apps, atualização ao vivo e ícone do item mais recente. Soltar arquivos numa pasta do Dock move ou copia para ela. A pasta Downloads vem no Dock em instalações novas (#27).
 - Ícones personalizados: "Trocar ícone…" no botão direito e no Gerenciar Dock aceita imagens (.png, .jpg, .ico...) e ícones de programas (.exe, .dll); a imagem é copiada e reduzida para 256 px, então continua funcionando se o original sumir. "Restaurar ícone padrão" volta ao ícone do app (#28).
+- Atalhos globais (#31), editáveis em Comportamento → Teclado (clique na caixa e aperte a combinação):
+  - **Ctrl+Alt+Shift+H** mostra e oculta o Dock, ligando e desligando o "Ocultar automaticamente", como Option+Cmd+D no macOS.
+  - Atalho opcional para a busca.
+  - **Win+Alt+1…9** ou **Ctrl+Alt+Shift+1…9** abrem o item N do Dock (desligado por padrão).
+  - Atalho já usado por outro programa, ou repetido no Dockbox, mostra um aviso com o nome.
+- Busca estilo Spotlight (#30, #31): digite e Enter abre apps do Menu Iniciar, itens do Dock e arquivos recentes, da Área de Trabalho, de Documentos e de Downloads; Ctrl+Enter mostra na pasta. Abre pelo atalho ou pelo novo widget Busca.
 
 ## [0.4.0] - 2026-10-29
 

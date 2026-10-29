@@ -174,7 +174,9 @@ public partial class DockWindow : Window
             ReleaseMinimizeEffect();
             ReleaseAppBar();
             var h = new WindowInteropHelper(this).Handle;
-            if (h != IntPtr.Zero) UnregisterHotKey(h, HotkeyId);
+            if (h != IntPtr.Zero && _shortcutPlan != null)
+                foreach (var sc in _shortcutPlan.Shortcuts) UnregisterHotKey(h, sc.Id);
+            SearchWindow.CloseIfOpen();
             if (h != IntPtr.Zero) UnregisterShellHook(h);
         };
         // Se o processo cair, devolve a área de trabalho inteira.
@@ -214,9 +216,9 @@ public partial class DockWindow : Window
             again.Tick += (_, _) => { again.Stop(); ApplyTaskbar(); };
             again.Start();
         }
-        if (msg == WM_HOTKEY && wParam.ToInt64() == HotkeyId)
+        if (msg == WM_HOTKEY && _shortcutPlan?.Shortcuts.FirstOrDefault(sc => sc.Id == wParam.ToInt64()) is { } shortcut)
         {
-            Dispatcher.BeginInvoke(ToggleKeyboard);
+            Dispatcher.BeginInvoke(() => OnShortcut(shortcut));
             handled = true;
             return IntPtr.Zero;
         }
@@ -1364,11 +1366,16 @@ public partial class DockWindow : Window
 
     // ================= Teclado e leitor de tela =================
 
-    private const int HotkeyId = 0xD0C;
-    private string? _shortcutRegistered;
-    /// <summary>Por que o atalho não pôde ser registrado (já usado por outro programa), ou null.</summary>
-    public static string? ShortcutError => _shortcutFailed is string s ? Loc.F("Shortcut_InUse", Hotkey.Display(s)) : null;
-    private static string? _shortcutFailed;
+    private ShortcutPlan? _shortcutPlan;
+    private string? _shortcutSignature;
+    /// <summary>Atalhos que não puderam ser registrados (já usados por outro programa ou repetidos), ou null.</summary>
+    public static string? ShortcutError => _shortcutFailed.Count switch
+    {
+        0 => null,
+        1 => Loc.F("Shortcut_InUse", Hotkey.Display(_shortcutFailed[0])),
+        _ => Loc.F("Shortcut_InUseMany", string.Join(", ", _shortcutFailed.Select(Hotkey.Display))),
+    };
+    private static List<string> _shortcutFailed = new();
     public static event Action? ShortcutStatusChanged;
 
     private Tile? _kbTile;          // item com o foco do teclado; null = fora do modo teclado
@@ -1381,19 +1388,61 @@ public partial class DockWindow : Window
         Visibility = Visibility.Collapsed,
     };
 
+    /// <summary>Registra no Windows os atalhos globais das configurações (foco, mostrar/ocultar, busca e itens 1 a 9).</summary>
     private void RegisterShortcut()
     {
         var hwnd = new WindowInteropHelper(this).Handle;
         if (hwnd == IntPtr.Zero) return;
-        string want = A.KeyboardShortcut ?? "";
-        if (want == _shortcutRegistered) return;
+        var plan = ShortcutPlan.Build(A);
+        string signature = plan.Signature + "#" + string.Join(",", plan.Duplicates);
+        if (signature == _shortcutSignature) return;
 
-        UnregisterHotKey(hwnd, HotkeyId);
-        _shortcutRegistered = want;
-        _shortcutFailed = null;
-        if (Hotkey.Parse(want) is (uint mods, uint vk) && !RegisterHotKey(hwnd, HotkeyId, mods | MOD_NOREPEAT, vk))
-            _shortcutFailed = want;
+        if (_shortcutPlan != null)
+            foreach (var old in _shortcutPlan.Shortcuts) UnregisterHotKey(hwnd, old.Id);
+        _shortcutSignature = signature;
+        var failed = new List<string>(plan.Duplicates);
+        var ok = new List<PlannedShortcut>();
+        foreach (var sc in plan.Shortcuts)
+        {
+            if (RegisterHotKey(hwnd, sc.Id, sc.Mods | MOD_NOREPEAT, sc.Vk)) ok.Add(sc);
+            else failed.Add(sc.Text);
+        }
+        _shortcutPlan = plan;
+        _shortcutFailed = failed;
         ShortcutStatusChanged?.Invoke();
+    }
+
+    private void OnShortcut(PlannedShortcut sc)
+    {
+        switch (sc.Action)
+        {
+            case ShortcutAction.Focus:
+                ToggleKeyboard();
+                break;
+            case ShortcutAction.ToggleDock:
+                // Como Option+Cmd+D no macOS: liga e desliga o ocultar automaticamente.
+                A.AutoHide = !A.AutoHide;
+                SettingsStore.Commit();
+                break;
+            case ShortcutAction.Search:
+                SearchWindow.Toggle();
+                break;
+            case ShortcutAction.OpenItem:
+                OpenItemFromShortcut(sc.Item);
+                break;
+        }
+    }
+
+    /// <summary>Abre o item N do Dock (contando só os fixados), como um clique, mas sem ler Ctrl/Shift do atalho.</summary>
+    private void OpenItemFromShortcut(int n)
+    {
+        var tile = _tiles.Where(t => t.Kind == TileKind.App).Skip(n - 1).FirstOrDefault();
+        if (tile?.Entry == null) return;
+        ClosePreview();
+        CloseStack();
+        if (tile.ExeKey != null && tile.Running && RunningApps.ToggleWindows(tile.ExeKey)) return;
+        if (AppLauncher.Launch(tile.Entry) && A.BounceOnLaunch && !ReduceMotion && !tile.Running)
+            Bounce(tile);
     }
 
     private List<Tile> FocusableTiles() => _tiles.Where(t => t.Kind != TileKind.Separator).ToList();

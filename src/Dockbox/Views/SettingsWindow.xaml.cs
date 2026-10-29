@@ -701,6 +701,8 @@ public partial class SettingsWindow : Window
             };
             ShortcutChoices.Children.Add(rb);
         }
+        BuildShortcutEditors();
+        BuildItemShortcutChoices();
         UpdateShortcutHint();
     }
 

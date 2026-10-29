@@ -77,6 +77,12 @@ public sealed class Appearance
     public string MonitorDevice { get; set; } = "";
     /// <summary>Atalho global que leva o foco ao Dock (ex.: "Win+Shift+D"); vazio = desligado.</summary>
     public string KeyboardShortcut { get; set; } = Hotkey.Default;
+    /// <summary>Atalho global que liga e desliga o "Ocultar automaticamente"; vazio = desligado.</summary>
+    public string ToggleShortcut { get; set; } = Hotkey.DefaultToggle;
+    /// <summary>Atalho global que abre a busca de apps e arquivos; vazio = desligado (padrão).</summary>
+    public string SearchShortcut { get; set; } = "";
+    /// <summary>Modificadores que, com 1 a 9, abrem o item N do Dock (ex.: "Win+Alt"); vazio = desligado.</summary>
+    public string ItemShortcutModifiers { get; set; } = "";
 }
 
 public sealed class DockSettings
@@ -242,7 +248,7 @@ public static class SettingsStore
     }
 
     public static readonly string[] AllWidgetKinds =
-        { "clock", "calendar", "weather", "system", "battery", "media", "trash" };
+        { "clock", "calendar", "weather", "system", "battery", "media", "search", "trash" };
 
     internal static void Normalize(DockSettings s)
     {
@@ -258,7 +264,11 @@ public static class SettingsStore
             {
                 // Padrão: relógio, calendário, clima e lixeira ligados
                 bool on = kind is "clock" or "calendar" or "weather" or "trash";
-                s.Widgets.Add(new WidgetConfig { Kind = kind, Enabled = on });
+                // Widget novo de uma versão nova entra antes da Lixeira quando ela está no fim (como no macOS);
+                // se o usuário mudou a Lixeira de lugar, vai para o fim.
+                var cfg = new WidgetConfig { Kind = kind, Enabled = on };
+                if (s.Widgets.Count > 0 && s.Widgets[^1].Kind == "trash") s.Widgets.Insert(s.Widgets.Count - 1, cfg);
+                else s.Widgets.Add(cfg);
             }
         }
 
@@ -275,6 +285,11 @@ public static class SettingsStore
         a.MonitorDevice ??= "";
         a.KeyboardShortcut ??= "";
         if (a.KeyboardShortcut.Length > 0 && Hotkey.Parse(a.KeyboardShortcut) == null) a.KeyboardShortcut = Hotkey.Default;
+        a.ToggleShortcut ??= "";
+        if (a.ToggleShortcut.Length > 0 && Hotkey.Parse(a.ToggleShortcut) == null) a.ToggleShortcut = Hotkey.DefaultToggle;
+        a.SearchShortcut ??= "";
+        if (a.SearchShortcut.Length > 0 && Hotkey.Parse(a.SearchShortcut) == null) a.SearchShortcut = "";
+        if (!Hotkey.ItemModifierChoices.Contains(a.ItemShortcutModifiers ?? "")) a.ItemShortcutModifiers = "";
         a.IconSize = Math.Clamp(a.IconSize, 32, 96);
         a.Magnification = Math.Clamp(a.Magnification, 1.0, 2.6);
         a.Opacity = Math.Clamp(a.Opacity, 0.0, 1.0);

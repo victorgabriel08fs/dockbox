@@ -14,6 +14,7 @@ public static class WidgetFactory
             "system" => new SystemWidget(),
             "battery" => new BatteryWidget(),
             "media" => new MediaWidget(),
+            "search" => new SearchWidget(),
             "trash" => new TrashWidget(),
             _ => null,
         };
@@ -29,6 +30,7 @@ public static class WidgetFactory
         "system" => Loc.T("W_System_Name"),
         "battery" => Loc.T("W_Battery_Name"),
         "media" => Loc.T("W_Media_Name"),
+        "search" => Loc.T("W_Search_Name"),
         "trash" => Loc.T("W_Trash_Name"),
         _ => kind,
     };
@@ -41,6 +43,7 @@ public static class WidgetFactory
         "system" => Loc.T("W_System_Desc"),
         "battery" => Loc.T("W_Battery_Desc"),
         "media" => Loc.T("W_Media_Desc"),
+        "search" => Loc.T("W_Search_Desc"),
         "trash" => Loc.T("W_Trash_Desc"),
         _ => "",
     };
@@ -54,6 +57,7 @@ public static class WidgetFactory
         "system" => "",
         "battery" => "",
         "media" => "",
+        "search" => "\uE721",
         "trash" => "",
         _ => "",
     };

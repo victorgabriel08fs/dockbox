@@ -64,6 +64,18 @@ O Dock some sozinho durante vídeo, jogo ou apresentação em tela cheia e volta
 - **Esc** sai e devolve o foco para a janela em que você estava.
 - O atalho pode ser trocado (ou desligado) em Gerenciar Dock → Comportamento → Teclado. Se outro programa já usa
   o atalho escolhido, aparece um aviso ali.
+- **Outros atalhos globais** (Comportamento → Teclado). Clique na caixa e aperte a combinação; Backspace ou
+  **Desligar** desligam.
+  - **Mostrar ou ocultar o Dock** (padrão **Ctrl+Alt+Shift+H**): liga e desliga o "Ocultar automaticamente", como
+    Option+Cmd+D no macOS.
+  - **Abrir a busca** (desligado por padrão): abre a busca estilo Spotlight. Digite o nome de um app ou arquivo e
+    aperte Enter; setas escolhem, Ctrl+Enter mostra o arquivo na pasta e Esc fecha. Procura nos apps do Menu
+    Iniciar, nos itens do Dock, nos arquivos recentes e na Área de Trabalho, em Documentos e em Downloads. O widget
+    **Busca** abre a mesma janela.
+  - **Abrir os itens 1 a 9**: com **Win+Alt** ou **Ctrl+Alt+Shift** e um número, abre o app naquela posição entre os
+    fixados (ou traz a janela se já está aberto). Vem desligado. Win+Alt+número pode já ser usado pelo Windows;
+    nesse caso aparece o aviso.
+  - Se um atalho já é usado por outro programa, ou repetido em duas funções, o aviso abaixo diz qual.
 - O Narrador e o NVDA leem o nome de cada item, se o app está aberto e o que cada widget mostra.
 - Com **Mostrar animações** desligado no Windows (Configurações → Acessibilidade → Efeitos visuais), o Dock não
   amplia, não pula e aparece/some sem deslizar. Com **alto contraste** ligado, o Dock usa as cores do Windows.
