@@ -248,7 +248,7 @@ public static class SettingsStore
     }
 
     public static readonly string[] AllWidgetKinds =
-        { "clock", "calendar", "weather", "system", "battery", "media", "search", "trash" };
+        { "clock", "calendar", "weather", "system", "battery", "media", "volume", "network", "notes", "timer", "clipboard", "search", "trash" };
 
     internal static void Normalize(DockSettings s)
     {

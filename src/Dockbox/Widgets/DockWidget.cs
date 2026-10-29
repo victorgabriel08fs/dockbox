@@ -58,6 +58,9 @@ public abstract class DockWidget
 
     public virtual void OnClick(FrameworkElement anchor) { }
 
+    /// <summary>Rodinha do mouse sobre o widget (120 = um dente para cima). True se usou o evento.</summary>
+    public virtual bool OnMouseWheel(int delta) => false;
+
     public virtual IEnumerable<(string Header, Action Action)> MenuItems() => Array.Empty<(string, Action)>();
 
     public virtual bool AcceptsFiles => false;

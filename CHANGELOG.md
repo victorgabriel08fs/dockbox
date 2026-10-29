@@ -12,6 +12,12 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 
 - Pilhas de pastas: clicar numa pasta fixada abre o conteúdo por cima do Dock em leque, grade (com rolagem) ou lista, com ordenação por nome, data de adição, data de modificação ou tipo; subpastas, arrastar itens para outros apps, atualização ao vivo e ícone do item mais recente. Soltar arquivos numa pasta do Dock move ou copia para ela. A pasta Downloads vem no Dock em instalações novas (#27).
 - Ícones personalizados: "Trocar ícone…" no botão direito e no Gerenciar Dock aceita imagens (.png, .jpg, .ico...) e ícones de programas (.exe, .dll); a imagem é copiada e reduzida para 256 px, então continua funcionando se o original sumir. "Restaurar ícone padrão" volta ao ícone do app (#28).
+- Novos widgets (vêm desligados; ligue em Gerenciar Dock → Widgets) (#30):
+  - Volume: rolar ajusta, clique silencia e o rótulo mostra o dispositivo de saída.
+  - Rede: Wi-Fi ou cabo, nome da rede e velocidade de download e upload.
+  - Notas rápidas: um bloquinho flutuante que salva sozinho em `%APPDATA%\Dockbox\notas.txt`.
+  - Temporizador: Pomodoro de 25 min, com 5, 15 e 50 min no botão direito, e som ao terminar.
+  - Área de transferência: os últimos 10 textos copiados, guardados só na memória; ignora o que os gerenciadores de senha pedem para não guardar.
 - Atalhos globais (#31), editáveis em Comportamento → Teclado (clique na caixa e aperte a combinação):
   - **Ctrl+Alt+Shift+H** mostra e oculta o Dock, ligando e desligando o "Ocultar automaticamente", como Option+Cmd+D no macOS.
   - Atalho opcional para a busca.

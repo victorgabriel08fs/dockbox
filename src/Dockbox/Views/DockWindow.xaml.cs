@@ -617,6 +617,13 @@ public partial class DockWindow : Window
             w.SetTheme(_theme);
             w.AvailabilityChanged += () => Dispatcher.BeginInvoke(RebuildTiles);
             var box = new Viewbox { Stretch = Stretch.Uniform, Child = w.Visual, Cursor = Cursors.Hand, Focusable = true, FocusVisualStyle = null };
+            box.MouseWheel += (_, e) =>
+            {
+                if (!w.OnMouseWheel(e.Delta)) return;
+                e.Handled = true;
+                if (_hovering) UpdateLabel(GetMouseDock());
+                UpdateAutomationNames();
+            };
             cached = (w, box);
             _widgetCache[kind] = cached;
         }

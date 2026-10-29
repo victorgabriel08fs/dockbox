@@ -101,7 +101,17 @@ Abra pelo botão direito no Dock → **Gerenciar Dock...**. As mudanças aparece
 | Monitor do sistema | Uso de CPU e RAM | Abre o Gerenciador de Tarefas |
 | Bateria | Carga (só aparece em notebooks) | Abre a economia de bateria |
 | Mídia | Música ou vídeo tocando agora | Tocar/pausar |
+| Volume | Volume e se está sem som; dispositivo no rótulo | Silencia; role o mouse para ajustar |
+| Rede | Wi-Fi ou cabo e velocidade de download/upload; nome da rede no rótulo | Abre o status de rede |
+| Notas rápidas | Começo da sua nota | Abre o bloquinho (salva sozinho) |
+| Temporizador | Minutos restantes (Pomodoro de 25 min) | Inicia/pausa; botão direito escolhe 5, 15, 25 ou 50 min |
+| Área de transferência | Quantos textos foram copiados | Lista os últimos 10; clique num para copiar de novo |
 | Lixeira | Se tem itens | Abre a Lixeira; botão direito para esvaziar |
+
+Volume, Rede, Notas rápidas, Temporizador e Área de transferência vêm desligados. A nota fica em
+`%APPDATA%\Dockbox\notas.txt`. O histórico da área de transferência fica só na memória e some ao fechar o Dockbox.
+Ele não guarda o que os gerenciadores de senha marcam como "não registrar". Use **Pausar histórico** no botão
+direito quando for copiar algo sensível de outro lugar.
 
 **Clima e privacidade**: digite sua cidade em **Cidade do clima** e clique em **Aplicar**. A previsão vem do
 `open-meteo.com`. Se preferir não digitar, ligue **Sem cidade: detectar pela internet**: aí o Dockbox descobre sua
