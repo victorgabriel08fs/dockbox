@@ -121,6 +121,7 @@ public partial class SettingsWindow : Window
         };
 
         LoadAll();
+        BuildBuiltInThemes();
     }
 
     /// <summary>Barra de título escura quando o tema é escuro (Windows 10 20H1+ / 11).</summary>

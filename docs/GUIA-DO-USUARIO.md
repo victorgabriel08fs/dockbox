@@ -128,6 +128,18 @@ clique em **Trocar ícone…**). Escolha uma imagem (.png, .jpg, .bmp, .gif, .ic
 Dockbox (`%APPDATA%\Dockbox\icons`) e reduzida para no máximo 256 px, então pode apagar ou mover o original.
 **Restaurar ícone padrão** volta ao ícone do app. SVG não é aceito: converta para PNG antes.
 
+**Temas**: em Estilo → **Temas**, clique num tema pronto (**Sonoma claro**, **Sonoma escuro**, **Grafite** ou
+**Transparente**) para mudar cores, fundo e cantos de uma vez; o tamanho dos ícones e a ampliação ficam como estão.
+**Exportar tema…** salva o seu estilo (cores, opacidade, desfoque, cantos, tamanho e ampliação) num arquivo
+`.dockbox-theme` para usar de novo ou mandar para alguém. **Importar tema…** mostra o tema no Dock e pergunta se
+quer mantê-lo; **Não** volta ao que estava.
+
+**Backup**: em Comportamento → **Backup**, **Exportar tudo…** salva apps, pastas, widgets, estilo, posição e
+opções num arquivo `.dockbox-backup`, com os ícones personalizados dentro. Em outro PC (ou depois de reinstalar),
+**Importar tudo…** deixa o Dock igual. Por segurança, scripts e links que vieram do arquivo pedem confirmação de
+novo na primeira vez que abrirem. Se o arquivo estiver danificado, for de outro tipo ou de uma versão mais nova do
+Dockbox, aparece o motivo e nada muda.
+
 **Pilhas de pastas**: clique numa pasta fixada no Dock (por exemplo, Downloads, que já vem no Dock) e o
 conteúdo abre por cima dele, sem abrir o Explorador.
 - **Leque**: os itens sobem a partir do ícone numa curva, com o nome ao lado (com até 10 itens e o Dock embaixo).

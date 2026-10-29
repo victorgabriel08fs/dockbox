@@ -4,7 +4,7 @@ Cada pasta guarda o executável pronto de uma versão, para baixar sem compilar.
 
 | Versão | Data | Arquivo | Notas |
 |---|---|---|---|
-| [v0.4.0](https://github.com/victorgabriel08fs/dockbox/releases/tag/v0.4.0) | 2026-10-29 | `Dockbox-v0.4.0-win-x64.zip` | Visual, Gerenciar Dock, widgets, vários monitores, idiomas, desfoque, miniaturas, badges e animação ao minimizar |
+| [v0.4.0](v0.4.0/) | 2026-10-29 | `Dockbox-v0.4.0-win-x64.zip` | Visual, Gerenciar Dock, widgets, vários monitores, idiomas, desfoque, miniaturas, badges e animação ao minimizar |
 | [v0.1.0](v0.1.0/) | 2026-10-29 | `Dockbox-v0.1.0-win-x64.zip` | MVP (Fase 1) |
 
 O que mudou em cada versão está no [CHANGELOG](../CHANGELOG.md).

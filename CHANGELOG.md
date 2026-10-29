@@ -18,6 +18,8 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
   - **Win+Alt+1…9** ou **Ctrl+Alt+Shift+1…9** abrem o item N do Dock (desligado por padrão).
   - Atalho já usado por outro programa, ou repetido no Dockbox, mostra um aviso com o nome.
 - Busca estilo Spotlight (#30, #31): digite e Enter abre apps do Menu Iniciar, itens do Dock e arquivos recentes, da Área de Trabalho, de Documentos e de Downloads; Ctrl+Enter mostra na pasta. Abre pelo atalho ou pelo novo widget Busca.
+- Temas: em Estilo, temas prontos (Sonoma claro, Sonoma escuro, Grafite, Transparente) e "Importar tema…"/"Exportar tema…" em arquivos `.dockbox-theme`; o tema importado aparece no Dock antes de confirmar e "Não" volta ao anterior (#29).
+- Backup completo: em Comportamento, "Exportar tudo…"/"Importar tudo…" salva e restaura apps, pastas, widgets, estilo e opções num arquivo `.dockbox-backup`, com os ícones personalizados dentro. Itens importados pedem confirmação de novo antes de abrir scripts e links. Arquivo inválido mostra o motivo e não muda nada (#29).
 
 ## [0.4.0] - 2026-10-29
 

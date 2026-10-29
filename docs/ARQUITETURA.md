@@ -136,6 +136,19 @@ imagens (`BitmapDecoder`, maior quadro de um .ico) ou um ícone de .exe/.dll (`P
 (GUID). O Dock e o Gerenciar Dock usam o ícone personalizado antes do ícone do app. Restaurar apaga a cópia se
 nenhum outro item a usa.
 
+## Temas e backup
+
+`Core/ThemeFiles` lê e grava dois arquivos JSON com `format` e `version` no topo: `.dockbox-theme` (só
+`ThemeData`: cores, opacidade, desfoque, cantos, tamanho e ampliação) e `.dockbox-backup` (o `DockSettings`
+inteiro mais os PNGs de `icons` em base64). Tudo é lido e validado antes de aplicar: JSON quebrado, formato
+errado, versão mais nova ou valores que não convertem viram `ThemeFileException` com a mensagem para o usuário;
+valores fora do intervalo passam pelo mesmo `SettingsStore.Normalize` das configurações. No backup, `Trusted` volta
+a `false` em todos os itens (scripts e links pedem confirmação de novo), nomes de ícone viram só o nome do arquivo
+(`.png`) e ícones citados mas ausentes voltam ao do app. Os temas prontos ficam em `ThemeFiles.BuiltIn` e não mudam
+tamanho nem ampliação. A interface está em `Views/SettingsWindow.Themes.cs`: importar tema aplica, salva e pergunta
+se mantém (desfaz com os valores de antes); importar backup grava os ícones primeiro e só então troca as
+configurações.
+
 ## Pilhas de pastas
 
 Clicar num item fixado que é uma pasta abre `Views/StackWindow` (em vez do Explorador). É uma janela WPF
