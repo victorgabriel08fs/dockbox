@@ -78,8 +78,12 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Reordenar funciona com o Dock embaixo, em cima e nas laterais.
 
 ### 6. Menus
-- [ ] Botão direito num app: cabeçalho com o nome, Abrir/Mostrar, Nova janela (só se aberto),
-      Mostrar no Explorador (seleciona o arquivo), Remover do Dock.
+- [ ] Botão direito num app fechado: cabeçalho com o nome, Abrir, Mostrar no Explorador (seleciona o arquivo),
+      Remover do Dock e o submenu Opções do Dock.
+- [ ] Botão direito num app aberto com 2+ janelas: lista as janelas pelo título (minimizadas marcadas); clicar traz aquela janela.
+      Nova janela abre outra instância; **Fechar todas as janelas (N)** fecha (o app pode perguntar se quer salvar).
+- [ ] Numa pasta fixada: "Mostrar a pasta no Explorador".
+- [ ] Menus pelo teclado: setas, Enter e Esc funcionam; ao fechar com Esc o foco volta para o app que estava ativo.
 - [ ] Botão direito num widget: opções do widget e Remover widget.
 - [ ] Botão direito no fundo: Gerenciar Dock, ampliação, posição (marca a atual), Sair.
 - [ ] Com o menu aberto, o rótulo some e os ícones não ficam ampliados presos.
