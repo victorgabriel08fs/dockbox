@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Dockbox.Core;
@@ -42,6 +43,7 @@ public partial class DockWindow : Window
         public double Scale = 1;
         public double Main, Size;       // posição/tamanho atuais no eixo do Dock
         public double BounceStart = -1; // segundos do relógio interno; -1 = sem pulo
+        public double GapBefore;        // espaço aberto antes do ícone (arrastar), animado
         public string Label => Entry?.Name ?? Widget?.Label ?? "";
     }
 
@@ -69,6 +71,16 @@ public partial class DockWindow : Window
     private double _edgeSince = -1;            // desde quando o mouse está na borda
     private double _leaveSince = -1;           // desde quando o mouse saiu do Dock
     private readonly TranslateTransform _slide = new();
+
+    // ---- Arrastar ícones dentro do Dock ----
+    private const double DragThreshold = 6;    // DIPs antes de virar arraste (clique continua clique)
+    private Tile? _pressTile;                  // ícone com o botão apertado
+    private (double main, double cross) _pressPoint;
+    private Tile? _dragTile;                   // ícone sendo arrastado
+    private int _dragSlot;                     // posição entre os apps onde ele vai entrar
+    private bool _dragRemove;                  // solto aqui, sai do Dock
+    private int _externalSlot = -1;            // arquivo vindo de fora: onde vai entrar (-1 = nenhum)
+    private double _gapEnd;                    // espaço aberto depois do último app
 
     private Appearance A => SettingsStore.Current.Appearance;
     private double BaseSize => A.IconSize;
@@ -102,7 +114,11 @@ public partial class DockWindow : Window
         SizeChanged += (_, _) => Layout();
 
         DragOver += OnDragOver;
+        DragLeave += (_, _) => { _externalSlot = -1; StartAnimating(); };
         Drop += OnDrop;
+        MouseMove += OnMouseMoveDrag;
+        MouseLeftButtonUp += OnMouseUpDrag;
+        LostMouseCapture += (_, _) => CancelPress();
         MouseRightButtonUp += OnRightClick;
 
         SettingsStore.Changed += ApplySettings;
@@ -347,29 +363,179 @@ public partial class DockWindow : Window
     private void HookClicks(Tile tile)
     {
         var v = tile.Visual;
-        // Remove handlers antigos (o Viewbox de widget é reaproveitado entre reconstruções)
-        if (v.Tag is (MouseButtonEventHandler down, MouseButtonEventHandler up, MouseEventHandler leave))
+        // Remove o handler antigo (o Viewbox de widget é reaproveitado entre reconstruções)
+        if (v.Tag is MouseButtonEventHandler old) v.MouseLeftButtonDown -= old;
+
+        // O clique é decidido ao soltar (OnMouseUpDrag): se o mouse andou, vira arraste.
+        MouseButtonEventHandler down = (_, e) =>
         {
-            v.MouseLeftButtonDown -= down;
-            v.MouseLeftButtonUp -= up;
-            v.MouseLeave -= leave;
+            e.Handled = true;
+            if (GetMouseDock() is not (double m, double c)) return;
+            tile.Pressed = true;
+            _pressTile = tile;
+            _pressPoint = (m, c);
+            CaptureMouse();
+            StartAnimating();
+        };
+        v.MouseLeftButtonDown += down;
+        v.Tag = down;
+    }
+
+    // ================= Arrastar ícones no Dock =================
+
+    private double SlotSize => BaseSize + Gap;
+    private double _dragCross;
+
+    private int AppCount => _tiles.Count(t => t.Kind == TileKind.App);
+
+    /// <summary>Espaço que o ícone de índice <paramref name="index"/> deve abrir antes de si (índice = Count: depois do último).</summary>
+    private double TargetGap(int index)
+    {
+        int slot;
+        Tile? skip;
+        if (_dragTile != null && !_dragRemove) { slot = _dragSlot; skip = _dragTile; }
+        else if (_externalSlot >= 0) { slot = _externalSlot; skip = null; }
+        else return 0;
+        return GapIndex(slot, skip) == index ? SlotSize : 0;
+    }
+
+    /// <summary>Índice em _tiles antes do qual fica o espaço da posição <paramref name="slot"/> entre os apps.</summary>
+    private int GapIndex(int slot, Tile? skip)
+    {
+        int seen = 0;
+        for (int i = 0; i < _tiles.Count; i++)
+        {
+            var t = _tiles[i];
+            if (t == skip) continue;
+            if (t.Kind != TileKind.App || seen == slot) return i; // os apps vêm primeiro
+            seen++;
+        }
+        return _tiles.Count;
+    }
+
+    /// <summary>Em qual das <paramref name="slots"/> posições entre os apps fica o ponto <paramref name="main"/>.</summary>
+    private int SlotAt(double main, int slots, bool extraSlot)
+    {
+        double total = _tiles.Sum(TileRestLength) + Math.Max(0, _tiles.Count - 1) * Gap + Pad * 2 + (extraSlot ? SlotSize : 0);
+        double start = (MainLength - total) / 2 + Pad;
+        int k = (int)Math.Floor((main - start + Gap / 2) / SlotSize);
+        return Math.Clamp(k, 0, Math.Max(0, slots - 1));
+    }
+
+    private void OnMouseMoveDrag(object sender, MouseEventArgs e)
+    {
+        if (_pressTile == null || GetMouseDock() is not (double m, double c)) return;
+        if (_dragTile == null)
+        {
+            if (_pressTile.Kind != TileKind.App) return; // widgets ficam fixos
+            if (Math.Abs(m - _pressPoint.main) < DragThreshold && Math.Abs(c - _pressPoint.cross) < DragThreshold) return;
+            BeginDrag(_pressTile);
+        }
+        _dragRemove = c > EdgeMargin + BackgroundThickness + BaseSize * 0.9;
+        _dragSlot = SlotAt(m, AppCount, extraSlot: false);
+        StartAnimating();
+    }
+
+    private void BeginDrag(Tile t)
+    {
+        _dragTile = t;
+        t.Pressed = false;
+        Panel.SetZIndex(t.Visual, 50);
+        _dragSlot = _tiles.Where(x => x.Kind == TileKind.App).ToList().IndexOf(t);
+        // O espaço já nasce aberto onde o ícone estava, para nada pular.
+        int gi = GapIndex(_dragSlot, t);
+        if (gi < _tiles.Count) _tiles[gi].GapBefore = SlotSize;
+        else _gapEnd = SlotSize;
+    }
+
+    /// <summary>Desenha o ícone arrastado seguindo o mouse.</summary>
+    private void PlaceDragged(Tile t, double baseCross)
+    {
+        if (GetMouseDock() is not (double m, double c)) return;
+        double size = BaseSize;
+        double crossMax = Math.Max(baseCross, (Horizontal ? H : W) - size - 34); // deixa lugar para o rótulo
+        t.Main = m - size / 2;
+        t.Size = size;
+        _dragCross = Math.Clamp(c - size / 2, baseCross, crossMax);
+        PlaceRect(t.Visual, t.Main, _dragCross, size, size);
+        t.Visual.Opacity = _dragRemove ? 0.5 : 0.9;
+        if (t.Dot != null) t.Dot.Visibility = Visibility.Collapsed;
+    }
+
+    private void OnMouseUpDrag(object sender, MouseButtonEventArgs e)
+    {
+        var press = _pressTile;
+        if (press == null) return;
+        e.Handled = true;
+        var drag = _dragTile;
+        bool remove = _dragRemove;
+        int slot = _dragSlot;
+        var mouse = GetMouseDock();
+        EndPress();
+
+        if (drag == null)
+        {
+            // Não arrastou: é um clique, se soltou em cima do mesmo item.
+            if (mouse is (double m, double c) && TileAt(m) == press && IsInside(m, c, true)) OnTileClicked(press);
+            return;
         }
 
-        MouseButtonEventHandler d = (_, e) => { tile.Pressed = true; StartAnimating(); e.Handled = true; };
-        MouseButtonEventHandler u = (_, e) =>
+        var entry = drag.Entry!;
+        if (remove)
         {
-            bool was = tile.Pressed;
-            tile.Pressed = false;
-            StartAnimating();
-            e.Handled = true;
-            if (was) OnTileClicked(tile);
-        };
-        MouseEventHandler l = (_, _) => { tile.Pressed = false; StartAnimating(); };
+            Puff(mouse);
+            RemoveEntry(entry);
+            return;
+        }
+        var items = SettingsStore.Current.Items;
+        int from = items.IndexOf(entry);
+        if (from < 0 || from == slot) return;
+        items.RemoveAt(from);
+        items.Insert(Math.Clamp(slot, 0, items.Count), entry);
+        SettingsStore.Commit();
+    }
 
-        v.MouseLeftButtonDown += d;
-        v.MouseLeftButtonUp += u;
-        v.MouseLeave += l;
-        v.Tag = (d, u, l);
+    private void EndPress()
+    {
+        if (_dragTile != null) Panel.SetZIndex(_dragTile.Visual, 0);
+        if (_pressTile != null) _pressTile.Pressed = false;
+        _pressTile = null;
+        _dragTile = null;
+        _dragRemove = false;
+        if (IsMouseCaptured) ReleaseMouseCapture();
+        StartAnimating();
+    }
+
+    private void CancelPress()
+    {
+        if (_pressTile != null) EndPress();
+    }
+
+    /// <summary>Nuvem rápida que some, no lugar onde um item foi removido.</summary>
+    private void Puff((double main, double cross)? at)
+    {
+        if (at is not (double m, double c)) return;
+        double size = BaseSize;
+        var scale = new ScaleTransform(0.4, 0.4);
+        var puff = new Ellipse
+        {
+            Fill = new RadialGradientBrush(Color.FromArgb(220, 255, 255, 255), Color.FromArgb(0, 255, 255, 255)),
+            IsHitTestVisible = false,
+            RenderTransformOrigin = new Point(0.5, 0.5),
+            RenderTransform = scale,
+        };
+        double crossMax = Math.Max(0, (Horizontal ? H : W) - size);
+        PlaceRect(puff, m - size / 2, Math.Clamp(c - size / 2, 0, crossMax), size, size);
+        Panel.SetZIndex(puff, 60);
+        DockCanvas.Children.Add(puff);
+
+        var duration = TimeSpan.FromMilliseconds(280);
+        var grow = new DoubleAnimation(0.4, 1.5, duration) { EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut } };
+        scale.BeginAnimation(ScaleTransform.ScaleXProperty, grow);
+        scale.BeginAnimation(ScaleTransform.ScaleYProperty, grow);
+        var fade = new DoubleAnimation(0.9, 0, duration);
+        fade.Completed += (_, _) => DockCanvas.Children.Remove(puff);
+        puff.BeginAnimation(OpacityProperty, fade);
     }
 
     // ================= Ações =================
@@ -483,6 +649,7 @@ public partial class DockWindow : Window
         bool wasHovering = _hovering;
         _hovering = !_menuOpen && _shown && mouse is (double mm, double mc) && IsInside(mm, mc, _hovering);
         if (_menuOpen) _hovering = wasHovering;
+        if (_dragTile != null || _pressTile != null) _hovering = true;
         bool revealSettled = UpdateReveal(now, dt);
 
         // Distâncias medidas nas posições "em repouso" para o efeito não oscilar.
@@ -496,7 +663,7 @@ public partial class DockWindow : Window
             if (t.Kind == TileKind.Separator) continue;
 
             double target = 1;
-            if (_hovering && mouse is (double main, double) && MaxScale > 1.001)
+            if (_hovering && _dragTile == null && _externalSlot < 0 && mouse is (double main, double) && MaxScale > 1.001)
             {
                 double d = Math.Abs(main - restCenters[i]) / InfluenceRadius;
                 if (d < 1) target = 1 + (MaxScale - 1) * (Math.Cos(Math.PI * d) + 1) / 2;
@@ -506,12 +673,22 @@ public partial class DockWindow : Window
             if (Math.Abs(target - t.Scale) > 0.002) settled = false;
             else t.Scale = target;
 
+            double gap = TargetGap(i);
+            t.GapBefore += (gap - t.GapBefore) * k;
+            if (Math.Abs(gap - t.GapBefore) > 0.3) settled = false;
+            else t.GapBefore = gap;
+
             if (t.BounceStart >= 0)
             {
                 if (now - t.BounceStart > BounceDuration) t.BounceStart = -1;
                 else settled = false;
             }
         }
+
+        double endGap = TargetGap(_tiles.Count);
+        _gapEnd += (endGap - _gapEnd) * k;
+        if (Math.Abs(endGap - _gapEnd) > 0.3) settled = false;
+        else _gapEnd = endGap;
 
         Layout();
         UpdateLabel(mouse);
@@ -617,9 +794,16 @@ public partial class DockWindow : Window
         double b = BaseSize;
 
         double content = 0;
-        foreach (var t in _tiles) content += t.Kind == TileKind.Separator ? SeparatorLength : b * t.Scale;
-        content += Math.Max(0, _tiles.Count - 1) * Gap;
-        if (_tiles.Count == 0) content = b;
+        int inFlow = 0;
+        foreach (var t in _tiles)
+        {
+            content += t.GapBefore;
+            if (t == _dragTile) continue; // o ícone arrastado segue o mouse, fora da fila
+            content += t.Kind == TileKind.Separator ? SeparatorLength : b * t.Scale;
+            inFlow++;
+        }
+        content += _gapEnd + Math.Max(0, inFlow - 1) * Gap;
+        if (inFlow == 0 && content <= 0) content = b;
 
         _dockLength = content + Pad * 2;
         _dockStart = Math.Round((MainLength - _dockLength) / 2);
@@ -634,6 +818,12 @@ public partial class DockWindow : Window
         double baseCross = EdgeMargin + Pad;
         foreach (var t in _tiles)
         {
+            x += t.GapBefore;
+            if (t == _dragTile)
+            {
+                PlaceDragged(t, baseCross);
+                continue;
+            }
             if (t.Kind == TileKind.Separator)
             {
                 double len = b * 0.72;
@@ -684,27 +874,29 @@ public partial class DockWindow : Window
     }
 
     private Tile? TileAt(double main) =>
-        _tiles.FirstOrDefault(t => t.Kind != TileKind.Separator && main >= t.Main - Gap / 2 && main < t.Main + t.Size + Gap / 2);
+        _tiles.FirstOrDefault(t => t != _dragTile && t.Kind != TileKind.Separator && main >= t.Main - Gap / 2 && main < t.Main + t.Size + Gap / 2);
 
     private void UpdateLabel((double main, double cross)? mouse)
     {
         Tile? hot = null;
-        if (A.ShowLabels && _hovering && !_menuOpen && mouse is (double main, double)) hot = TileAt(main);
+        if (A.ShowLabels && _hovering && !_menuOpen && _pressTile == null && _externalSlot < 0 && mouse is (double main, double)) hot = TileAt(main);
+        if (_dragTile != null) hot = _dragTile;
+        string text = _dragTile != null && _dragRemove ? "Remover" : hot?.Label ?? "";
 
-        if (hot == null || string.IsNullOrEmpty(hot.Label))
+        if (hot == null || string.IsNullOrEmpty(text))
         {
             NameLabel.Visibility = Visibility.Collapsed;
             return;
         }
 
-        NameLabelText.Text = hot.Label;
+        NameLabelText.Text = text;
         NameLabel.Visibility = Visibility.Visible;
         NameLabel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         var sz = NameLabel.DesiredSize;
         double mainLen = Horizontal ? sz.Width : sz.Height;
         double crossLen = Horizontal ? sz.Height : sz.Width;
 
-        double cross = EdgeMargin + Pad + hot.Size + BounceOffset(hot) + 10;
+        double cross = hot == _dragTile ? _dragCross + hot.Size + 10 : EdgeMargin + Pad + hot.Size + BounceOffset(hot) + 10;
         double main0 = hot.Main + hot.Size / 2 - mainLen / 2;
         main0 = Math.Clamp(main0, 4, Math.Max(4, MainLength - mainLen - 4));
         PlacePos(NameLabel, Math.Round(main0), Math.Round(cross), mainLen, crossLen);
@@ -839,14 +1031,19 @@ public partial class DockWindow : Window
             return;
         }
         StartAnimating();
-        var t = DropTarget(out _);
+        var t = DropTarget(out double main);
         if (t?.Widget is { AcceptsFiles: true }) e.Effects = DragDropEffects.Move;
         else if (t?.Kind == TileKind.App && !files.All(IsPinnable)) e.Effects = DragDropEffects.Copy;
         else e.Effects = DragDropEffects.Link;
+
+        // Ao fixar, abre espaço mostrando onde o item vai entrar.
+        _externalSlot = e.Effects == DragDropEffects.Link ? SlotAt(main, AppCount + 1, extraSlot: true) : -1;
     }
 
     private void OnDrop(object sender, DragEventArgs e)
     {
+        int slot = _externalSlot;
+        _externalSlot = -1;
         if (e.Data.GetData(DataFormats.FileDrop) is not string[] files || files.Length == 0) return;
         e.Handled = true;
         var t = DropTarget(out double main);
@@ -865,7 +1062,7 @@ public partial class DockWindow : Window
 
         // Fixar no Dock, na posição em que foi solto
         var items = SettingsStore.Current.Items;
-        int index = _tiles.Count(x => x.Kind == TileKind.App && x.Main + x.Size / 2 < main);
+        int index = slot >= 0 ? slot : _tiles.Count(x => x.Kind == TileKind.App && x.Main + x.Size / 2 < main);
         index = Math.Clamp(index, 0, items.Count);
         foreach (var f in files)
         {
