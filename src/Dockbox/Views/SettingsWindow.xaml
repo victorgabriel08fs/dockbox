@@ -263,6 +263,12 @@
                             <CheckBox x:Name="RunningToggle" Style="{StaticResource UiToggle}" Content="Indicador de app aberto (ponto embaixo do ícone)" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="BounceToggle" Style="{StaticResource UiToggle}" Content="Animação de pulo ao abrir um app" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="SeparatorToggle" Style="{StaticResource UiToggle}" Content="Separador entre apps e widgets" Click="Toggle_Click" Margin="0,0,0,14"/>
+                            <CheckBox x:Name="AutoHideToggle" Style="{StaticResource UiToggle}" Content="Ocultar e mostrar o Dock automaticamente" Click="Toggle_Click" Margin="0,0,0,10"/>
+                            <DockPanel x:Name="AutoHideDelayRow" Margin="0,0,0,4">
+                                <TextBlock x:Name="AutoHideDelayValue" DockPanel.Dock="Right" Foreground="{DynamicResource UiSubFg}"/>
+                                <TextBlock Text="Tempo com o mouse na borda até aparecer" Foreground="{DynamicResource UiSubFg}"/>
+                            </DockPanel>
+                            <Slider x:Name="AutoHideDelaySlider" Style="{StaticResource UiSlider}" Minimum="0" Maximum="1.5" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
                             <CheckBox x:Name="ReserveToggle" Style="{StaticResource UiToggle}" Content="Reservar espaço na tela (janelas maximizadas param antes do Dock)" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="AutostartToggle" Style="{StaticResource UiToggle}" Content="Iniciar o Dockbox junto com o Windows" Click="Autostart_Click"/>
                         </StackPanel>

@@ -61,6 +61,15 @@ public partial class DockWindow : Window
     private AppBar? _appBar;
     private bool _positioning;
 
+    // ---- Auto-ocultar ----
+    private const double EdgeTrigger = 3;      // faixa (DIPs) junto à borda que revela o Dock
+    private const double HideDelay = 0.35;     // segundos depois que o mouse sai
+    private bool _shown = true;                // estado desejado: visível ou escondido
+    private double _reveal = 1;                // animado: 1 = visível, 0 = fora da tela
+    private double _edgeSince = -1;            // desde quando o mouse está na borda
+    private double _leaveSince = -1;           // desde quando o mouse saiu do Dock
+    private readonly TranslateTransform _slide = new();
+
     private Appearance A => SettingsStore.Current.Appearance;
     private double BaseSize => A.IconSize;
     private double MaxScale => A.Magnify ? A.Magnification : 1.0;
@@ -71,11 +80,12 @@ public partial class DockWindow : Window
     public DockWindow()
     {
         InitializeComponent();
+        DockCanvas.RenderTransform = _slide;
         PositionWindow();
 
         // Parado: confere o mouse 20x por segundo. Com o mouse no Dock: anima a cada frame.
         _idleTimer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(50) };
-        _idleTimer.Tick += (_, _) => { if (IsMouseInDock()) StartAnimating(); };
+        _idleTimer.Tick += (_, _) => { if (ShouldWake()) StartAnimating(); };
 
         // Widgets e indicadores de apps abertos
         _slowTimer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromSeconds(1) };
@@ -184,7 +194,8 @@ public partial class DockWindow : Window
     private Rect? ReserveArea(bool force)
     {
         if (_appBar == null) return null;
-        if (!A.ReserveSpace)
+        // Com auto-ocultar, o Dock não reserva espaço (senão sobraria uma faixa vazia).
+        if (!A.ReserveSpace || A.AutoHide)
         {
             _appBar.Remove();
             return null;
@@ -207,6 +218,7 @@ public partial class DockWindow : Window
 
     private void ApplySettings()
     {
+        if (!A.AutoHide) _shown = true;
         ApplyTheme();
         RebuildTiles();
         PositionWindow();
@@ -469,8 +481,9 @@ public partial class DockWindow : Window
 
         var mouse = GetMouseDock();
         bool wasHovering = _hovering;
-        _hovering = !_menuOpen && mouse is (double mm, double mc) && IsInside(mm, mc, _hovering);
+        _hovering = !_menuOpen && _shown && mouse is (double mm, double mc) && IsInside(mm, mc, _hovering);
         if (_menuOpen) _hovering = wasHovering;
+        bool revealSettled = UpdateReveal(now, dt);
 
         // Distâncias medidas nas posições "em repouso" para o efeito não oscilar.
         var restCenters = RestCenters();
@@ -503,7 +516,65 @@ public partial class DockWindow : Window
         Layout();
         UpdateLabel(mouse);
 
-        if (settled && !_hovering) StopAnimating();
+        if (settled && revealSettled && !_hovering) StopAnimating();
+    }
+
+    // ================= Auto-ocultar =================
+
+    /// <summary>Chamado pelo timer parado: acorda a animação quando o mouse chega ao Dock (ou à borda, se oculto).</summary>
+    private bool ShouldWake()
+    {
+        if (!A.AutoHide || _shown) return IsMouseInDock();
+
+        double now = _clock.Elapsed.TotalSeconds;
+        if (IsMouseAtEdge())
+        {
+            // Espera um pouco para não aparecer quando o mouse só passa pela borda.
+            if (_edgeSince < 0) _edgeSince = now;
+            if (now - _edgeSince >= A.AutoHideDelay)
+            {
+                _edgeSince = -1;
+                _shown = true;
+                return true;
+            }
+        }
+        else _edgeSince = -1;
+        return false;
+    }
+
+    private bool IsMouseAtEdge() =>
+        GetMouseDock() is (double m, double c)
+        && m >= _dockStart && m <= _dockStart + _dockLength
+        && c >= -2 && c <= EdgeTrigger;
+
+    /// <summary>Decide se o Dock deve sumir e anima o deslize. Devolve true quando não há nada a animar.</summary>
+    private bool UpdateReveal(double now, double dt)
+    {
+        bool waiting = false;
+        if (!A.AutoHide) _shown = true;
+        else if (_hovering || _menuOpen) _leaveSince = -1;
+        else if (_shown)
+        {
+            if (_leaveSince < 0) _leaveSince = now;
+            if (now - _leaveSince >= HideDelay) { _shown = false; _leaveSince = -1; }
+            else waiting = true;
+        }
+
+        double target = _shown ? 1 : 0;
+        _reveal += (target - _reveal) * (1 - Math.Exp(-dt * 14));
+        bool settled = Math.Abs(target - _reveal) < 0.003;
+        if (settled) _reveal = target;
+        ApplySlide();
+        return settled && !waiting;
+    }
+
+    /// <summary>Empurra todo o conteúdo do Dock para fora da tela conforme <see cref="_reveal"/>.</summary>
+    private void ApplySlide()
+    {
+        // Fundo + margem + sombra precisam sair inteiros.
+        double distance = (1 - _reveal) * (EdgeMargin + BackgroundThickness + 30);
+        _slide.X = A.Edge switch { DockEdge.Left => -distance, DockEdge.Right => distance, _ => 0 };
+        _slide.Y = A.Edge switch { DockEdge.Top => -distance, DockEdge.Bottom => distance, _ => 0 };
     }
 
     private const double BounceDuration = 1.4;
@@ -705,6 +776,11 @@ public partial class DockWindow : Window
         menu.Items.Add(Item(A.Magnify ? "Desligar ampliação" : "Ligar ampliação", () =>
         {
             A.Magnify = !A.Magnify;
+            SettingsStore.Commit();
+        }));
+        menu.Items.Add(Item(A.AutoHide ? "Desligar ocultação automática" : "Ligar ocultação automática", () =>
+        {
+            A.AutoHide = !A.AutoHide;
             SettingsStore.Commit();
         }));
         menu.Items.Add(new Separator());

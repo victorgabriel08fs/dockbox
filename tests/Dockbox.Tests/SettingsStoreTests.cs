@@ -211,6 +211,19 @@ public sealed class SettingsStoreTests : IDisposable
         """);
         SettingsStore.Load();
         Assert.True(SettingsStore.Current.Appearance.ReserveSpace);
+        Assert.False(SettingsStore.Current.Appearance.AutoHide);
+        Assert.Equal(0.3, SettingsStore.Current.Appearance.AutoHideDelay);
+    }
+
+    [Fact]
+    public void AtrasoDoAutoOcultar_ELimitado()
+    {
+        WriteSettings("""
+        { "Appearance": { "AutoHide": true, "AutoHideDelay": 30 } }
+        """);
+        SettingsStore.Load();
+        Assert.True(SettingsStore.Current.Appearance.AutoHide);
+        Assert.Equal(2, SettingsStore.Current.Appearance.AutoHideDelay);
     }
 
     // ---------- Normalização de valores editados à mão ----------

@@ -70,8 +70,12 @@ localização pelo endereço IP usando o serviço `ipwho.is` (seu IP é enviado 
 **Estilo**: tema (automático, claro, escuro ou personalizado), cor do fundo, cor de destaque, opacidade,
 cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).
 
-**Comportamento**: mostrar nome, ponto de app aberto, animação de pulo, separador, reservar espaço na tela
-(janelas maximizadas param antes do Dock) e iniciar com o Windows.
+**Comportamento**: mostrar nome, ponto de app aberto, animação de pulo, separador, ocultar automaticamente
+(com o tempo até aparecer), reservar espaço na tela (janelas maximizadas param antes do Dock) e iniciar com o Windows.
+
+Com **Ocultar e mostrar o Dock automaticamente**, o Dock sai da tela quando o mouse vai embora e volta quando
+você encosta o mouse na borda, na altura do Dock. Também dá para ligar e desligar pelo botão direito no Dock.
+Se a barra de tarefas estiver na mesma borda, encoste o mouse logo acima dela.
 **Restaurar padrões** volta estilo, widgets e comportamento ao original, mas mantém seus apps.
 
 ## Onde ficam as configurações

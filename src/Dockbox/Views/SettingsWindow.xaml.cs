@@ -189,6 +189,9 @@ public partial class SettingsWindow : Window
             BounceToggle.IsChecked = A.BounceOnLaunch;
             SeparatorToggle.IsChecked = A.ShowSeparator;
             ReserveToggle.IsChecked = A.ReserveSpace;
+            AutoHideToggle.IsChecked = A.AutoHide;
+            AutoHideDelaySlider.Value = A.AutoHideDelay;
+            UpdateAutoHideControls();
             AutostartToggle.IsChecked = Autostart.IsEnabled;
         }
         finally
@@ -515,6 +518,7 @@ public partial class SettingsWindow : Window
         A.CornerRadius = Math.Round(RadiusSlider.Value);
         A.IconSize = Math.Round(SizeSlider.Value);
         A.Magnification = Math.Round(MagSlider.Value, 2);
+        A.AutoHideDelay = Math.Round(AutoHideDelaySlider.Value, 2);
         Commit(debounce: true);
     }
 
@@ -524,6 +528,7 @@ public partial class SettingsWindow : Window
         RadiusValue.Text = $"{RadiusSlider.Value:0} px";
         SizeValue.Text = $"{SizeSlider.Value:0} px";
         MagValue.Text = $"{MagSlider.Value:0.0}x";
+        AutoHideDelayValue.Text = $"{AutoHideDelaySlider.Value:0.0} s";
     }
 
     // ================= Comportamento =================
@@ -537,7 +542,19 @@ public partial class SettingsWindow : Window
         A.BounceOnLaunch = BounceToggle.IsChecked == true;
         A.ShowSeparator = SeparatorToggle.IsChecked == true;
         A.ReserveSpace = ReserveToggle.IsChecked == true;
+        A.AutoHide = AutoHideToggle.IsChecked == true;
+        UpdateAutoHideControls();
         Commit();
+    }
+
+    /// <summary>Com auto-ocultar, o tempo fica ativo e a reserva de espaço não se aplica.</summary>
+    private void UpdateAutoHideControls()
+    {
+        bool on = AutoHideToggle.IsChecked == true;
+        AutoHideDelaySlider.IsEnabled = on;
+        AutoHideDelayRow.Opacity = on ? 1 : 0.5;
+        ReserveToggle.IsEnabled = !on;
+        ReserveToggle.ToolTip = on ? "Com o auto-ocultar ligado o Dock não reserva espaço na tela." : null;
     }
 
     private void Autostart_Click(object sender, RoutedEventArgs e)

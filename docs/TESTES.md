@@ -109,6 +109,15 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Encerre o `Dockbox.exe` pelo Gerenciador de Tarefas e anote se a área volta sozinha (pode precisar abrir e fechar de novo).
 - [ ] Vídeo em tela cheia: o Dock some e não aparece faixa vazia.
 
+### 8c. Ocultar automaticamente
+- [ ] Ligue em Comportamento (ou pelo botão direito no Dock): o Dock desliza para fora e a reserva de espaço é liberada.
+- [ ] Encoste o mouse na borda, na altura do Dock: ele aparece depois do tempo configurado; tirar o mouse esconde de novo.
+- [ ] Passar o mouse rápido pela borda não faz o Dock piscar.
+- [ ] Funciona nas 4 posições; com a barra de tarefas na mesma borda, a faixa de ativação fica logo acima dela.
+- [ ] Com o menu do botão direito aberto, o Dock não some.
+- [ ] Arraste um arquivo do Explorador até a borda: o Dock aparece e dá para soltar num app ou na Lixeira.
+- [ ] Desligar: o Dock volta a ficar fixo e a reserva de espaço volta (se estiver ligada).
+
 ### 9. Widgets
 - [ ] Relógio: ponteiros na hora certa; rótulo com dia da semana; opção 24 h muda o formato.
 - [ ] Calendário: dia certo; clique abre o mês; clique fora fecha; vira o dia à meia-noite.

@@ -41,6 +41,10 @@ public sealed class Appearance
     public bool ShowSeparator { get; set; } = true;
     /// <summary>Reserva a faixa do Dock na tela para as janelas maximizadas pararem antes dele.</summary>
     public bool ReserveSpace { get; set; } = true;
+    /// <summary>Esconde o Dock fora da tela até o mouse encostar na borda.</summary>
+    public bool AutoHide { get; set; }
+    /// <summary>Segundos com o mouse na borda até o Dock aparecer.</summary>
+    public double AutoHideDelay { get; set; } = 0.3;
 }
 
 public sealed class DockSettings
@@ -171,6 +175,7 @@ public static class SettingsStore
         a.Magnification = Math.Clamp(a.Magnification, 1.0, 2.6);
         a.Opacity = Math.Clamp(a.Opacity, 0.0, 1.0);
         a.CornerRadius = Math.Clamp(a.CornerRadius, 0, 40);
+        a.AutoHideDelay = double.IsFinite(a.AutoHideDelay) ? Math.Clamp(a.AutoHideDelay, 0, 2) : 0.3;
         a.CustomColor = ColorUtil.IsValid(a.CustomColor) ? a.CustomColor : "#2A2D3A";
         a.AccentColor = ColorUtil.IsValid(a.AccentColor) ? a.AccentColor : "#0A84FF";
         s.WeatherCity ??= "";
