@@ -108,6 +108,9 @@ File: {1}</value></data>
   <data name="Menu_MagnifyOn" xml:space="preserve"><value>Turn magnification on</value></data>
   <data name="Menu_AutoHideOff" xml:space="preserve"><value>Turn auto-hide off</value></data>
   <data name="Menu_AutoHideOn" xml:space="preserve"><value>Turn auto-hide on</value></data>
+  <data name="Menu_TaskbarHide" xml:space="preserve"><value>Hide the taskbar</value></data>
+  <data name="Menu_TaskbarShow" xml:space="preserve"><value>Show the taskbar</value></data>
+  <data name="Menu_StartMenu" xml:space="preserve"><value>Open the Start menu</value></data>
   <data name="Menu_Position" xml:space="preserve"><value>Position on screen</value></data>
   <data name="Menu_Quit" xml:space="preserve"><value>Quit Dockbox</value></data>
   <data name="Edge_Bottom" xml:space="preserve"><value>Bottom</value></data>
@@ -217,6 +220,8 @@ Your pinned apps will be kept.</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Time with the mouse at the edge before it appears</value></data>
   <data name="S_AutoHideDelayA11y" xml:space="preserve"><value>Time until the Dock appears</value></data>
   <data name="S_Reserve" xml:space="preserve"><value>Reserve screen space (maximized windows stop before the Dock)</value></data>
+  <data name="S_HideTaskbar" xml:space="preserve"><value>Hide the Windows taskbar</value></data>
+  <data name="S_HideTaskbarHint" xml:space="preserve"><value>It comes back when you turn this off, from the Dock's right-click menu, or when Dockbox closes. The Start menu still opens with the Windows key. Notification area icons are hidden too.</value></data>
   <data name="S_Autostart" xml:space="preserve"><value>Start Dockbox with Windows</value></data>
   <data name="S_Keyboard" xml:space="preserve"><value>Keyboard</value></data>
   <data name="S_KeyboardSub" xml:space="preserve"><value>Shortcut to use the Dock without a mouse. After it: arrows choose, Enter opens, Shift+F10 opens the menu and Esc returns to where you were.</value></data>

@@ -195,6 +195,13 @@ public partial class DockWindow : Window
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (msg == WM_DISPLAYCHANGE) OnDisplayChanged();
+        if (msg == TaskbarCreatedMessage && A.HideTaskbar)
+        {
+            // O Explorer reiniciou e recriou a barra: esconde de novo quando ela terminar de aparecer.
+            var again = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1.5) };
+            again.Tick += (_, _) => { again.Stop(); ApplyTaskbar(); };
+            again.Start();
+        }
         if (msg == WM_HOTKEY && wParam.ToInt64() == HotkeyId)
         {
             Dispatcher.BeginInvoke(ToggleKeyboard);
@@ -214,6 +221,8 @@ public partial class DockWindow : Window
         }
         return IntPtr.Zero;
     }
+
+    private static readonly int TaskbarCreatedMessage = RegisterWindowMessage("TaskbarCreated");
 
     private void ReleaseAppBar()
     {
@@ -361,7 +370,19 @@ public partial class DockWindow : Window
         if (signature != _tilesSignature || _tiles.Count == 0) RebuildTiles();
         PositionWindow();
         RegisterShortcut();
+        ApplyTaskbar();
         StartAnimating();
+    }
+
+    /// <summary>Esconde ou mostra a barra de tarefas do Windows conforme a opção.</summary>
+    private static void ApplyTaskbar()
+    {
+        try
+        {
+            if (SettingsStore.Current.Appearance.HideTaskbar) Taskbar.Hide();
+            else if (Taskbar.Hidden) Taskbar.Restore();
+        }
+        catch (Exception ex) { ErrorLog.Write("Barra de tarefas", ex); }
     }
 
     /// <summary>Idioma mudou: recria os ícones, pede rótulos novos aos widgets e refaz os nomes para leitores de tela.</summary>
@@ -812,6 +833,13 @@ public partial class DockWindow : Window
             var hwnd = new WindowInteropHelper(this).Handle;
             if (hwnd != IntPtr.Zero)
                 SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
+        }
+
+        // A barra de tarefas pode voltar sozinha (monitor novo, tecla Windows): esconde de novo.
+        if (A.HideTaskbar && !fullscreen)
+        {
+            try { if (Taskbar.ShouldHideAgain()) Taskbar.Hide(); }
+            catch { }
         }
 
         // Indicadores de apps abertos e apps abertos não fixados
@@ -1467,6 +1495,12 @@ public partial class DockWindow : Window
             A.AutoHide = !A.AutoHide;
             SettingsStore.Commit();
         }));
+        menu.Items.Add(Item(Loc.T(A.HideTaskbar ? "Menu_TaskbarShow" : "Menu_TaskbarHide"), () =>
+        {
+            A.HideTaskbar = !A.HideTaskbar;
+            SettingsStore.Commit();
+        }));
+        if (A.HideTaskbar) menu.Items.Add(Item(Loc.T("Menu_StartMenu"), Taskbar.OpenStartMenu));
         menu.Items.Add(new Separator());
         menu.Items.Add(Header(Loc.T("Menu_Position")));
         foreach (var (edge, name) in new[] { (DockEdge.Bottom, Loc.T("Edge_Bottom")), (DockEdge.Left, Loc.T("Edge_Left")), (DockEdge.Right, Loc.T("Edge_Right")), (DockEdge.Top, Loc.T("Edge_Top")) })
