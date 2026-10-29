@@ -25,6 +25,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Reordenar arrastando um ícone no Dock e remover arrastando para fora, com indicador de onde o item entra, também ao arrastar arquivos de fora (#6).
 - Menu próprio de cada app: janelas abertas (clique traz a janela), Nova janela, Mostrar no Explorador, Fechar/Fechar todas, Remover do Dock e submenu Opções do Dock; menus funcionam pelo teclado (#7).
 - Apps abertos que não estão fixados aparecem depois dos fixados, com "Manter no Dock"; apps da Microsoft Store ganham o ponto de aberto e podem ser adicionados pelo Gerenciar Dock (#8).
+- Desfazer remoção: aviso "Desfazer" no Dock por 6 segundos e Ctrl+Z no Gerenciar Dock; fixar algo que já está no Dock não duplica, o item existente é destacado (#9).
 
 ### Segurança
 

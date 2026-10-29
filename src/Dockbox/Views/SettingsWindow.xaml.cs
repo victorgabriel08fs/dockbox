@@ -86,6 +86,15 @@ public partial class SettingsWindow : Window
         };
 
         ItemsList.ItemsSource = _items;
+        PreviewKeyDown += (_, e) =>
+        {
+            // Ctrl+Z desfaz a última remoção (dentro de uma caixa de texto, fica o desfazer do texto).
+            if (e.Key == Key.Z && Keyboard.Modifiers == ModifierKeys.Control && Keyboard.FocusedElement is not TextBox)
+            {
+                e.Handled = true;
+                UndoRemoval();
+            }
+        };
         SourceInitialized += (_, _) => ApplyTitleBarTheme();
         SettingsStore.Changed += OnExternalChange;
         Closed += (_, _) =>
@@ -260,14 +269,22 @@ public partial class SettingsWindow : Window
     private void AddEntries(IEnumerable<DockEntry> entries)
     {
         ItemVm? last = null;
+        bool added = false;
         foreach (var e in entries)
         {
+            // Já fixado (mesmo caminho ou atalho para o mesmo app): seleciona o existente em vez de duplicar.
+            if (DockItems.FindDuplicate(S.Items, e.Path, e.Arguments) is DockEntry existing)
+            {
+                last = _items.FirstOrDefault(i => i.Entry == existing) ?? last;
+                continue;
+            }
             S.Items.Add(e);
             last = new ItemVm(e);
             _items.Add(last);
+            added = true;
         }
         if (last == null) return;
-        Commit();
+        if (added) Commit();
         ItemsList.SelectedItem = last;
         ItemsList.ScrollIntoView(last);
     }
@@ -324,12 +341,27 @@ public partial class SettingsWindow : Window
     private void MoveUp_Click(object sender, RoutedEventArgs e) => Move(-1);
     private void MoveDown_Click(object sender, RoutedEventArgs e) => Move(+1);
 
+    private void UndoRemoval()
+    {
+        var entry = RemovalHistory.Undo(S.Items);
+        if (entry == null) return;
+        Commit();
+        LoadAll();
+        var vm = _items.FirstOrDefault(i => i.Entry == entry);
+        if (vm != null)
+        {
+            NavItems.IsChecked = true;
+            ItemsList.SelectedItem = vm;
+            ItemsList.ScrollIntoView(vm);
+        }
+    }
+
     private void Remove_Click(object sender, RoutedEventArgs e)
     {
         if (Selected is not ItemVm vm) return;
         int i = _items.IndexOf(vm);
         _items.Remove(vm);
-        S.Items.Remove(vm.Entry);
+        RemovalHistory.Remove(S.Items, vm.Entry);
         Commit();
         if (_items.Count > 0) ItemsList.SelectedIndex = Math.Min(i, _items.Count - 1);
     }

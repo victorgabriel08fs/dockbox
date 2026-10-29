@@ -89,6 +89,9 @@ public partial class DockWindow : Window
     private static readonly string? OwnExe = Environment.ProcessPath?.ToLowerInvariant();
     private static readonly Dictionary<string, string> ExeNames = new(StringComparer.OrdinalIgnoreCase);
 
+    // ---- Desfazer remoção ----
+    private readonly DispatcherTimer _undoTimer = new() { Interval = TimeSpan.FromSeconds(6) };
+
     private Appearance A => SettingsStore.Current.Appearance;
     private double BaseSize => A.IconSize;
     private double MaxScale => A.Magnify ? A.Magnification : 1.0;
@@ -129,6 +132,13 @@ public partial class DockWindow : Window
         MouseRightButtonUp += OnRightClick;
 
         SettingsStore.Changed += ApplySettings;
+        RemovalHistory.Recorded += entry => Dispatcher.BeginInvoke(() => ShowUndoToast(entry));
+        _undoTimer.Tick += (_, _) => HideUndoToast();
+        UndoToast.MouseLeftButtonUp += (_, e) =>
+        {
+            e.Handled = true;
+            UndoRemoval();
+        };
         SystemParameters.StaticPropertyChanged += (_, e) =>
         {
             // Com a AppBar ativa, a reserva só é refeita se a borda ou a espessura mudaram (ver ReserveArea).
@@ -591,8 +601,52 @@ public partial class DockWindow : Window
 
     private void RemoveEntry(DockEntry entry)
     {
-        SettingsStore.Current.Items.Remove(entry);
-        SettingsStore.Commit();
+        if (RemovalHistory.Remove(SettingsStore.Current.Items, entry)) SettingsStore.Commit();
+    }
+
+    // ================= Desfazer remoção =================
+
+    private void ShowUndoToast(DockEntry entry)
+    {
+        string name = entry.Name.Length > 32 ? entry.Name[..29] + "..." : entry.Name;
+        UndoText.Text = $"\u201C{name}\u201D removido";
+        UndoToast.Background = _theme.LabelBackground;
+        UndoToast.BorderBrush = _theme.LabelBorder;
+        UndoText.Foreground = _theme.LabelForeground;
+        UndoButton.Background = ColorUtil.Brush(_theme.Accent);
+        ((TextBlock)UndoButton.Child).Foreground = ColorUtil.Luminance(_theme.Accent) > 0.7 ? Brushes.Black : Brushes.White;
+        UndoToast.Visibility = Visibility.Visible;
+        _undoTimer.Stop();
+        _undoTimer.Start();
+        _shown = true; // com auto-ocultar, mostra o Dock junto com o aviso
+        Layout();
+        StartAnimating();
+    }
+
+    private void HideUndoToast()
+    {
+        _undoTimer.Stop();
+        UndoToast.Visibility = Visibility.Collapsed;
+        StartAnimating();
+    }
+
+    private void UndoRemoval()
+    {
+        HideUndoToast();
+        if (RemovalHistory.Undo(SettingsStore.Current.Items) != null) SettingsStore.Commit();
+    }
+
+    /// <summary>Coloca o aviso centralizado acima do Dock.</summary>
+    private void PlaceUndoToast()
+    {
+        if (UndoToast.Visibility != Visibility.Visible) return;
+        UndoToast.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var sz = UndoToast.DesiredSize;
+        double mainLen = Horizontal ? sz.Width : sz.Height;
+        double crossLen = Horizontal ? sz.Height : sz.Width;
+        double main0 = Math.Clamp(_dockStart + _dockLength / 2 - mainLen / 2, 4, Math.Max(4, MainLength - mainLen - 4));
+        double cross = EdgeMargin + BackgroundThickness + 12;
+        PlacePos(UndoToast, Math.Round(main0), Math.Round(cross), mainLen, crossLen);
     }
 
     private void DisableWidget(string kind)
@@ -785,7 +839,8 @@ public partial class DockWindow : Window
     {
         var entry = tile.Entry!;
         _unpinned.RemoveAll(u => u.Key == tile.ExeKey);
-        SettingsStore.Current.Items.Add(new DockEntry { Name = entry.Name, Path = entry.Path });
+        if (DockItems.FindDuplicate(SettingsStore.Current.Items, entry.Path) == null)
+            SettingsStore.Current.Items.Add(new DockEntry { Name = entry.Name, Path = entry.Path });
         SettingsStore.Commit();
     }
 
@@ -822,7 +877,7 @@ public partial class DockWindow : Window
     {
         bool waiting = false;
         if (!A.AutoHide) _shown = true;
-        else if (_hovering || _menuOpen) _leaveSince = -1;
+        else if (_hovering || _menuOpen || UndoToast.Visibility == Visibility.Visible) _leaveSince = -1;
         else if (_shown)
         {
             if (_leaveSince < 0) _leaveSince = now;
@@ -942,6 +997,7 @@ public partial class DockWindow : Window
             }
             x += size + Gap;
         }
+        PlaceUndoToast();
     }
 
     /// <summary>
@@ -1226,6 +1282,12 @@ public partial class DockWindow : Window
         index = Math.Clamp(index, 0, items.Count);
         foreach (var f in files)
         {
+            if (DockItems.FindDuplicate(items, f) is DockEntry existing)
+            {
+                // Já está no Dock: destaca o item em vez de duplicar.
+                if (_tiles.FirstOrDefault(x => x.Entry == existing) is Tile same) Bounce(same);
+                continue;
+            }
             string name = Directory.Exists(f) ? new DirectoryInfo(f).Name : Path.GetFileNameWithoutExtension(f);
             var entry = new DockEntry { Name = name, Path = f };
             var risk = AppLauncher.Assess(f, null);

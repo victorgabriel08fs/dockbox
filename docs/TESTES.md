@@ -76,6 +76,14 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Clique rápido (sem mover) continua abrindo o app; apertar, sair do ícone e soltar fora não abre nada.
 - [ ] Widgets não arrastam, mas o clique neles continua funcionando.
 
+### 5a. Desfazer e duplicados
+- [ ] Remova um item pelo menu: aparece "… removido · Desfazer"; clicar devolve na mesma posição. Sem clicar, o aviso some em 6 s.
+- [ ] Remova arrastando para fora e pelo Gerenciar Dock: o mesmo aviso aparece.
+- [ ] No Gerenciar Dock, remova dois itens e aperte Ctrl+Z duas vezes: voltam na ordem certa. Ctrl+Z dentro de um campo de texto desfaz o texto.
+- [ ] Arraste para o Dock o `.exe` de um app já fixado por atalho: não duplica, o ícone existente pula.
+- [ ] Adicione pelo seletor um app já fixado: não duplica e o existente fica selecionado.
+- [ ] Com auto-ocultar ligado, remover mostra o Dock com o aviso até ele sumir.
+
 ### 5b. Apps abertos não fixados e apps da Store
 - [ ] Abra um app que não está no Dock: ganha um ícone depois dos fixados (com separador) e ponto; fechar remove o ícone.
 - [ ] Clique nesse ícone: traz/minimiza a janela. Botão direito → **Manter no Dock**: passa para os fixados e continua depois de reiniciar.
