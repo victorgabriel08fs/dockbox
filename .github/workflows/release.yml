@@ -57,8 +57,13 @@ jobs:
         shell: bash
         run: |
           tag="${{ steps.ver.outputs.tag }}"
-          gh release create "$tag" "releases/$tag/Dockbox-$tag-win-x64.zip" "releases/$tag/SHA256SUMS.txt" \
-            --title "Dockbox $tag" --notes-file notes.md
+          files=("releases/$tag/Dockbox-$tag-win-x64.zip" "releases/$tag/SHA256SUMS.txt")
+          # Se a release já foi criada pela página Releases do GitHub, só anexa os arquivos.
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "${files[@]}" --clobber
+          else
+            gh release create "$tag" "${files[@]}" --title "Dockbox $tag" --notes-file notes.md
+          fi
 
       # Precisa da opção "Allow GitHub Actions to create and approve pull requests"
       # em Settings > Actions > General. Sem ela, a release é criada mesmo assim.
