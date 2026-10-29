@@ -6,6 +6,14 @@
 
 <p align="center">Um clone do Dock do macOS para Windows, feito em C# + WPF (.NET 8).</p>
 
+<p align="center">
+  <a href="https://github.com/victorgabriel08fs/dockbox/releases/latest"><b>Baixar a versão mais recente</b></a>
+  · <a href="docs/GUIA-DO-USUARIO.md">Guia do usuário</a>
+  · <a href="CHANGELOG.md">Novidades</a>
+</p>
+
+Funciona no Windows 10 (versão 1809 ou mais recente) e no Windows 11, 64 bits. Não precisa instalar o .NET.
+
 ## O que já existe
 
 - Dock sem borda, transparente e sempre no topo, que **não rouba o foco** e não aparece no Alt+Tab.
@@ -36,10 +44,16 @@
 
 ## Como rodar no Windows
 
-Opção A, sem instalar nada: baixe o zip da versão mais recente na pasta
-[`releases/`](releases/) ou na página
-[Releases](https://github.com/victorgabriel08fs/dockbox/releases), extraia e abra o `Dockbox.exe`.
-Builds de desenvolvimento ficam na aba **Actions** (workflow *build*, artefato `Dockbox-win-x64`).
+Opção A, sem instalar nada:
+
+1. Baixe o `Dockbox-vX.Y.Z-win-x64.zip` da [versão mais recente](https://github.com/victorgabriel08fs/dockbox/releases/latest)
+   (as versões antigas ficam na página [Releases](https://github.com/victorgabriel08fs/dockbox/releases) e na pasta [`releases/`](releases/)).
+2. Extraia e dê dois cliques em `Dockbox.exe`.
+3. Se aparecer "O Windows protegeu o computador", clique em **Mais informações** → **Executar assim mesmo**
+   (o executável ainda não tem assinatura digital).
+
+Builds de desenvolvimento, com o que ainda não saiu numa versão, ficam na aba **Actions**
+(workflow *build*, artefato `Dockbox-win-x64`).
 
 Opção B, compilando:
 
@@ -65,12 +79,13 @@ Tudo fica em `%APPDATA%\Dockbox\settings.json` e é editado pela janela **Gerenc
 Se o arquivo for corrompido, uma cópia com data é guardada antes de voltar aos padrões.
 Um `pinned.json` da versão anterior é importado automaticamente.
 
-## Limitações conhecidas do MVP
+## Limitações conhecidas
 
-- A barra de tarefas do Windows continua visível.
-- O fundo imita vidro, mas não desfoca o que está atrás.
+- O progresso de downloads não aparece no ícone: o Windows não deixa outros programas lerem o que os apps mandam para a barra de tarefas.
+- O contador vermelho só aparece em apps que põem o número no título da janela, como "(3) WhatsApp".
+- O executável ainda não tem assinatura digital, por isso o aviso do SmartScreen na primeira vez.
 
-Esses pontos estão previstos nas fases 2 e 3.
+O que vem a seguir está no [roadmap](https://github.com/victorgabriel08fs/dockbox/issues/39).
 
 ## Documentação e testes
 

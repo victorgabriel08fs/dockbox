@@ -5,7 +5,7 @@ mostra seus apps favoritos, indica quais estão abertos e tem widgets (relógio,
 
 ## Instalar e abrir
 
-1. Baixe o `Dockbox.exe` (aba **Actions** do GitHub → execução mais recente do *build* → artefato `Dockbox-win-x64`).
+1. Baixe o `Dockbox-vX.Y.Z-win-x64.zip` da [versão mais recente](https://github.com/victorgabriel08fs/dockbox/releases/latest) e extraia.
 2. Dê dois cliques em `Dockbox.exe`. Não precisa instalar nada.
 3. Se aparecer **"O Windows protegeu o computador"**, clique em **Mais informações** → **Executar assim mesmo**.
    Isso acontece porque o executável ainda não tem assinatura digital.

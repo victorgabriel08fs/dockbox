@@ -8,6 +8,10 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 
 ## [Não lançado]
 
+## [0.4.0] - 2026-10-29
+
+Reúne as etapas v0.2, v0.3 e v0.4 do roadmap, que não foram lançadas separadamente.
+
 ### Adicionado
 
 - Visual estilo macOS: fundo de vidro com gradiente, borda clara e sombra; rótulo com o nome do item.
@@ -74,5 +78,6 @@ Primeira versão (Fase 1, MVP).
 - Menu do botão direito: editar apps fixados, recarregar e sair.
 - Apps fixados salvos em `%APPDATA%\Dockbox\pinned.json`.
 
-[Não lançado]: https://github.com/victorgabriel08fs/dockbox/compare/v0.1.0...HEAD
+[Não lançado]: https://github.com/victorgabriel08fs/dockbox/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/victorgabriel08fs/dockbox/compare/v0.1.0...v0.4.0
 [0.1.0]: https://github.com/victorgabriel08fs/dockbox/releases/tag/v0.1.0
