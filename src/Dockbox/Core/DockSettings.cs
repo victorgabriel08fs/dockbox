@@ -53,7 +53,7 @@ public sealed class Appearance
     public MonitorMode Monitor { get; set; } = MonitorMode.Primary;
     /// <summary>Monitor escolhido (ex.: \\.\DISPLAY2), usado quando <see cref="Monitor"/> é Choose.</summary>
     public string MonitorDevice { get; set; } = "";
-    /// <summary>Atalho global que leva o foco ao Dock (ex.: "Ctrl+Alt+D"); vazio = desligado.</summary>
+    /// <summary>Atalho global que leva o foco ao Dock (ex.: "Win+Shift+D"); vazio = desligado.</summary>
     public string KeyboardShortcut { get; set; } = Hotkey.Default;
 }
 

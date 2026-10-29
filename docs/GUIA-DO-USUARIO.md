@@ -57,7 +57,7 @@ O Dock some sozinho durante vídeo, jogo ou apresentação em tela cheia e volta
 
 ### Teclado e leitor de tela
 
-- Aperte **Ctrl+Alt+D** em qualquer lugar: o Dock aparece (mesmo com ocultar automaticamente) e o primeiro item
+- Aperte **Win+Shift+D** em qualquer lugar: o Dock aparece (mesmo com ocultar automaticamente) e o primeiro item
   fica com um contorno na cor de destaque.
 - **Setas** ou **Tab** escolhem o item; **Home** e **End** vão para o primeiro e o último.
 - **Enter** ou **Espaço** abre (Ctrl+Enter abre uma nova janela). **Shift+F10** ou a tecla de menu abrem o menu do item.

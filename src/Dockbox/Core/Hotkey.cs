@@ -1,14 +1,15 @@
 namespace Dockbox.Core;
 
-/// <summary>Atalho global para usar o Dock pelo teclado (ex.: "Ctrl+Alt+D").</summary>
+/// <summary>Atalho global para usar o Dock pelo teclado (ex.: "Win+Shift+D").</summary>
 public static class Hotkey
 {
     public const uint ModAlt = 0x1, ModControl = 0x2, ModShift = 0x4, ModWin = 0x8;
 
-    public const string Default = "Ctrl+Alt+D";
+    // Ctrl+Alt+letra e Ctrl+Alt+Espaço são atalhos da Lupa do Windows; Win+Alt+D mostra data e hora no Windows 11.
+    public const string Default = "Win+Shift+D";
 
     /// <summary>Atalhos oferecidos nas configurações. Vazio = desligado.</summary>
-    public static readonly string[] Choices = { "Ctrl+Alt+D", "Ctrl+Alt+Space", "Win+Shift+D", "" };
+    public static readonly string[] Choices = { "Win+Shift+D", "Ctrl+Alt+Shift+D", "Ctrl+Shift+F12", "" };
 
     /// <summary>Texto para mostrar ao usuário.</summary>
     public static string Display(string? text) =>

@@ -32,6 +32,7 @@ public sealed class AccessibilityTests
     {
         Assert.Equal("Desligado", Hotkey.Display(""));
         Assert.Equal("Ctrl+Alt+Espaço", Hotkey.Display("Ctrl+Alt+Space"));
+        Assert.Equal("Win+Shift+D", Hotkey.Default);
     }
 
     [Fact]

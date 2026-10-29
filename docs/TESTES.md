@@ -192,14 +192,14 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Item `steam://open/games` (com a Steam instalada): pergunta uma vez.
 
 ### 10c. Acessibilidade
-- [ ] **Ctrl+Alt+D** com outro app em foco: o Dock ganha foco, o primeiro item fica com contorno e o nome aparece.
+- [ ] **Win+Shift+D** com outro app em foco: o Dock ganha foco, o primeiro item fica com contorno e o nome aparece.
 - [ ] Setas, Tab/Shift+Tab, Home e End movem o contorno (em qualquer borda); a ampliação acompanha.
 - [ ] Enter abre o app; Ctrl+Enter abre nova janela; Enter num app aberto traz a janela para frente.
 - [ ] Shift+F10 (e a tecla de menu) abre o menu do item ao lado dele; setas e Enter funcionam no menu; Esc fecha e o contorno continua no item.
 - [ ] Esc sai e o foco volta para o app de antes. Apertar o atalho de novo também sai.
 - [ ] Com ocultar automaticamente: o atalho mostra o Dock, que só some depois de sair com Esc.
 - [ ] Clicar em outra janela durante o modo teclado sai dele.
-- [ ] Comportamento → Teclado: trocar para Ctrl+Alt+Espaço funciona na hora; Desligado desativa. Com um atalho usado por outro programa aparece o aviso.
+- [ ] Comportamento → Teclado: trocar para Ctrl+Shift+F12 funciona na hora; Desligado desativa. Com um atalho usado por outro programa aparece o aviso.
 - [ ] Narrador (Ctrl+Win+Enter): ao andar com as setas, lê o nome do app e "aberto" quando o app está aberto; widgets leem o que mostram (ex.: hora).
 - [ ] No Gerenciar Dock, com Narrador, os controles deslizantes, campos e botões de mover/remover têm nome.
 - [ ] Configurações → Acessibilidade → Efeitos visuais → Efeitos de animação desligado: o Dock não amplia, não pula e o auto-ocultar não desliza (aparece/some direto).
