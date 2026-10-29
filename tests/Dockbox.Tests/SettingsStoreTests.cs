@@ -414,7 +414,7 @@ public sealed class SettingsStoreTests : IDisposable
     public void ArquivoGrandeComMuitosItens_Carrega()
     {
         var items = Enumerable.Range(0, 2000).Select(i => new DockEntry { Name = $"App {i}", Path = $@"C:\apps\{i}.exe" });
-        WriteSettings(JsonSerializer.Serialize(new { Items = items }));
+        WriteSettings(JsonSerializer.Serialize(new { Items = items }, SettingsStore.JsonOptions)); // como o app grava (enums por nome)
         SettingsStore.Load();
         Assert.Equal(2000, SettingsStore.Current.Items.Count);
     }
