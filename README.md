@@ -32,6 +32,7 @@ Funciona no Windows 10 (versão 1809 ou mais recente) e no Windows 11, 64 bits. 
 - Reserva espaço na tela: janelas maximizadas param antes do Dock, como na barra de tarefas (dá para desligar).
 - Ocultar automaticamente: o Dock sai da tela e volta quando o mouse encosta na borda.
 - Ícone na área de notificação (bandeja) com atalhos para Gerenciar Dock e Sair.
+- Atalhos globais: **Ctrl+Alt+Shift+H** mostra e oculta o Dock, abrir os itens 1 a 9 pelo teclado e busca estilo Spotlight de apps e arquivos.
 - Acessível: **Win+Shift+D** leva o foco ao Dock (setas, Enter, Shift+F10, Esc), nomes para o Narrador/NVDA,
   sem animações quando o Windows pede e cores do alto contraste.
 - Temas prontos (Sonoma claro e escuro, Grafite, Transparente), exportar e importar tema e backup completo para levar o Dock a outro PC.

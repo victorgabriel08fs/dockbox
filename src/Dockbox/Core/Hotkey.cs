@@ -11,6 +11,39 @@ public static class Hotkey
     /// <summary>Atalhos oferecidos nas configurações. Vazio = desligado.</summary>
     public static readonly string[] Choices = { "Win+Shift+D", "Ctrl+Alt+Shift+D", "Ctrl+Shift+F12", "" };
 
+    /// <summary>Mostrar/ocultar o Dock (liga e desliga o "Ocultar automaticamente", como Option+Cmd+D no macOS).</summary>
+    public const string DefaultToggle = "Ctrl+Alt+Shift+H";
+
+    /// <summary>Modificadores oferecidos para abrir os itens 1 a 9. Vazio = desligado (padrão).</summary>
+    public static readonly string[] ItemModifierChoices = { "", "Win+Alt", "Ctrl+Alt+Shift" };
+
+    /// <summary>Atalho do item <paramref name="n"/> (1 a 9) com os modificadores escolhidos.</summary>
+    public static string ForItem(string modifiers, int n) => string.IsNullOrEmpty(modifiers) ? "" : $"{modifiers}+{n}";
+
+    /// <summary>Monta o texto ("Win+Ctrl+Alt+Shift+X") a partir do que foi apertado; null se a tecla não serve.</summary>
+    public static string? Format(uint mods, uint vk)
+    {
+        string? key = vk switch
+        {
+            0x20 => "Space",
+            >= 0x30 and <= 0x39 => ((char)vk).ToString(),
+            >= 0x41 and <= 0x5A => ((char)vk).ToString(),
+            >= 0x70 and <= 0x7B => "F" + (vk - 0x70 + 1),
+            _ => null,
+        };
+        if (key == null || mods == 0) return null;
+        var parts = new List<string>();
+        if ((mods & ModWin) != 0) parts.Add("Win");
+        if ((mods & ModControl) != 0) parts.Add("Ctrl");
+        if ((mods & ModAlt) != 0) parts.Add("Alt");
+        if ((mods & ModShift) != 0) parts.Add("Shift");
+        parts.Add(key);
+        return string.Join('+', parts);
+    }
+
+    /// <summary>Os dois textos são o mesmo atalho (ordem e maiúsculas não importam).</summary>
+    public static bool Same(string? a, string? b) => Parse(a) is { } x && Parse(b) is { } y && x == y;
+
     /// <summary>Texto para mostrar ao usuário.</summary>
     public static string Display(string? text) =>
         string.IsNullOrEmpty(text) ? Loc.T("Common_Off") : text.Replace("Space", Loc.T("Key_Space"));

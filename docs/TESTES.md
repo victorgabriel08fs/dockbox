@@ -310,6 +310,20 @@ Ligue os cinco em Gerenciar Dock → Widgets. Eles aparecem antes da Lixeira.
 - [ ] No `settings.json`, um item com caminho `ms-msdt:/id PCWDiagnostic`: clicar mostra "bloqueado" e nada abre.
 - [ ] Item `steam://open/games` (com a Steam instalada): pergunta uma vez.
 
+### 10d. Atalhos globais e busca
+- [ ] Com o Bloco de Notas em foco, aperte **Ctrl+Alt+Shift+H**: o Dock passa a se ocultar. Aperte de novo: volta a ficar fixo. A opção em Comportamento acompanha.
+- [ ] Comportamento → Teclado → clique em "Mostrar ou ocultar o Dock" e aperte **Ctrl+Alt+Shift+J**: a caixa mostra o atalho novo, o novo funciona e o antigo não. Clique na caixa e aperte Backspace: fica "Desligado".
+- [ ] Clique na caixa e aperte só **H**: aparece o aviso para usar um modificador e nada muda. Esc desiste.
+- [ ] Coloque na busca o mesmo atalho do foco (Win+Shift+D): aparece o aviso de atalho em uso.
+- [ ] Coloque na busca um atalho de outro programa aberto (ex.: o do Discord ou do OBS): aparece o aviso com o nome.
+- [ ] Busca com **Alt+Space**: abre a janela no meio do monitor do mouse, com o cursor na caixa. Digite "calc": a Calculadora aparece primeiro; Enter abre. Digite "config" (sem acento): acha Configurações.
+- [ ] Digite o nome de um arquivo da Área de Trabalho: aparece como "Arquivo"; **Ctrl+Enter** abre o Explorador com ele selecionado.
+- [ ] Setas sobem e descem na lista; clique num resultado abre; Esc limpa e, com a caixa vazia, fecha; clicar fora fecha.
+- [ ] Um `.bat` na Área de Trabalho aberto pela busca pede confirmação, como no Dock.
+- [ ] Ligue o widget **Busca** e clique nele: abre a mesma janela; clique de novo: fecha.
+- [ ] Teclado → itens 1 a 9 → **Ctrl+Alt+Shift+1…9**: Ctrl+Alt+Shift+1 abre o primeiro app fixado; com ele aberto, traz a janela; com ela na frente, minimiza. Uma pasta na posição abre no Explorador ou na pilha.
+- [ ] **Win+Alt+1…9**: se o Windows já usa, aparece o aviso listando os atalhos que não funcionam.
+
 ### 10c. Acessibilidade
 - [ ] **Win+Shift+D** com outro app em foco: o Dock ganha foco, o primeiro item fica com contorno e o nome aparece.
 - [ ] Setas, Tab/Shift+Tab, Home e End movem o contorno (em qualquer borda); a ampliação acompanha.

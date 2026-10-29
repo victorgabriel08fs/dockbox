@@ -97,6 +97,23 @@ consulta `GetClipboardSequenceNumber` a cada segundo e só lê o texto quando el
 `ExcludeClipboardContentFromMonitorProcessing` e `CanIncludeInClipboardHistory = 0`, que os gerenciadores de
 senha usam.
 
+## Atalhos globais e busca
+
+`Core/ShortcutPlan` lê as configurações e monta a lista de atalhos a registrar, cada um com um id fixo: foco
+(`KeyboardShortcut`), mostrar/ocultar (`ToggleShortcut`), busca (`SearchShortcut`) e itens 1 a 9
+(`ItemShortcutModifiers` + número). Um atalho repetido fica só na primeira função e vai para `Duplicates`.
+`DockWindow.RegisterShortcut` registra tudo com `RegisterHotKey` (só quando a `Signature` muda) e junta os que
+falharam em `ShortcutError`, que o Gerenciar Dock mostra. `WM_HOTKEY` chama `OnShortcut`. Mostrar/ocultar inverte
+`AutoHide`. O item N abre o N-ésimo app fixado sem olhar Ctrl/Shift, que fazem parte do próprio atalho.
+`Core/Hotkey.Format` monta o texto a partir das teclas apertadas no editor (`Views/SettingsWindow.Shortcuts.cs`).
+
+`Views/SearchWindow` é a busca: janela sem borda no monitor do mouse. Os itens do Dock são lidos na hora. Os apps
+(`StartMenuApps`) e os arquivos (Recentes, Área de Trabalho, Documentos e Downloads, até 500 por pasta, só o
+primeiro nível) ficam em cache por 2 min e carregam numa `Task`. `Core/SearchRanker` dá pontos sem acentos e sem
+maiúsculas: igual > começo > começo de palavra > iniciais > contém > letras em ordem. Desempata por Dock, app,
+arquivo e nome mais curto, e junta itens repetidos. Abrir passa por `AppLauncher.Launch`, com as mesmas
+confirmações do Dock.
+
 ## Desfoque
 
 `Views/BlurBackdrop` é uma janela vazia, sempre logo abaixo do Dock e do tamanho do fundo, com

@@ -143,7 +143,28 @@ Depois abra este de novo.</value></data>
   <data name="Undo_Removed" xml:space="preserve"><value>“{0}” removido</value></data>
   <data name="Undo_Button" xml:space="preserve"><value>Desfazer</value></data>
   <data name="Drag_Remove" xml:space="preserve"><value>Remover</value></data>
-  <data name="Shortcut_InUse" xml:space="preserve"><value>O atalho {0} já é usado por outro programa. Escolha outro.</value></data>
+  <data name="Shortcut_InUse" xml:space="preserve"><value>O atalho {0} já está em uso (por outro programa ou por outro atalho do Dockbox). Escolha outro.</value></data>
+  <data name="Shortcut_InUseMany" xml:space="preserve"><value>Estes atalhos já estão em uso (por outros programas ou repetidos no Dockbox) e não funcionam: {0}. Escolha outros.</value></data>
+  <data name="S_ShortcutToggle" xml:space="preserve"><value>Mostrar ou ocultar o Dock</value></data>
+  <data name="S_ShortcutToggleHint" xml:space="preserve"><value>Liga e desliga o "Ocultar automaticamente", como Option+Cmd+D no macOS.</value></data>
+  <data name="S_ShortcutSearch" xml:space="preserve"><value>Abrir a busca</value></data>
+  <data name="S_ShortcutSearchHint" xml:space="preserve"><value>Busca estilo Spotlight: digite o nome de um app ou arquivo e aperte Enter.</value></data>
+  <data name="S_ShortcutPress" xml:space="preserve"><value>Aperte o atalho…</value></data>
+  <data name="S_ShortcutRecordHint" xml:space="preserve"><value>Aperte a combinação (ex.: Ctrl+Alt+Shift+H). Backspace desliga; Esc desiste.</value></data>
+  <data name="S_ShortcutInvalid" xml:space="preserve"><value>Use pelo menos uma tecla modificadora (Ctrl, Alt, Shift ou Win) com uma letra, um número, Espaço ou F1 a F12.</value></data>
+  <data name="S_ShortcutOff" xml:space="preserve"><value>Desligar</value></data>
+  <data name="S_ItemShortcuts" xml:space="preserve"><value>Abrir os itens 1 a 9 do Dock</value></data>
+  <data name="S_ItemShortcutsHint" xml:space="preserve"><value>O número é a posição entre os apps fixados, da esquerda para a direita (ou de cima para baixo). Se o app já está aberto, traz a janela.</value></data>
+  <data name="Search_Title" xml:space="preserve"><value>Buscar</value></data>
+  <data name="Search_Placeholder" xml:space="preserve"><value>Buscar apps e arquivos</value></data>
+  <data name="Search_Loading" xml:space="preserve"><value>Carregando apps e arquivos…</value></data>
+  <data name="Search_Nothing" xml:space="preserve"><value>Nada encontrado</value></data>
+  <data name="Search_KindDock" xml:space="preserve"><value>Dock</value></data>
+  <data name="Search_KindApp" xml:space="preserve"><value>App</value></data>
+  <data name="Search_KindFile" xml:space="preserve"><value>Arquivo</value></data>
+  <data name="W_Search_Name" xml:space="preserve"><value>Busca</value></data>
+  <data name="W_Search_Desc" xml:space="preserve"><value>Abre a busca de apps e arquivos (estilo Spotlight).</value></data>
+  <data name="W_Search_Label" xml:space="preserve"><value>Busca ({0})</value></data>
   <data name="A11y_Open" xml:space="preserve"><value>{0}, aberto</value></data>
   <data name="A11y_OpenUnpinned" xml:space="preserve"><value>{0}, aberto, não fixado</value></data>
   <data name="Menu_DockOptions" xml:space="preserve"><value>Opções do Dock</value></data>

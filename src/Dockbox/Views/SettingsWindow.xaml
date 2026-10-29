@@ -354,6 +354,12 @@
                             <Border Background="{DynamicResource UiInputBg}" CornerRadius="8" HorizontalAlignment="Left" Padding="2">
                                 <StackPanel x:Name="ShortcutChoices" Orientation="Horizontal"/>
                             </Border>
+                            <StackPanel x:Name="ShortcutEditors" Margin="0,16,0,0"/>
+                            <TextBlock Text="{l:T S_ItemShortcuts}" Foreground="{DynamicResource UiSubFg}" Margin="0,6,0,6"/>
+                            <Border Background="{DynamicResource UiInputBg}" CornerRadius="8" HorizontalAlignment="Left" Padding="2">
+                                <StackPanel x:Name="ItemShortcutChoices" Orientation="Horizontal"/>
+                            </Border>
+                            <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,6,0,0" Text="{l:T S_ItemShortcutsHint}"/>
                             <TextBlock x:Name="ShortcutHint" Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="Collapsed"/>
                             <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,10,0,0"
                                        Text="{l:T S_A11yNote}"/>

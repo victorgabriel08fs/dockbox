@@ -143,7 +143,28 @@ Then open this one again.</value></data>
   <data name="Undo_Removed" xml:space="preserve"><value>“{0}” removed</value></data>
   <data name="Undo_Button" xml:space="preserve"><value>Undo</value></data>
   <data name="Drag_Remove" xml:space="preserve"><value>Remove</value></data>
-  <data name="Shortcut_InUse" xml:space="preserve"><value>The shortcut {0} is already used by another program. Pick another one.</value></data>
+  <data name="Shortcut_InUse" xml:space="preserve"><value>The shortcut {0} is already in use (by another program or another Dockbox shortcut). Pick another one.</value></data>
+  <data name="Shortcut_InUseMany" xml:space="preserve"><value>These shortcuts are already in use (by other programs or repeated in Dockbox) and won't work: {0}. Pick others.</value></data>
+  <data name="S_ShortcutToggle" xml:space="preserve"><value>Show or hide the Dock</value></data>
+  <data name="S_ShortcutToggleHint" xml:space="preserve"><value>Turns "Hide automatically" on and off, like Option+Cmd+D on macOS.</value></data>
+  <data name="S_ShortcutSearch" xml:space="preserve"><value>Open search</value></data>
+  <data name="S_ShortcutSearchHint" xml:space="preserve"><value>Spotlight-style search: type the name of an app or file and press Enter.</value></data>
+  <data name="S_ShortcutPress" xml:space="preserve"><value>Press the shortcut…</value></data>
+  <data name="S_ShortcutRecordHint" xml:space="preserve"><value>Press the combination (e.g. Ctrl+Alt+Shift+H). Backspace turns it off; Esc cancels.</value></data>
+  <data name="S_ShortcutInvalid" xml:space="preserve"><value>Use at least one modifier key (Ctrl, Alt, Shift or Win) with a letter, a number, Space or F1 to F12.</value></data>
+  <data name="S_ShortcutOff" xml:space="preserve"><value>Turn off</value></data>
+  <data name="S_ItemShortcuts" xml:space="preserve"><value>Open Dock items 1 to 9</value></data>
+  <data name="S_ItemShortcutsHint" xml:space="preserve"><value>The number is the position among pinned apps, from left to right (or top to bottom). If the app is already open, it brings its window forward.</value></data>
+  <data name="Search_Title" xml:space="preserve"><value>Search</value></data>
+  <data name="Search_Placeholder" xml:space="preserve"><value>Search apps and files</value></data>
+  <data name="Search_Loading" xml:space="preserve"><value>Loading apps and files…</value></data>
+  <data name="Search_Nothing" xml:space="preserve"><value>Nothing found</value></data>
+  <data name="Search_KindDock" xml:space="preserve"><value>Dock</value></data>
+  <data name="Search_KindApp" xml:space="preserve"><value>App</value></data>
+  <data name="Search_KindFile" xml:space="preserve"><value>File</value></data>
+  <data name="W_Search_Name" xml:space="preserve"><value>Search</value></data>
+  <data name="W_Search_Desc" xml:space="preserve"><value>Opens the apps and files search (Spotlight style).</value></data>
+  <data name="W_Search_Label" xml:space="preserve"><value>Search ({0})</value></data>
   <data name="A11y_Open" xml:space="preserve"><value>{0}, open</value></data>
   <data name="A11y_OpenUnpinned" xml:space="preserve"><value>{0}, open, not pinned</value></data>
   <data name="Menu_DockOptions" xml:space="preserve"><value>Dock options</value></data>

@@ -19,6 +19,7 @@ public static class WidgetFactory
             "notes" => new NotesWidget(),
             "timer" => new TimerWidget(),
             "clipboard" => new ClipboardWidget(),
+            "search" => new SearchWidget(),
             "trash" => new TrashWidget(),
             _ => null,
         };
@@ -39,6 +40,7 @@ public static class WidgetFactory
         "notes" => Loc.T("W_Notes_Name"),
         "timer" => Loc.T("W_Timer_Name"),
         "clipboard" => Loc.T("W_Clipboard_Name"),
+        "search" => Loc.T("W_Search_Name"),
         "trash" => Loc.T("W_Trash_Name"),
         _ => kind,
     };
@@ -56,6 +58,7 @@ public static class WidgetFactory
         "notes" => Loc.T("W_Notes_Desc"),
         "timer" => Loc.T("W_Timer_Desc"),
         "clipboard" => Loc.T("W_Clipboard_Desc"),
+        "search" => Loc.T("W_Search_Desc"),
         "trash" => Loc.T("W_Trash_Desc"),
         _ => "",
     };
@@ -74,6 +77,7 @@ public static class WidgetFactory
         "notes" => "\uE70B",
         "timer" => "\uE916",
         "clipboard" => "\uE77F",
+        "search" => "\uE721",
         "trash" => "",
         _ => "",
     };
