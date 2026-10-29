@@ -34,6 +34,7 @@ Funciona no Windows 10 (versão 1809 ou mais recente) e no Windows 11, 64 bits. 
 - Ícone na área de notificação (bandeja) com atalhos para Gerenciar Dock e Sair.
 - Acessível: **Win+Shift+D** leva o foco ao Dock (setas, Enter, Shift+F10, Esc), nomes para o Narrador/NVDA,
   sem animações quando o Windows pede e cores do alto contraste.
+- Temas prontos (Sonoma claro e escuro, Grafite, Transparente), exportar e importar tema e backup completo para levar o Dock a outro PC.
 - Ícones personalizados para qualquer item (imagem ou ícone de outro programa).
 - Pilhas de pastas: clicar numa pasta fixada (como Downloads) abre o conteúdo em leque, grade ou lista.
 - Minimizar "suga" a janela para o ícone do app no Dock (efeitos Escala e Gênio).
