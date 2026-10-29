@@ -26,6 +26,7 @@
 - Ícone na área de notificação (bandeja) com atalhos para Gerenciar Dock e Sair.
 - Acessível: **Win+Shift+D** leva o foco ao Dock (setas, Enter, Shift+F10, Esc), nomes para o Narrador/NVDA,
   sem animações quando o Windows pede e cores do alto contraste.
+- Fundo de vidro com desfoque de verdade do que está atrás (Windows 10 e 11).
 - Opção de esconder a barra de tarefas do Windows (ela volta ao fechar o Dockbox).
 - Em português, inglês e espanhol (segue o idioma do Windows ou o que você escolher).
 - Iniciar junto com o Windows (opcional).

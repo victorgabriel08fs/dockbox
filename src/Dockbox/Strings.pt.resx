@@ -197,6 +197,8 @@ Seus apps fixados serão mantidos.</value></data>
   <data name="S_Opacity" xml:space="preserve"><value>Opacidade</value></data>
   <data name="S_BackgroundOpacity" xml:space="preserve"><value>Opacidade do fundo</value></data>
   <data name="S_Corners" xml:space="preserve"><value>Cantos arredondados</value></data>
+  <data name="S_Blur" xml:space="preserve"><value>Desfocar o que está atrás do Dock</value></data>
+  <data name="S_BlurHint" xml:space="preserve"><value>Precisa de "Efeitos de transparência" ligado no Windows; fica desligado na economia de bateria e no alto contraste. Com o desfoque, a cor do fundo fica um pouco mais transparente.</value></data>
   <data name="S_Size" xml:space="preserve"><value>Tamanho</value></data>
   <data name="S_IconSize" xml:space="preserve"><value>Tamanho dos ícones</value></data>
   <data name="S_Magnify" xml:space="preserve"><value>Ampliação ao passar o mouse</value></data>

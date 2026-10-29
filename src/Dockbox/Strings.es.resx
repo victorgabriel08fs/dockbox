@@ -197,6 +197,8 @@ Tus aplicaciones ancladas se mantendrán.</value></data>
   <data name="S_Opacity" xml:space="preserve"><value>Opacidad</value></data>
   <data name="S_BackgroundOpacity" xml:space="preserve"><value>Opacidad del fondo</value></data>
   <data name="S_Corners" xml:space="preserve"><value>Esquinas redondeadas</value></data>
+  <data name="S_Blur" xml:space="preserve"><value>Desenfocar lo que hay detrás del Dock</value></data>
+  <data name="S_BlurHint" xml:space="preserve"><value>Necesita "Efectos de transparencia" activado en Windows; se desactiva con el ahorro de batería y el contraste alto. Con el desenfoque, el color de fondo es un poco más transparente.</value></data>
   <data name="S_Size" xml:space="preserve"><value>Tamaño</value></data>
   <data name="S_IconSize" xml:space="preserve"><value>Tamaño de los iconos</value></data>
   <data name="S_Magnify" xml:space="preserve"><value>Ampliar al pasar el ratón</value></data>

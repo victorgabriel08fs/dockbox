@@ -34,6 +34,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Acessibilidade: atalho global (Win+Shift+D, configurável ou desligado) para usar o Dock pelo teclado, com setas, Enter, Shift+F10 e Esc; nomes para leitores de tela em cada item e widget e nos controles do Gerenciar Dock; sem ampliação, pulo nem deslizes com "Mostrar animações" desligado; cores do Windows no alto contraste (#25).
 - Idiomas: português, inglês e espanhol, escolhidos em Gerenciar Dock › Comportamento › Idioma; no automático segue o idioma do Windows (outros idiomas ficam em inglês). Datas do relógio e do calendário e o nome da cidade do clima seguem o idioma (#34).
 - Ocultar a barra de tarefas do Windows (opcional, em Comportamento ou no botão direito do Dock), com "Abrir o menu Iniciar" no menu do Dock; a barra volta ao desligar, ao fechar o Dockbox e, se ele travar ou for encerrado, na próxima vez que abrir; reaparece sozinha só com o Iniciar ou a pesquisa abertos (#21).
+- Desfoque de verdade atrás do Dock no Windows 10 e 11 (opção em Estilo, ligada por padrão); desliga sozinho com "Efeitos de transparência" desligado, na economia de bateria e no alto contraste (#22).
 
 ### Segurança
 
