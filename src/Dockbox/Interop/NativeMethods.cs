@@ -429,6 +429,18 @@ internal static class NativeMethods
     [DllImport("ole32.dll")]
     public static extern int PropVariantClear(ref PROPVARIANT pvar);
 
+    // ---- Atalho global (teclado) ----
+    public const int WM_HOTKEY = 0x0312;
+    public const uint MOD_NOREPEAT = 0x4000;
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
     // ---- Vários monitores ----
     public const int WM_DISPLAYCHANGE = 0x007E;
     public const uint SWP_NOZORDER = 0x0004;

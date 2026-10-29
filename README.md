@@ -24,6 +24,8 @@
 - Reserva espaço na tela: janelas maximizadas param antes do Dock, como na barra de tarefas (dá para desligar).
 - Ocultar automaticamente: o Dock sai da tela e volta quando o mouse encosta na borda.
 - Ícone na área de notificação (bandeja) com atalhos para Gerenciar Dock e Sair.
+- Acessível: **Ctrl+Alt+D** leva o foco ao Dock (setas, Enter, Shift+F10, Esc), nomes para o Narrador/NVDA,
+  sem animações quando o Windows pede e cores do alto contraste.
 - Iniciar junto com o Windows (opcional).
 
 ## Como rodar no Windows
