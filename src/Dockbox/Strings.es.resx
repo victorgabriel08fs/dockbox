@@ -233,6 +233,11 @@ Tus aplicaciones ancladas se mantendrán.</value></data>
   <data name="S_Separator" xml:space="preserve"><value>Separador entre aplicaciones y widgets</value></data>
   <data name="S_AutoHide" xml:space="preserve"><value>Ocultar y mostrar el Dock automáticamente</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Tiempo con el ratón en el borde hasta que aparece</value></data>
+  <data name="S_Attention" xml:space="preserve"><value>Rebotar cuando una aplicación pida atención</value></data>
+  <data name="S_Badges" xml:space="preserve"><value>Mostrar contadores en los iconos</value></data>
+  <data name="S_BadgesHint" xml:space="preserve"><value>El número viene del título de las ventanas, como en "(3) WhatsApp". El progreso de descargas no aparece: Windows no permite que otros programas lo lean.</value></data>
+  <data name="A11y_WithBadge" xml:space="preserve"><value>{0}, {1} sin leer</value></data>
+  <data name="A11y_WithAttention" xml:space="preserve"><value>{0}, requiere atención</value></data>
   <data name="S_Previews" xml:space="preserve"><value>Mostrar miniaturas de las ventanas al pasar el ratón</value></data>
   <data name="S_PreviewsHint" xml:space="preserve"><value>Aparece en apps con más de una ventana abierta. Haz clic en una miniatura para traer esa ventana.</value></data>
   <data name="S_PreviewDelay" xml:space="preserve"><value>Tiempo con el ratón sobre el icono hasta que aparecen</value></data>

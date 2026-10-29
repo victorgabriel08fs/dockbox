@@ -233,6 +233,11 @@ Your pinned apps will be kept.</value></data>
   <data name="S_Separator" xml:space="preserve"><value>Separator between apps and widgets</value></data>
   <data name="S_AutoHide" xml:space="preserve"><value>Automatically hide and show the Dock</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Time with the mouse at the edge before it appears</value></data>
+  <data name="S_Attention" xml:space="preserve"><value>Bounce when an app needs attention</value></data>
+  <data name="S_Badges" xml:space="preserve"><value>Show counters on icons</value></data>
+  <data name="S_BadgesHint" xml:space="preserve"><value>The number comes from window titles, as in "(3) WhatsApp". Download progress doesn't show: Windows doesn't let other programs read it.</value></data>
+  <data name="A11y_WithBadge" xml:space="preserve"><value>{0}, {1} unread</value></data>
+  <data name="A11y_WithAttention" xml:space="preserve"><value>{0}, needs attention</value></data>
   <data name="S_Previews" xml:space="preserve"><value>Show window thumbnails on hover</value></data>
   <data name="S_PreviewsHint" xml:space="preserve"><value>Appears for apps with more than one open window. Click a thumbnail to bring that window forward.</value></data>
   <data name="S_PreviewDelay" xml:space="preserve"><value>Time with the mouse on the icon before they appear</value></data>

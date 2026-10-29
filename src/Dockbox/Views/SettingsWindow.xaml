@@ -293,6 +293,9 @@
                             <Slider x:Name="PreviewDelaySlider" AutomationProperties.Name="{l:T S_PreviewDelayA11y}" Style="{StaticResource UiSlider}" Minimum="0" Maximum="1.5" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
                             <CheckBox x:Name="UnpinnedToggle" Style="{StaticResource UiToggle}" Content="{l:T S_ShowRunning}" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="BounceToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Bounce}" Click="Toggle_Click" Margin="0,0,0,14"/>
+                            <CheckBox x:Name="AttentionToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Attention}" Click="Toggle_Click" Margin="0,0,0,14"/>
+                            <CheckBox x:Name="BadgesToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Badges}" Click="Toggle_Click" Margin="0,0,0,4"/>
+                            <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,0,0,14" Text="{l:T S_BadgesHint}"/>
                             <CheckBox x:Name="SeparatorToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Separator}" Click="Toggle_Click" Margin="0,0,0,14"/>
                             <CheckBox x:Name="AutoHideToggle" Style="{StaticResource UiToggle}" Content="{l:T S_AutoHide}" Click="Toggle_Click" Margin="0,0,0,10"/>
                             <DockPanel x:Name="AutoHideDelayRow" Margin="0,0,0,4">

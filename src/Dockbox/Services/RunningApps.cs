@@ -135,6 +135,14 @@ public static class RunningApps
         }
     }
 
+    /// <summary>Título da janela.</summary>
+    public static string Title(IntPtr hwnd)
+    {
+        var sb = new StringBuilder(512);
+        GetWindowText(hwnd, sb, sb.Capacity);
+        return sb.ToString();
+    }
+
     /// <summary>Janelas abertas de um app, com título, na ordem de empilhamento.</summary>
     public static List<(IntPtr Handle, string Title, bool Minimized)> WindowsOf(string exeKey)
     {

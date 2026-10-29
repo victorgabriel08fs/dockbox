@@ -111,6 +111,19 @@ da ampliação, onde o Dock deixa de segurar o mouse, para não haver vão no ca
 quantas miniaturas cabem na tela (encolhe até 60% antes de esconder as que sobram) e o encaixe de cada uma, sem
 chamadas ao Windows, para os testes.
 
+## Pedidos de atenção e contadores
+
+O Dock se registra com `RegisterShellHookWindow` e recebe a mensagem `SHELLHOOK`. `HSHELL_FLASH` diz que uma
+janela piscou (FlashWindowEx); a janela principal dela (`GetAncestor(GA_ROOTOWNER)`) entra em
+`Core/AttentionTracker`, que tira as janelas que fecharam e as do app que foi para o primeiro plano
+(conferido no timer lento e quando chega `HSHELL_WINDOWACTIVATED`/`DESTROYED`). Ícones com atenção pulam de
+novo a cada segundo (o pulo dura 1,4 s), menos com animações desligadas no Windows.
+
+Os contadores vêm do título das janelas (`Core/Badges.ParseCount`: "(N) Nome" no começo do título), lidos no
+timer lento. O contador e o progresso que os apps mandam com `ITaskbarList3` vão direto para a janela da barra
+de tarefas do Explorer; não há API para outro programa ler isso sem substituir o Explorer como shell ou
+injetar código nele, por isso ficaram de fora.
+
 ## Barra de tarefas do Windows
 
 `Services/Taskbar` esconde `Shell_TrayWnd` e `Shell_SecondaryTrayWnd` (`ShowWindow`) e liga a ocultação
