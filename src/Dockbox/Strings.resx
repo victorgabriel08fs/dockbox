@@ -233,6 +233,11 @@ Your pinned apps will be kept.</value></data>
   <data name="S_Separator" xml:space="preserve"><value>Separator between apps and widgets</value></data>
   <data name="S_AutoHide" xml:space="preserve"><value>Automatically hide and show the Dock</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Time with the mouse at the edge before it appears</value></data>
+  <data name="S_MinimizeEffect" xml:space="preserve"><value>When minimizing a window</value></data>
+  <data name="S_MinimizeNone" xml:space="preserve"><value>None</value></data>
+  <data name="S_MinimizeScale" xml:space="preserve"><value>Scale</value></data>
+  <data name="S_MinimizeGenie" xml:space="preserve"><value>Genie</value></data>
+  <data name="S_MinimizeHint" xml:space="preserve"><value>The window shrinks into the app's icon in the Dock. While the effect is on, Windows' own minimize and restore animation is turned off; it comes back when you choose None or close Dockbox.</value></data>
   <data name="S_Previews" xml:space="preserve"><value>Show window thumbnails on hover</value></data>
   <data name="S_PreviewsHint" xml:space="preserve"><value>Appears for apps with more than one open window. Click a thumbnail to bring that window forward.</value></data>
   <data name="S_PreviewDelay" xml:space="preserve"><value>Time with the mouse on the icon before they appear</value></data>

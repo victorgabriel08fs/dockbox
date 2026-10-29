@@ -110,6 +110,15 @@ quer salvar). Janelas minimizadas aparecem com o ícone do app. Passe o mouse pa
 na hora; tire o mouse do ícone e do painel para ele sumir. **Tempo com o mouse no ícone até aparecer** ajusta a
 espera (0 a 1,5 s). O botão direito no ícone continua listando as janelas.
 
+**Ao minimizar uma janela** (em Comportamento): a janela encolhe até o ícone do app no Dock, como no macOS.
+- **Escala** (padrão): a janela diminui direto até o ícone.
+- **Gênio**: a janela primeiro se estreita e depois desce até o ícone, como se fosse sugada.
+- **Nenhum**: volta a animação normal do Windows.
+
+Se o app não tem ícone no Dock, a janela vai para o meio do Dock. Enquanto Escala ou Gênio estão ligados, o
+Windows não faz a própria animação ao minimizar e ao restaurar (senão as duas apareceriam juntas); ela volta
+ao escolher Nenhum ou fechar o Dockbox. Com "Mostrar animações" desligado no Windows, não há efeito.
+
 **Monitor** (em Aparência, abaixo de Posição na tela):
 - **Principal**: o Dock fica no monitor principal do Windows.
 - **Escolher**: aparece a lista de monitores (número e resolução); clique no que quiser. A escolha fica salva.

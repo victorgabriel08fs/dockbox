@@ -42,6 +42,8 @@ public sealed class Appearance
     public bool ShowLabels { get; set; } = true;
     public bool ShowRunning { get; set; } = true;
     public bool BounceOnLaunch { get; set; } = true;
+    /// <summary>Efeito ao minimizar uma janela: encolhe até o ícone do app no Dock.</summary>
+    public MinimizeEffect MinimizeEffect { get; set; } = MinimizeEffect.Scale;
     public bool ShowSeparator { get; set; } = true;
     /// <summary>Reserva a faixa do Dock na tela para as janelas maximizadas pararem antes dele.</summary>
     public bool ReserveSpace { get; set; } = true;
@@ -252,6 +254,7 @@ public static class SettingsStore
         if (!Enum.IsDefined(a.Edge)) a.Edge = DockEdge.Bottom;
         if (!Enum.IsDefined(a.Theme)) a.Theme = ThemeMode.Auto;
         if (!Enum.IsDefined(a.Monitor)) a.Monitor = MonitorMode.Primary;
+        if (!Enum.IsDefined(a.MinimizeEffect)) a.MinimizeEffect = MinimizeEffect.Scale;
         a.MonitorDevice ??= "";
         a.KeyboardShortcut ??= "";
         if (a.KeyboardShortcut.Length > 0 && Hotkey.Parse(a.KeyboardShortcut) == null) a.KeyboardShortcut = Hotkey.Default;

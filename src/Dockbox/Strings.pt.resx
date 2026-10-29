@@ -233,6 +233,11 @@ Seus apps fixados serão mantidos.</value></data>
   <data name="S_Separator" xml:space="preserve"><value>Separador entre apps e widgets</value></data>
   <data name="S_AutoHide" xml:space="preserve"><value>Ocultar e mostrar o Dock automaticamente</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Tempo com o mouse na borda até aparecer</value></data>
+  <data name="S_MinimizeEffect" xml:space="preserve"><value>Ao minimizar uma janela</value></data>
+  <data name="S_MinimizeNone" xml:space="preserve"><value>Nenhum</value></data>
+  <data name="S_MinimizeScale" xml:space="preserve"><value>Escala</value></data>
+  <data name="S_MinimizeGenie" xml:space="preserve"><value>Gênio</value></data>
+  <data name="S_MinimizeHint" xml:space="preserve"><value>A janela encolhe até o ícone do app no Dock. Enquanto o efeito estiver ligado, a animação do próprio Windows ao minimizar e restaurar fica desligada; ela volta ao escolher Nenhum ou fechar o Dockbox.</value></data>
   <data name="S_Previews" xml:space="preserve"><value>Mostrar miniaturas das janelas ao passar o mouse</value></data>
   <data name="S_PreviewsHint" xml:space="preserve"><value>Aparece em apps com mais de uma janela aberta. Clique numa miniatura para trazer a janela.</value></data>
   <data name="S_PreviewDelay" xml:space="preserve"><value>Tempo com o mouse no ícone até aparecer</value></data>

@@ -111,6 +111,20 @@ da ampliação, onde o Dock deixa de segurar o mouse, para não haver vão no ca
 quantas miniaturas cabem na tela (encolhe até 60% antes de esconder as que sobram) e o encaixe de cada uma, sem
 chamadas ao Windows, para os testes.
 
+## Animação ao minimizar
+
+`DockWindow.Minimize.cs` registra `SetWinEventHook(EVENT_SYSTEM_MINIMIZESTART)` (fora do processo, sem as
+janelas do próprio Dockbox). Para cada janela que minimiza, calcula de onde ela sai (o retângulo atual ou, se
+já minimizou, `GetWindowPlacement` convertido de coordenadas da área de trabalho) e para onde vai (o ícone do
+app no Dock, pelas chaves de `RunningApps`; sem ícone, o meio do Dock). `Views/MinimizeEffectWindow` é uma
+janela temporária sem foco e sem cliques coberta pela miniatura ao vivo da janela (`DwmRegisterThumbnail`),
+redimensionada a cada frame conforme `Core/MinimizeMath` (Escala: tudo junto com aceleração; Gênio: primeiro o
+eixo ao longo do Dock, depois o eixo até o Dock).
+
+Para a animação do Windows não aparecer junto, `Services/SystemMinimizeAnimation` desliga `MinAnimate`
+(`SPI_SETANIMATION`, sem gravar no registro) enquanto o efeito está ligado, com um arquivo de recuperação
+como o da barra de tarefas: religa ao escolher Nenhum, ao fechar e, depois de uma queda, na próxima abertura.
+
 ## Barra de tarefas do Windows
 
 `Services/Taskbar` esconde `Shell_TrayWnd` e `Shell_SecondaryTrayWnd` (`ShowWindow`) e liga a ocultação

@@ -36,6 +36,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Ocultar a barra de tarefas do Windows (opcional, em Comportamento ou no botão direito do Dock), com "Abrir o menu Iniciar" no menu do Dock; a barra volta ao desligar, ao fechar o Dockbox e, se ele travar ou for encerrado, na próxima vez que abrir; reaparece sozinha só com o Iniciar ou a pesquisa abertos (#21).
 - Desfoque de verdade atrás do Dock no Windows 10 e 11 (opção em Estilo, ligada por padrão); desliga sozinho com "Efeitos de transparência" desligado, na economia de bateria e no alto contraste (#22).
 - Miniaturas das janelas: passar o mouse num app com mais de uma janela aberta mostra as miniaturas ao vivo de cada janela, com o título; clicar traz a janela e o X fecha. Segue o tema, os cantos e a posição do Dock; dá para desligar e mudar o tempo até aparecer em Comportamento (#23).
+- Animação ao minimizar: a janela encolhe até o ícone do app no Dock, com os efeitos Escala (padrão) e Gênio, ou Nenhum, em Comportamento. Enquanto o efeito está ligado, a animação do próprio Windows ao minimizar e restaurar fica desligada; ela volta ao escolher Nenhum, ao fechar o Dockbox e, se ele travar, na próxima abertura (#26).
 
 ### Corrigido
 
