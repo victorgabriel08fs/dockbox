@@ -18,11 +18,8 @@
 - **Widgets**: relógio, calendário, clima (Open-Meteo), CPU/RAM, bateria, mídia tocando agora e Lixeira.
 - **Estilo**: tema automático/claro/escuro/personalizado, cor de fundo, cor de destaque, opacidade,
   cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).
-<<<<<<< HEAD
 - Reserva espaço na tela: janelas maximizadas param antes do Dock, como na barra de tarefas (dá para desligar).
-=======
 - Ícone na área de notificação (bandeja) com atalhos para Gerenciar Dock e Sair.
->>>>>>> origin/main
 - Iniciar junto com o Windows (opcional).
 
 ## Como rodar no Windows
