@@ -65,6 +65,32 @@ public static class RunningApps
         }
     }
 
+    /// <summary>Janelas abertas de um app, com título, na ordem de empilhamento.</summary>
+    public static List<(IntPtr Handle, string Title, bool Minimized)> WindowsOf(string exeKey)
+    {
+        var result = new List<(IntPtr, string, bool)>();
+        if (!Snapshot().TryGetValue(exeKey, out var windows)) return result;
+        var sb = new StringBuilder(512);
+        foreach (var w in windows)
+        {
+            sb.Clear();
+            GetWindowText(w, sb, sb.Capacity);
+            result.Add((w, sb.ToString(), IsIconic(w)));
+        }
+        return result;
+    }
+
+    /// <summary>Traz uma janela para a frente, restaurando se estiver minimizada.</summary>
+    public static void Activate(IntPtr hwnd)
+    {
+        if (IsIconic(hwnd)) ShowWindow(hwnd, SW_RESTORE);
+        AllowSetForegroundWindow(ASFW_ANY);
+        SetForegroundWindow(hwnd);
+    }
+
+    /// <summary>Pede para a janela fechar (como clicar no X; o app pode perguntar se quer salvar).</summary>
+    public static void Close(IntPtr hwnd) => PostMessage(hwnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+
     /// <summary>
     /// Comportamento do Dock: se o app já está em primeiro plano, minimiza; senão traz a janela para a frente.
     /// Retorna false se o app não tem janelas abertas.

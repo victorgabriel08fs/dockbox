@@ -29,9 +29,10 @@ O Dock some sozinho durante vídeo, jogo ou apresentação em tela cheia e volta
 | **Ctrl** + clique | Abre uma nova janela/instância do app |
 | Passar o mouse | Os ícones crescem e o nome aparece |
 | Ponto embaixo do ícone | O app está aberto |
-| Botão direito num app | Abrir/Mostrar, Nova janela, Mostrar no Explorador, Remover do Dock |
+| Botão direito num app | Janelas abertas do app (clique para trazer), Nova janela, Mostrar no Explorador, Remover do Dock, Fechar e Opções do Dock |
 | Botão direito num widget | Opções do widget e Remover widget |
-| Botão direito no fundo | Gerenciar Dock, ligar/desligar ampliação, posição na tela, sair |
+| Botão direito no fundo | Gerenciar Dock, ampliação, ocultação automática, posição na tela, sair |
+| Menus pelo teclado | Setas para navegar, Enter para escolher, Esc para fechar |
 
 ### Arrastar e soltar
 

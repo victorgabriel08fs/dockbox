@@ -947,23 +947,70 @@ public partial class DockWindow : Window
         var menu = new ContextMenu();
         if (tile?.Kind == TileKind.App)
         {
-            var entry = tile.Entry!;
-            menu.Items.Add(Header(entry.Name));
-            menu.Items.Add(Item(tile.Running ? "Mostrar" : "Abrir", () => OnTileClicked(tile)));
-            if (tile.Running) menu.Items.Add(Item("Nova janela", () => AppLauncher.Launch(entry)));
-            menu.Items.Add(Item("Mostrar no Explorador", () => AppLauncher.ShowInExplorer(entry.Path)));
+            // Cada app tem o próprio menu; as opções gerais ficam num submenu.
+            AddAppItems(menu, tile);
             menu.Items.Add(new Separator());
-            menu.Items.Add(Item("Remover do Dock", () => RemoveEntry(entry)));
+            var options = new MenuItem { Header = "Opções do Dock" };
+            AddDockItems(options);
+            menu.Items.Add(options);
         }
-        else if (tile?.Kind == TileKind.Widget)
+        else
         {
-            var w = tile.Widget!;
-            menu.Items.Add(Header(w.DisplayName));
-            foreach (var (h, a) in w.MenuItems()) menu.Items.Add(Item(h, a));
-            menu.Items.Add(Item("Remover widget", () => DisableWidget(w.Kind)));
+            if (tile?.Kind == TileKind.Widget)
+            {
+                var w = tile.Widget!;
+                menu.Items.Add(Header(w.DisplayName));
+                foreach (var (h, a) in w.MenuItems()) menu.Items.Add(Item(h, a));
+                menu.Items.Add(Item("Remover widget", () => DisableWidget(w.Kind)));
+                menu.Items.Add(new Separator());
+            }
+            AddDockItems(menu);
+        }
+        ShowMenu(menu);
+    }
+
+    /// <summary>Menu de um app: janelas abertas, nova janela, Explorador, fechar e remover.</summary>
+    private void AddAppItems(ItemsControl menu, Tile tile)
+    {
+        var entry = tile.Entry!;
+        menu.Items.Add(Header(entry.Name));
+
+        var windows = tile.Running && tile.ExeKey != null ? RunningApps.WindowsOf(tile.ExeKey) : new();
+        if (windows.Count > 0)
+        {
+            foreach (var (hwnd, title, minimized) in windows.Take(12))
+            {
+                string text = title.Length > 60 ? title[..57] + "..." : title;
+                var mi = Item(minimized ? text + "  (minimizada)" : text, () => RunningApps.Activate(hwnd));
+                mi.Padding = new Thickness(18, mi.Padding.Top, mi.Padding.Right, mi.Padding.Bottom);
+                menu.Items.Add(mi);
+            }
+            menu.Items.Add(new Separator());
+            menu.Items.Add(Item("Nova janela", () => AppLauncher.Launch(entry)));
+        }
+        else
+        {
+            menu.Items.Add(Item("Abrir", () => OnTileClicked(tile)));
         }
 
-        if (menu.Items.Count > 0) menu.Items.Add(new Separator());
+        menu.Items.Add(Item(Directory.Exists(Environment.ExpandEnvironmentVariables(entry.Path)) ? "Mostrar a pasta no Explorador" : "Mostrar no Explorador",
+            () => AppLauncher.ShowInExplorer(entry.Path)));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(Item("Remover do Dock", () => RemoveEntry(entry)));
+
+        if (windows.Count > 0)
+        {
+            menu.Items.Add(new Separator());
+            menu.Items.Add(Item(windows.Count == 1 ? "Fechar" : $"Fechar todas as janelas ({windows.Count})", () =>
+            {
+                foreach (var (hwnd, _, _) in windows) RunningApps.Close(hwnd);
+            }));
+        }
+    }
+
+    /// <summary>Opções gerais do Dock (área vazia, separador, widgets e submenu dos apps).</summary>
+    private void AddDockItems(ItemsControl menu)
+    {
         menu.Items.Add(Item("Gerenciar Dock...", () => SettingsWindow.ShowSingle()));
         menu.Items.Add(Item(A.Magnify ? "Desligar ampliação" : "Ligar ampliação", () =>
         {
@@ -986,11 +1033,30 @@ public partial class DockWindow : Window
         }
         menu.Items.Add(new Separator());
         menu.Items.Add(Item("Sair do Dockbox", Close));
+    }
 
+    private void ShowMenu(ContextMenu menu)
+    {
+        IntPtr previous = IntPtr.Zero;
+        var hwnd = new WindowInteropHelper(this).Handle;
         menu.PlacementTarget = this;
         menu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
-        menu.Opened += (_, _) => { _menuOpen = true; NameLabel.Visibility = Visibility.Collapsed; };
-        menu.Closed += (_, _) => { _menuOpen = false; StartAnimating(); };
+        menu.Opened += (_, _) =>
+        {
+            _menuOpen = true;
+            NameLabel.Visibility = Visibility.Collapsed;
+            // O Dock não pega foco; só durante o menu, para setas, Enter e Esc funcionarem.
+            previous = GetForegroundWindow();
+            SetForegroundWindow(hwnd);
+            menu.Focus();
+        };
+        menu.Closed += (_, _) =>
+        {
+            _menuOpen = false;
+            StartAnimating();
+            // Devolve o foco para quem tinha, a não ser que a ação do menu tenha ativado outra janela.
+            if (previous != IntPtr.Zero && GetForegroundWindow() == hwnd) SetForegroundWindow(previous);
+        };
         menu.IsOpen = true;
     }
 

@@ -25,6 +25,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Identidade visual: logo e ícone próprios no `Dockbox.exe`, nas janelas, na bandeja e no README (#40).
 - Ícone na área de notificação com atalhos para Gerenciar Dock e Sair (#40).
 - Reordenar arrastando um ícone no Dock e remover arrastando para fora, com indicador de onde o item entra, também ao arrastar arquivos de fora (#6).
+- Menu próprio de cada app: janelas abertas (clique traz a janela), Nova janela, Mostrar no Explorador, Fechar/Fechar todas, Remover do Dock e submenu Opções do Dock; menus funcionam pelo teclado (#7).
 
 ### Segurança
 
