@@ -32,6 +32,8 @@ public sealed class Appearance
     public ThemeMode Theme { get; set; } = ThemeMode.Auto;
     /// <summary>Opacidade do fundo, 0 a 1.</summary>
     public double Opacity { get; set; } = 0.72;
+    /// <summary>Desfoca o que está atrás do fundo do Dock (quando o Windows permite transparência).</summary>
+    public bool Blur { get; set; } = true;
     /// <summary>Cor do fundo no tema personalizado (#RRGGBB).</summary>
     public string CustomColor { get; set; } = "#2A2D3A";
     /// <summary>Cor de destaque: indicador de app aberto, anéis dos widgets (#RRGGBB).</summary>
@@ -85,7 +87,7 @@ public static class SettingsStore
     public static void UseFolder(string folder) => FolderPath = folder;
     private static string LegacyPinnedPath => System.IO.Path.Combine(FolderPath, "pinned.json");
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    internal static readonly JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,

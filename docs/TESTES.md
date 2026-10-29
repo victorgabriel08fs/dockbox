@@ -135,6 +135,16 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Escala de tela 100%, 125%, 150% e 200%: ícones nítidos, Dock no lugar certo.
 - [ ] **Restaurar padrões**: estilo volta, apps continuam.
 
+### 8a. Desfoque
+- [ ] Estilo → **Desfocar o que está atrás do Dock** ligado: com uma janela colorida atrás, o fundo do Dock fica desfocado (Windows 10 e 11).
+- [ ] O desfoque acompanha o fundo ao ampliar os ícones, sem sobrar desfoque fora do fundo nem nos cantos arredondados; mude os cantos (0 e 32 px) e confira.
+- [ ] Nas 4 posições e em monitor com escala 150%: o desfoque fica exatamente atrás do fundo.
+- [ ] Com Ocultar automaticamente: o desfoque some junto com o Dock e volta com ele.
+- [ ] Arrastar uma janela atrás do Dock não fica lento.
+- [ ] Configurações do Windows → Personalização → Cores → **Efeitos de transparência** desligado: o desfoque some em até 3 s; ligado de novo, volta.
+- [ ] Economia de bateria ligada (notebook): o desfoque some. Alto contraste: some.
+- [ ] Opção desligada: o fundo volta ao visual de antes.
+
 ### 8b. Reservar espaço na tela
 - [ ] Com a opção ligada (padrão), maximize uma janela: ela para antes do Dock nas 4 posições.
 - [ ] Mude o tamanho dos ícones: a área reservada acompanha na hora.

@@ -98,6 +98,11 @@ localização pelo endereço IP usando o serviço `ipwho.is` (seu IP é enviado 
 **Estilo**: tema (automático, claro, escuro ou personalizado), cor do fundo, cor de destaque, opacidade,
 cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).
 
+**Desfocar o que está atrás do Dock** (em Estilo, ligado por padrão): o fundo do Dock desfoca as janelas e o papel
+de parede atrás dele, como no macOS. Com o desfoque, a cor do fundo fica um pouco mais transparente; ajuste com
+**Opacidade**. O desfoque some sozinho quando "Efeitos de transparência" está desligado no Windows
+(Configurações → Personalização → Cores), na economia de bateria e no alto contraste, e volta quando eles mudam.
+
 **Monitor** (em Aparência, abaixo de Posição na tela):
 - **Principal**: o Dock fica no monitor principal do Windows.
 - **Escolher**: aparece a lista de monitores (número e resolução); clique no que quiser. A escolha fica salva.

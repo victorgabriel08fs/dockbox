@@ -206,6 +206,8 @@ Your pinned apps will be kept.</value></data>
   <data name="S_Opacity" xml:space="preserve"><value>Opacity</value></data>
   <data name="S_BackgroundOpacity" xml:space="preserve"><value>Background opacity</value></data>
   <data name="S_Corners" xml:space="preserve"><value>Rounded corners</value></data>
+  <data name="S_Blur" xml:space="preserve"><value>Blur what's behind the Dock</value></data>
+  <data name="S_BlurHint" xml:space="preserve"><value>Needs "Transparency effects" turned on in Windows; it's off in battery saver and high contrast. With blur, the background color becomes a bit more transparent.</value></data>
   <data name="S_Size" xml:space="preserve"><value>Size</value></data>
   <data name="S_IconSize" xml:space="preserve"><value>Icon size</value></data>
   <data name="S_Magnify" xml:space="preserve"><value>Magnify on hover</value></data>

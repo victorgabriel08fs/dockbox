@@ -226,7 +226,9 @@
                                 <TextBlock x:Name="RadiusValue" DockPanel.Dock="Right" Foreground="{DynamicResource UiSubFg}"/>
                                 <TextBlock Text="{l:T S_Corners}" Foreground="{DynamicResource UiSubFg}"/>
                             </DockPanel>
-                            <Slider x:Name="RadiusSlider" AutomationProperties.Name="{l:T S_Corners}" Style="{StaticResource UiSlider}" Minimum="0" Maximum="32" ValueChanged="Slider_Changed"/>
+                            <Slider x:Name="RadiusSlider" AutomationProperties.Name="{l:T S_Corners}" Style="{StaticResource UiSlider}" Minimum="0" Maximum="32" ValueChanged="Slider_Changed" Margin="0,0,0,14"/>
+                            <CheckBox x:Name="BlurToggle" Style="{StaticResource UiToggle}" Content="{l:T S_Blur}" Click="Toggle_Click" Margin="0,0,0,4"/>
+                            <TextBlock Style="{StaticResource UiSub}" TextWrapping="Wrap" Text="{l:T S_BlurHint}"/>
                         </StackPanel>
                     </Border>
 
