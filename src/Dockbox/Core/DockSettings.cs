@@ -275,9 +275,23 @@ public static class SettingsStore
             new() { Name = "Bloco de Notas", Path = System.IO.Path.Combine(sys, "notepad.exe") },
             new() { Name = "Calculadora", Path = System.IO.Path.Combine(sys, "calc.exe") },
             new() { Name = "Paint", Path = System.IO.Path.Combine(sys, "mspaint.exe") },
-            new() { Name = "Terminal", Path = System.IO.Path.Combine(sys, "cmd.exe") },
+            TerminalEntry(sys, local),
         };
 
-        return candidates.Where(a => File.Exists(a.Path)).GroupBy(a => a.Name).Select(g => g.First()).ToList();
+        return candidates
+            .Where(a => a.Path.StartsWith("shell:", StringComparison.OrdinalIgnoreCase) || File.Exists(a.Path))
+            .GroupBy(a => a.Name).Select(g => g.First()).ToList();
+    }
+
+    /// <summary>"Terminal": Windows Terminal quando instalado; senão PowerShell; por último o cmd.</summary>
+    public static DockEntry TerminalEntry(string systemDir, string localAppData)
+    {
+        // O alias wt.exe em WindowsApps só existe com o Windows Terminal instalado.
+        string wtAlias = System.IO.Path.Combine(localAppData, @"Microsoft\WindowsApps\wt.exe");
+        if (File.Exists(wtAlias))
+            return new DockEntry { Name = "Terminal", Path = @"shell:AppsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App" };
+        string ps = System.IO.Path.Combine(systemDir, @"WindowsPowerShell\v1.0\powershell.exe");
+        if (File.Exists(ps)) return new DockEntry { Name = "Terminal", Path = ps };
+        return new DockEntry { Name = "Terminal", Path = System.IO.Path.Combine(systemDir, "cmd.exe") };
     }
 }

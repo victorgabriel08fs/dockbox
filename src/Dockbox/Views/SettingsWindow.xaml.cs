@@ -179,9 +179,13 @@ public partial class SettingsWindow : Window
         _loading = true;
         try
         {
-            // Itens
+            // Itens: reaproveita os já carregados para não ler os ícones do disco de novo
+            // a cada clique de cor ou mudança de estilo.
+            var loaded = new Dictionary<DockEntry, ItemVm>(ReferenceEqualityComparer.Instance);
+            foreach (var vm in _items) loaded[vm.Entry] = vm;
             _items.Clear();
-            foreach (var e in S.Items) _items.Add(new ItemVm(e));
+            foreach (var e in S.Items)
+                _items.Add(loaded.TryGetValue(e, out var vm) ? vm : new ItemVm(e));
 
             // Widgets
             BuildWidgetRows();
@@ -212,6 +216,7 @@ public partial class SettingsWindow : Window
             EdgeLeft.IsChecked = A.Edge == DockEdge.Left;
             EdgeRight.IsChecked = A.Edge == DockEdge.Right;
             EdgeTop.IsChecked = A.Edge == DockEdge.Top;
+            UpdateMoveTooltips();
 
             // Comportamento
             LabelsToggle.IsChecked = A.ShowLabels;
@@ -357,6 +362,14 @@ public partial class SettingsWindow : Window
         S.Items.Insert(j, vm.Entry);
         ItemsList.SelectedItem = vm;
         Commit();
+    }
+
+    /// <summary>As setas falam de "antes/depois" no sentido do Dock: esquerda/direita ou acima/abaixo.</summary>
+    private void UpdateMoveTooltips()
+    {
+        bool horizontal = A.Edge is DockEdge.Bottom or DockEdge.Top;
+        MoveUpButton.ToolTip = horizontal ? "Mover para antes (mais à esquerda no Dock)" : "Mover para antes (mais acima no Dock)";
+        MoveDownButton.ToolTip = horizontal ? "Mover para depois (mais à direita no Dock)" : "Mover para depois (mais abaixo no Dock)";
     }
 
     private void MoveUp_Click(object sender, RoutedEventArgs e) => Move(-1);

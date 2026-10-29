@@ -36,6 +36,7 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] O aviso do SmartScreen aparece e **Executar assim mesmo** funciona.
 - [ ] O Dock aparece embaixo, centralizado, com apps padrão e relógio, calendário, clima e lixeira.
 - [ ] `settings.json` foi criado. Com um `pinned.json` antigo na pasta, os apps dele foram importados.
+- [ ] O item padrão "Terminal" abre o Windows Terminal (se instalado); sem ele, o PowerShell.
 - [ ] Abrir o `Dockbox.exe` de novo não cria um segundo Dock.
 - [ ] O `Dockbox.exe` mostra o ícone do Dockbox no Explorador (ícones pequenos, médios e grandes).
 
@@ -119,6 +120,8 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] O caminho só é aplicado ao sair do campo ou apertar Enter. Digitar um caminho de rede (`\\algum-servidor\x`): nada trava.
 - [ ] Argumentos: em um item `notepad.exe` coloque um caminho de arquivo entre aspas; ao clicar, abre o arquivo.
 - [ ] Remover um item pelo Dock com o Gerenciar aberto: a lista atualiza.
+- [ ] Com o Dock nas laterais, a dica das setas diz "mais acima/abaixo no Dock"; embaixo/em cima, "mais à esquerda/direita".
+- [ ] Clicar várias cores seguidas no Estilo é instantâneo, mesmo com muitos itens (os ícones não piscam nem recarregam).
 - [ ] Navegação só com teclado (Tab, setas, Espaço, Enter): anote o que não dá para alcançar.
 
 ### 8. Estilo e posição
