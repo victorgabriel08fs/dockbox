@@ -751,7 +751,9 @@ public partial class SettingsWindow : Window
 
     private void Slider_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (OpacityValue == null) return; // XAML ainda carregando
+        // Os sliders disparam ValueChanged enquanto o XAML carrega (Minimum ajusta o Value),
+        // antes de os textos de valor que vêm depois existirem.
+        if (!IsInitialized) return;
         UpdateSliderLabels();
         if (_loading) return;
         A.Opacity = Math.Round(OpacitySlider.Value, 2);

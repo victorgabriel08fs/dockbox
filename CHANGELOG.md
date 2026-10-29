@@ -38,6 +38,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 
 ### Corrigido
 
+- O Gerenciar Dock não abria: ao carregar a janela, os controles deslizantes avisavam mudança de valor antes de os textos de valor existirem, e o erro cancelava a abertura. Um teste automático agora abre a janela nos três idiomas.
 - Abrir o Dockbox com outro já aberto (por exemplo, uma versão nova) não fazia nada. Agora pergunta se é para trocar: o aberto fecha sozinho ou é encerrado; se não der (aberto como administrador), explica como fechar.
 
 ### Segurança

@@ -10,7 +10,7 @@
         Background="{DynamicResource UiWindowBg}"
         Foreground="{DynamicResource UiFg}"
         FontFamily="{StaticResource UiFont}"
-        Icon="/Assets/Dockbox.ico">
+        Icon="pack://application:,,,/Dockbox;component/Assets/Dockbox.ico">
     <DockPanel Margin="20">
         <StackPanel DockPanel.Dock="Top">
             <TextBlock Text="{l:T P_Title}" Style="{StaticResource UiH1}"/>
