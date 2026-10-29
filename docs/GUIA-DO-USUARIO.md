@@ -28,6 +28,7 @@ O Dock some sozinho durante vídeo, jogo ou apresentação em tela cheia e volta
 | **Ctrl** + clique | Abre uma nova janela/instância do app |
 | Passar o mouse | Os ícones crescem e o nome aparece |
 | Ponto embaixo do ícone | O app está aberto |
+| Ícones depois do separador | Apps abertos que não estão fixados; somem quando fecham. Botão direito → **Manter no Dock** para fixar |
 | Botão direito num app | Janelas abertas do app (clique para trazer), Nova janela, Mostrar no Explorador, Remover do Dock, Fechar e Opções do Dock |
 | Botão direito num widget | Opções do widget e Remover widget |
 | Botão direito no fundo | Gerenciar Dock, ampliação, ocultação automática, posição na tela, sair |
@@ -51,7 +52,7 @@ O Dock some sozinho durante vídeo, jogo ou apresentação em tela cheia e volta
 Abra pelo botão direito no Dock → **Gerenciar Dock...**. As mudanças aparecem no Dock na hora.
 
 **Itens do Dock**
-- **Adicionar app**: lista os apps do Menu Iniciar. Dá para buscar e escolher vários com Ctrl + clique.
+- **Adicionar app**: lista os apps do Menu Iniciar e os da Microsoft Store (Calculadora, Fotos, Configurações...). Dá para buscar e escolher vários com Ctrl + clique.
 - **Adicionar arquivo...** e **Adicionar pasta...**: escolha qualquer arquivo ou pasta.
 - Setas: mudam a ordem. Lixeira: remove do Dock (não apaga o app).
 - **Item selecionado**: edite nome, caminho e argumentos de linha de comando.

@@ -46,6 +46,13 @@ public static class ShellLinks
     public static string? ExecutableKey(string path)
     {
         string full = Environment.ExpandEnvironmentVariables(path);
+        // App da Store fixado como shell:AppsFolder\<AppUserModelID>
+        const string appsFolder = @"shell:AppsFolder\";
+        if (full.StartsWith(appsFolder, StringComparison.OrdinalIgnoreCase))
+        {
+            string id = full[appsFolder.Length..];
+            return id.Contains('!') ? RunningApps.AumidKey(id) : null;
+        }
         if (full.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
             full = ResolveTarget(full) ?? full;
         if (!full.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) return null;

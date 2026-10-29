@@ -75,6 +75,15 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Arraste um ícone para longe do Dock: aparece "Remover"; soltar remove com uma nuvenzinha. Voltar antes de soltar cancela.
 - [ ] Clique rápido (sem mover) continua abrindo o app; apertar, sair do ícone e soltar fora não abre nada.
 - [ ] Widgets não arrastam, mas o clique neles continua funcionando.
+
+### 5b. Apps abertos não fixados e apps da Store
+- [ ] Abra um app que não está no Dock: ganha um ícone depois dos fixados (com separador) e ponto; fechar remove o ícone.
+- [ ] Clique nesse ícone: traz/minimiza a janela. Botão direito → **Manter no Dock**: passa para os fixados e continua depois de reiniciar.
+- [ ] As janelas do próprio Dockbox (Gerenciar Dock) não aparecem como app aberto.
+- [ ] Gerenciar Dock → Adicionar apps: a Calculadora e outros apps da Store aparecem com ícone; fixe a Calculadora.
+- [ ] Abra a Calculadora fixada: o ponto aparece e ela não ganha ícone duplicado; clique traz/minimiza.
+- [ ] Desligue **Mostrar apps abertos que não estão fixados** em Comportamento: a seção some.
+- [ ] Janelas de ferramenta e invisíveis (ex.: bandeja, popups) não viram ícone.
 - [ ] Reordenar funciona com o Dock embaixo, em cima e nas laterais.
 
 ### 6. Menus

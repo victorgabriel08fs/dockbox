@@ -212,6 +212,7 @@ public sealed class SettingsStoreTests : IDisposable
         SettingsStore.Load();
         Assert.True(SettingsStore.Current.Appearance.ReserveSpace);
         Assert.False(SettingsStore.Current.Appearance.AutoHide);
+        Assert.True(SettingsStore.Current.Appearance.ShowRunningUnpinned);
         Assert.Equal(0.3, SettingsStore.Current.Appearance.AutoHideDelay);
     }
 
