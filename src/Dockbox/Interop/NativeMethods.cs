@@ -254,6 +254,21 @@ internal static class NativeMethods
     [DllImport("dwmapi.dll")]
     public static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
 
+    // ---- Avisos do shell (janela piscando pedindo atenção) ----
+    public const int HSHELL_WINDOWDESTROYED = 2, HSHELL_WINDOWACTIVATED = 4, HSHELL_RUDEAPPACTIVATED = 0x8004, HSHELL_FLASH = 0x8006;
+    public const uint GA_ROOTOWNER = 3;
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool RegisterShellHookWindow(IntPtr hwnd);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool DeregisterShellHookWindow(IntPtr hwnd);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetAncestor(IntPtr hwnd, uint flags);
+
     // ---- Miniaturas ao vivo das janelas ----
     public const int DWM_TNP_RECTDESTINATION = 0x1, DWM_TNP_OPACITY = 0x4, DWM_TNP_VISIBLE = 0x8, DWM_TNP_SOURCECLIENTAREAONLY = 0x10;
 

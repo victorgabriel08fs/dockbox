@@ -229,6 +229,20 @@ public sealed class SettingsStoreTests : IDisposable
     }
 
     [Fact]
+    public void ContadoresEPuloPorAtencao_VemLigadosEFicamDesligados()
+    {
+        WriteSettings("{ \"Appearance\": { \"IconSize\": 48 } }");
+        SettingsStore.Load();
+        Assert.True(SettingsStore.Current.Appearance.ShowBadges);
+        Assert.True(SettingsStore.Current.Appearance.BounceOnAttention);
+
+        WriteSettings("{ \"Appearance\": { \"ShowBadges\": false, \"BounceOnAttention\": false } }");
+        SettingsStore.Load();
+        Assert.False(SettingsStore.Current.Appearance.ShowBadges);
+        Assert.False(SettingsStore.Current.Appearance.BounceOnAttention);
+    }
+
+    [Fact]
     public void Miniaturas_VemLigadasEOAtrasoELimitado()
     {
         WriteSettings("{ \"Appearance\": { \"IconSize\": 48 } }");
