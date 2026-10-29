@@ -102,8 +102,11 @@ public partial class SettingsWindow : Window
         SettingsStore.SaveFailed += onFail;
         SettingsStore.SaveRecovered += onRecover;
         Loaded += (_, _) => UpdateSaveBanner();
+        EventHandler onDisplay = (_, _) => Dispatcher.BeginInvoke(UpdateMonitorControls);
+        Microsoft.Win32.SystemEvents.DisplaySettingsChanged += onDisplay;
         Closed += (_, _) =>
         {
+            Microsoft.Win32.SystemEvents.DisplaySettingsChanged -= onDisplay;
             SettingsStore.Changed -= OnExternalChange;
             SettingsStore.SaveFailed -= onFail;
             SettingsStore.SaveRecovered -= onRecover;
@@ -217,6 +220,10 @@ public partial class SettingsWindow : Window
             EdgeRight.IsChecked = A.Edge == DockEdge.Right;
             EdgeTop.IsChecked = A.Edge == DockEdge.Top;
             UpdateMoveTooltips();
+            MonitorPrimary.IsChecked = A.Monitor == MonitorMode.Primary;
+            MonitorChoose.IsChecked = A.Monitor == MonitorMode.Choose;
+            MonitorFollow.IsChecked = A.Monitor == MonitorMode.FollowMouse;
+            UpdateMonitorControls();
 
             // Comportamento
             LabelsToggle.IsChecked = A.ShowLabels;
@@ -576,7 +583,83 @@ public partial class SettingsWindow : Window
                : EdgeRight.IsChecked == true ? DockEdge.Right
                : EdgeTop.IsChecked == true ? DockEdge.Top
                : DockEdge.Bottom;
+        UpdateMonitorControls();
         Commit();
+    }
+
+    private void MonitorMode_Checked(object sender, RoutedEventArgs e)
+    {
+        if (_loading) return;
+        A.Monitor = MonitorChoose.IsChecked == true ? MonitorMode.Choose
+                  : MonitorFollow.IsChecked == true ? MonitorMode.FollowMouse
+                  : MonitorMode.Primary;
+        // Ao escolher pela primeira vez, começa no monitor onde esta janela está.
+        if (A.Monitor == MonitorMode.Choose && Screens.Find(Monitors.All(), A.MonitorDevice) == null)
+            A.MonitorDevice = MonitorOfThisWindow() ?? "";
+        UpdateMonitorControls();
+        Commit();
+    }
+
+    private string? MonitorOfThisWindow()
+    {
+        var screens = Monitors.All();
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero || !GetWindowRect(hwnd, out RECT r)) return screens.FirstOrDefault(s => s.Primary)?.Device;
+        int cx = (r.Left + r.Right) / 2, cy = (r.Top + r.Bottom) / 2;
+        return screens.FirstOrDefault(s => cx >= s.Bounds.Left && cx < s.Bounds.Right && cy >= s.Bounds.Top && cy < s.Bounds.Bottom)?.Device
+               ?? screens.FirstOrDefault(s => s.Primary)?.Device;
+    }
+
+    /// <summary>Lista de monitores (modo Escolher) e a dica abaixo dela.</summary>
+    private void UpdateMonitorControls()
+    {
+        var screens = Monitors.All();
+        bool choose = A.Monitor == MonitorMode.Choose;
+        MonitorListBorder.Visibility = choose ? Visibility.Visible : Visibility.Collapsed;
+
+        MonitorList.Children.Clear();
+        if (choose)
+        {
+            var style = (Style)FindResource("UiSegment");
+            foreach (var screen in screens)
+            {
+                var rb = new RadioButton
+                {
+                    Style = style,
+                    GroupName = "monitorPick",
+                    Content = screen.Label,
+                    ToolTip = screen.Device,
+                    IsChecked = string.Equals(screen.Device, A.MonitorDevice, StringComparison.OrdinalIgnoreCase),
+                };
+                string device = screen.Device;
+                rb.Checked += (_, _) =>
+                {
+                    if (string.Equals(A.MonitorDevice, device, StringComparison.OrdinalIgnoreCase)) return;
+                    A.MonitorDevice = device;
+                    Commit();
+                };
+                MonitorList.Children.Add(rb);
+            }
+        }
+
+        string edge = A.Edge switch
+        {
+            DockEdge.Top => "de cima",
+            DockEdge.Left => "da esquerda",
+            DockEdge.Right => "da direita",
+            _ => "de baixo",
+        };
+        MonitorHint.Text = A.Monitor switch
+        {
+            MonitorMode.Choose when Screens.Find(screens, A.MonitorDevice) == null =>
+                "O monitor escolhido não está conectado. O Dock fica no principal até ele voltar.",
+            MonitorMode.FollowMouse when screens.Count < 2 =>
+                "Só há um monitor conectado agora.",
+            MonitorMode.FollowMouse =>
+                $"Pare o mouse na borda {edge} de outro monitor por meio segundo e o Dock vai para lá.",
+            _ => "",
+        };
+        MonitorHint.Visibility = MonitorHint.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void Slider_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -49,6 +49,10 @@ public sealed class Appearance
     public bool AutoHide { get; set; }
     /// <summary>Segundos com o mouse na borda até o Dock aparecer.</summary>
     public double AutoHideDelay { get; set; } = 0.3;
+    /// <summary>Em qual monitor o Dock fica.</summary>
+    public MonitorMode Monitor { get; set; } = MonitorMode.Primary;
+    /// <summary>Monitor escolhido (ex.: \\.\DISPLAY2), usado quando <see cref="Monitor"/> é Choose.</summary>
+    public string MonitorDevice { get; set; } = "";
 }
 
 public sealed class DockSettings
@@ -234,6 +238,8 @@ public static class SettingsStore
         var a = s.Appearance ??= new Appearance();
         if (!Enum.IsDefined(a.Edge)) a.Edge = DockEdge.Bottom;
         if (!Enum.IsDefined(a.Theme)) a.Theme = ThemeMode.Auto;
+        if (!Enum.IsDefined(a.Monitor)) a.Monitor = MonitorMode.Primary;
+        a.MonitorDevice ??= "";
         a.IconSize = Math.Clamp(a.IconSize, 32, 96);
         a.Magnification = Math.Clamp(a.Magnification, 1.0, 2.6);
         a.Opacity = Math.Clamp(a.Opacity, 0.0, 1.0);

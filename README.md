@@ -20,7 +20,7 @@
 - **Gerenciar Dock** (botão direito no Dock): adicionar apps do Menu Iniciar e da Microsoft Store, arquivos e pastas; remover, reordenar e editar.
 - **Widgets**: relógio, calendário, clima (Open-Meteo), CPU/RAM, bateria, mídia tocando agora e Lixeira.
 - **Estilo**: tema automático/claro/escuro/personalizado, cor de fundo, cor de destaque, opacidade,
-  cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).
+  cantos arredondados, tamanho dos ícones, intensidade da ampliação, posição (embaixo, em cima, esquerda, direita) e monitor (principal, escolhido ou seguir o mouse).
 - Reserva espaço na tela: janelas maximizadas param antes do Dock, como na barra de tarefas (dá para desligar).
 - Ocultar automaticamente: o Dock sai da tela e volta quando o mouse encosta na borda.
 - Ícone na área de notificação (bandeja) com atalhos para Gerenciar Dock e Sair.
@@ -59,7 +59,6 @@ Um `pinned.json` da versão anterior é importado automaticamente.
 
 ## Limitações conhecidas do MVP
 
-- Só aparece no monitor principal.
 - A barra de tarefas do Windows continua visível.
 - O fundo imita vidro, mas não desfoca o que está atrás.
 
