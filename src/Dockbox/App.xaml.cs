@@ -1,12 +1,14 @@
 using System.Windows;
 using System.Windows.Media;
 using Dockbox.Core;
+using Dockbox.Services;
 
 namespace Dockbox;
 
 public partial class App : Application
 {
     private Mutex? _singleInstance;
+    private TrayIcon? _tray;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -37,6 +39,9 @@ public partial class App : Application
         };
         base.OnStartup(e);
 
+        try { _tray = new TrayIcon(); }
+        catch { /* sem bandeja (ex.: Explorer reiniciando) o Dock continua funcionando */ }
+
         if (SettingsStore.LoadWarning is string warning)
             Dispatcher.BeginInvoke(() => MessageBox.Show(warning, "Dockbox", MessageBoxButton.OK, MessageBoxImage.Information));
     }
@@ -58,6 +63,7 @@ public partial class App : Application
     {
         // Última tentativa de não perder mudanças que falharam ao salvar.
         if (SettingsStore.LastSaveError != null) SettingsStore.Save();
+        _tray?.Dispose();
         _singleInstance?.Dispose();
         base.OnExit(e);
     }

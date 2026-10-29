@@ -18,7 +18,8 @@ de Trabalho, ele oferece copiar o `Dockbox.exe` para `%LOCALAPPDATA%\Programs\Do
 início automático não quebrar se o arquivo sumir. Se você mover o exe depois e abrir de novo, o início automático
 passa a usar o novo lugar sozinho.
 
-Para fechar: botão direito no Dock → **Sair do Dockbox**.
+Para fechar: botão direito no Dock → **Sair do Dockbox**. O Dockbox também fica na área de notificação
+(perto do relógio do Windows): clique no ícone para abrir o **Gerenciar Dock** ou use o botão direito para sair.
 
 ## Usar o Dock
 
