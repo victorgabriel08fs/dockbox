@@ -227,6 +227,40 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.Equal(2, SettingsStore.Current.Appearance.AutoHideDelay);
     }
 
+    // ---------- Falha ao salvar ----------
+
+    [Fact]
+    public void ArquivoSomenteLeitura_AvisaUmaVezEGuardaOErro()
+    {
+        SettingsStore.Load();
+        File.SetAttributes(SettingsFile, FileAttributes.ReadOnly);
+        var messages = new List<string>();
+        void OnFail(string m) => messages.Add(m);
+        SettingsStore.SaveFailed += OnFail;
+        try
+        {
+            SettingsStore.Current.Clock24h = !SettingsStore.Current.Clock24h;
+            Assert.False(SettingsStore.Save());
+            Assert.False(SettingsStore.Save()); // segunda falha seguida não avisa de novo
+            Assert.Single(messages);
+            Assert.Contains("somente leitura", messages[0]);
+            Assert.Contains(SettingsFile, messages[0]);
+            Assert.Equal(messages[0], SettingsStore.LastSaveError);
+
+            // A mudança continua em memória e é gravada quando o arquivo volta a aceitar escrita.
+            bool wanted = SettingsStore.Current.Clock24h;
+            File.SetAttributes(SettingsFile, FileAttributes.Normal);
+            Assert.True(SettingsStore.Save());
+            Assert.Null(SettingsStore.LastSaveError);
+            Assert.Contains($"\"Clock24h\": {wanted.ToString().ToLowerInvariant()}", File.ReadAllText(SettingsFile));
+        }
+        finally
+        {
+            SettingsStore.SaveFailed -= OnFail;
+            File.SetAttributes(SettingsFile, FileAttributes.Normal);
+        }
+    }
+
     // ---------- Normalização de valores editados à mão ----------
 
     [Fact]

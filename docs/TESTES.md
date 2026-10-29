@@ -161,7 +161,10 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Feche o Dockbox, coloque um erro de digitação no `settings.json` e abra:
       aparece um aviso com o local da cópia, o Dock abre com padrões e o `settings.json.corrompido-...` tem o conteúdo antigo.
 - [ ] Faça duas mudanças: `settings.json.bak` tem a penúltima versão.
-- [ ] Deixe `settings.json` somente leitura e mude algo: o Dock não fecha (anote se avisa que não salvou).
+- [ ] Deixe `settings.json` somente leitura e mude algo: o Dock não fecha, aparece o aviso "Não foi possível salvar" com o motivo
+      e o caminho (uma vez só), e o Gerenciar Dock mostra uma faixa vermelha com **Tentar salvar de novo**.
+- [ ] Tire o somente leitura e clique em **Tentar salvar de novo**: a faixa some e a mudança está no arquivo.
+- [ ] Com o arquivo ainda somente leitura, feche o Dockbox: nada trava (a mudança se perde, como avisado).
 - [ ] Iniciar com o Windows: ligue, reinicie, o Dock abre sozinho; desligue, reinicie, não abre.
 - [ ] Deixe aberto por 1 h trocando de apps: memória do Dockbox no Gerenciador de Tarefas estável.
 - [ ] Após algum erro, existe `erros.log` com detalhes.

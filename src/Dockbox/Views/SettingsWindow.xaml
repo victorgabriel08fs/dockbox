@@ -64,7 +64,17 @@
         </Border>
 
         <!-- ============ Conteúdo ============ -->
-        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <DockPanel Grid.Column="1">
+        <!-- Aviso quando o settings.json não pôde ser salvo -->
+        <Border x:Name="SaveErrorBanner" DockPanel.Dock="Top" Visibility="Collapsed" Background="#33E5484D"
+                BorderBrush="#99E5484D" BorderThickness="0,0,0,1" Padding="30,12,30,12">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Style="{StaticResource UiButton}" Content="Tentar salvar de novo"
+                        Click="RetrySave_Click" VerticalAlignment="Center" Margin="12,0,0,0"/>
+                <TextBlock x:Name="SaveErrorText" TextWrapping="Wrap" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Border>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <Grid Margin="30,24,30,24">
 
                 <!-- ===== Itens ===== -->
@@ -288,5 +298,6 @@
                 </StackPanel>
             </Grid>
         </ScrollViewer>
+        </DockPanel>
     </Grid>
 </Window>

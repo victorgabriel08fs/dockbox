@@ -123,6 +123,7 @@ uma cópia `.corrompido-...` e volta aos padrões; para recuperar, corrija a có
 
 | Problema | O que fazer |
 |---|---|
+| Aviso "Não foi possível salvar as configurações" | Veja o motivo no aviso: tire o somente leitura do `settings.json`, libere espaço ou pause o OneDrive/antivírus, e clique em **Tentar salvar de novo** no Gerenciar Dock |
 | O Dock cobre a parte de baixo de janelas maximizadas | Ligue **Reservar espaço na tela** em Gerenciar Dock → Comportamento |
 | A área de trabalho ficou menor depois que o Dockbox fechou | Abra e feche o Dockbox de novo, ou reinicie o Explorador; isso só acontece se o processo for encerrado à força |
 | Só aparece no monitor principal | Limitação atual (suporte a vários monitores está previsto) |
