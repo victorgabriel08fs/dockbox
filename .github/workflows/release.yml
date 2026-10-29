@@ -1,9 +1,16 @@
 name: release
 
-# Roda ao enviar uma tag de versão, por exemplo: git tag v0.2.0 && git push origin v0.2.0
+# Roda ao enviar uma tag de versão (git tag v0.2.0 && git push origin v0.2.0) ou ao
+# criar a release pelo site. Também dá para rodar à mão em Actions > release >
+# Run workflow, informando uma tag que já existe.
 on:
   push:
     tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag já existente (ex.: v0.1.0)'
+        required: true
 
 permissions:
   contents: write
@@ -14,6 +21,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
 
       - uses: actions/setup-dotnet@v4
         with:
@@ -23,14 +32,22 @@ jobs:
         id: ver
         shell: bash
         run: |
-          tag="${GITHUB_REF_NAME}"
+          tag="${{ inputs.tag || github.ref_name }}"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+          # Se o zip desta versão já está commitado em releases/, usa ele em vez de recompilar.
+          if [ -f "releases/$tag/Dockbox-$tag-win-x64.zip" ]; then
+            echo "prebuilt=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prebuilt=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Publicar executável único
+        if: steps.ver.outputs.prebuilt != 'true'
         run: dotnet publish src/Dockbox/Dockbox.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=${{ steps.ver.outputs.version }} -o out
 
       - name: Empacotar zip
+        if: steps.ver.outputs.prebuilt != 'true'
         shell: bash
         run: |
           tag="${{ steps.ver.outputs.tag }}"
