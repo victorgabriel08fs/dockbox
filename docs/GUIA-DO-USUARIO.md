@@ -116,7 +116,7 @@ Tudo fica em `%APPDATA%\Dockbox\` (botão **Abrir pasta de configurações** no 
 | `settings.json` | Itens, widgets, estilo e comportamento |
 | `settings.json.bak` | Versão anterior, gravada a cada mudança |
 | `settings.json.corrompido-AAAAMMDD-HHMMSS` | Cópia de um arquivo que não pôde ser lido |
-| `erros.log` | Erros inesperados, útil para relatar problemas |
+| `erros.log` | Erros inesperados com data, hora e versão, útil para relatar problemas. Passando de 1 MB, o antigo vira `erros.1.log` |
 | `pinned.json` | Lista da primeira versão; importada automaticamente uma vez |
 
 Dá para editar o `settings.json` à mão com o Dockbox fechado. Se o arquivo ficar inválido, o Dockbox avisa, guarda

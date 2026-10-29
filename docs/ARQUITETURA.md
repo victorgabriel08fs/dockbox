@@ -6,7 +6,7 @@ Compila no Linux (`EnableWindowsTargeting`), mas só roda no Windows 10 1809+ e 
 ## Visão geral
 
 ```
-App.xaml.cs ── carrega SettingsStore, garante instância única, registra erros em erros.log
+App.xaml.cs ── carrega SettingsStore, garante instância única, registra erros em erros.log (Core/ErrorLog, com rotação em 1 MB)
    │
    ├── Views/DockWindow ──────── janela transparente, topmost, sem foco
    │     ├── tiles de app ─────── IconLoader, ShellLinks, RunningApps, AppLauncher
