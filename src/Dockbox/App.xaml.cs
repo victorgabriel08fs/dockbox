@@ -12,6 +12,14 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        // Reaberto de outra pasta (ao ligar o início automático): espera a instância antiga fechar.
+        int afterIdx = Array.IndexOf(e.Args, "--after-pid");
+        if (afterIdx >= 0 && afterIdx + 1 < e.Args.Length && int.TryParse(e.Args[afterIdx + 1], out int oldPid))
+        {
+            try { System.Diagnostics.Process.GetProcessById(oldPid).WaitForExit(8000); }
+            catch { /* já fechou */ }
+        }
+
         // Só uma instância do Dock por vez.
         _singleInstance = new Mutex(true, @"Local\Dockbox.SingleInstance", out bool isNew);
         if (!isNew)
@@ -20,16 +28,13 @@ public partial class App : Application
             return;
         }
 
+        SettingsStore.SaveFailed += message => Dispatcher.BeginInvoke(() => ShowSaveError(message));
         SettingsStore.Load();
+        Services.Autostart.RepairIfMoved();
         DispatcherUnhandledException += (_, args) =>
         {
             // Não deixa um erro inesperado fechar o Dock; registra para diagnóstico.
-            try
-            {
-                System.IO.File.AppendAllText(System.IO.Path.Combine(SettingsStore.FolderPath, "erros.log"),
-                    $"[{DateTime.Now:s}] {args.Exception}\n\n");
-            }
-            catch { }
+            ErrorLog.Write("Erro inesperado", args.Exception);
             args.Handled = true;
         };
         base.OnStartup(e);
@@ -41,8 +46,23 @@ public partial class App : Application
             Dispatcher.BeginInvoke(() => MessageBox.Show(warning, "Dockbox", MessageBoxButton.OK, MessageBoxImage.Information));
     }
 
+    /// <summary>Avisa que as configurações não foram salvas e oferece tentar de novo.</summary>
+    private static void ShowSaveError(string message)
+    {
+        var answer = MessageBox.Show(
+            message + "\n\nSuas mudanças continuam valendo enquanto o Dockbox estiver aberto, mas se perdem ao fechar.\n\n" +
+            "Corrija o problema e clique em Sim para tentar salvar de novo.",
+            "Dockbox", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes);
+        if (answer != MessageBoxResult.Yes) return;
+        if (!SettingsStore.Save())
+            MessageBox.Show("Ainda não foi possível salvar. Dá para tentar de novo pelo Gerenciar Dock.",
+                "Dockbox", MessageBoxButton.OK, MessageBoxImage.Warning);
+    }
+
     protected override void OnExit(ExitEventArgs e)
     {
+        // Última tentativa de não perder mudanças que falharam ao salvar.
+        if (SettingsStore.LastSaveError != null) SettingsStore.Save();
         _tray?.Dispose();
         _singleInstance?.Dispose();
         base.OnExit(e);

@@ -5,6 +5,7 @@
         Width="520" Height="600"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
+        UseLayoutRounding="True"
         Background="{DynamicResource UiWindowBg}"
         Foreground="{DynamicResource UiFg}"
         FontFamily="{StaticResource UiFont}"
@@ -14,7 +15,7 @@
             <TextBlock Text="Adicionar apps" Style="{StaticResource UiH1}"/>
             <TextBlock Text="Apps do Menu Iniciar. Selecione um ou vários (Ctrl + clique)." Style="{StaticResource UiSub}" Margin="0,0,0,12"/>
             <Grid Margin="0,0,0,10">
-                <TextBox x:Name="Search" Style="{StaticResource UiTextBox}" Padding="32,7,8,7" TextChanged="Search_TextChanged"/>
+                <TextBox x:Name="Search" AutomationProperties.Name="Buscar apps" Style="{StaticResource UiTextBox}" Padding="32,7,8,7" TextChanged="Search_TextChanged"/>
                 <TextBlock Text="&#xE721;" FontFamily="{StaticResource UiIconFont}" FontSize="13" Margin="11,0,0,0"
                            VerticalAlignment="Center" Foreground="{DynamicResource UiSubFg}" IsHitTestVisible="False"/>
             </Grid>

@@ -6,7 +6,7 @@ Compila no Linux (`EnableWindowsTargeting`), mas só roda no Windows 10 1809+ e 
 ## Visão geral
 
 ```
-App.xaml.cs ── carrega SettingsStore, garante instância única, registra erros em erros.log
+App.xaml.cs ── carrega SettingsStore, garante instância única, registra erros em erros.log (Core/ErrorLog, com rotação em 1 MB)
    │
    ├── Views/DockWindow ──────── janela transparente, topmost, sem foco
    │     ├── tiles de app ─────── IconLoader, ShellLinks, RunningApps, AppLauncher
@@ -39,8 +39,15 @@ O Dock escuta `Changed` e se redesenha (`ApplyTheme` + `RebuildTiles` + `Positio
 
 - **Sem foco**: `WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW` e resposta `MA_NOACTIVATE` a `WM_MOUSEACTIVATE`.
   Clicar no Dock não tira o foco do app atual e o Dock não aparece no Alt+Tab.
-- **Tamanho**: a janela ocupa a largura (ou altura) inteira da área de trabalho do monitor principal, com
+- **Tamanho**: a janela ocupa a largura (ou altura) inteira da área de trabalho do monitor do Dock, com
   espessura suficiente para o ícone ampliado, o pulo e o rótulo. As partes transparentes deixam o clique passar.
+- **Monitores**: `Monitors.All()` lista os monitores (`EnumDisplayMonitors`, `GetDpiForMonitor`) e `Screens.Pick`
+  escolhe o do Dock (principal, escolhido ou o último para onde o mouse levou), voltando ao principal se o
+  monitor sumir. A janela é posicionada em pixels físicos com `SetWindowPos`, porque cada monitor pode ter
+  outra escala; em `DpiChanged`, `WM_DISPLAYCHANGE` e `DisplaySettingsChanged` a posição é refeita.
+- **DPI**: o app é `PerMonitorV2` (`app.manifest`). Os ícones do Dock são extraídos a 256 px; nas janelas,
+  `IconLoader.LoadForDisplay` pede o menor tamanho padrão que cubra o tamanho em DIPs vezes a maior escala
+  entre os monitores. Se a fábrica de imagens do Shell falhar, usa o ícone de 48 px da lista do sistema.
 - **Hover**: `HitArea` ganha alfa 1 enquanto o mouse está no Dock, para o mouse não "cair" entre ícones ampliados.
 - **Animação**: parado, um `DispatcherTimer` de 50 ms só verifica o mouse. Com o mouse no Dock, a animação
   roda em `CompositionTarget.Rendering` e para sozinha quando tudo assenta.

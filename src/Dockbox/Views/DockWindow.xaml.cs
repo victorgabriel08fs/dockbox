@@ -1,10 +1,12 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Dockbox.Core;
@@ -27,7 +29,8 @@ public partial class DockWindow : Window
 
     private static readonly Brush HitBrush = ColorUtil.Brush(Color.FromArgb(1, 0, 0, 0));
 
-    private enum TileKind { App, Widget, Separator }
+    /// <summary>App = fixado; Running = aberto mas não fixado (temporário, depois dos fixados).</summary>
+    private enum TileKind { App, Widget, Separator, Running }
 
     private sealed class Tile
     {
@@ -42,6 +45,7 @@ public partial class DockWindow : Window
         public double Scale = 1;
         public double Main, Size;       // posição/tamanho atuais no eixo do Dock
         public double BounceStart = -1; // segundos do relógio interno; -1 = sem pulo
+        public double GapBefore;        // espaço aberto antes do ícone (arrastar), animado
         public string Label => Entry?.Name ?? Widget?.Label ?? "";
     }
 
@@ -58,12 +62,43 @@ public partial class DockWindow : Window
     private bool _menuOpen;
     private double _dockStart, _dockLength; // no eixo principal
     private DockTheme _theme = DockTheme.From(new Appearance());
+    private Brush _focusBrush = Brushes.White;
     private AppBar? _appBar;
     private bool _positioning;
 
+    // ---- Auto-ocultar ----
+    private const double EdgeTrigger = 3;      // faixa (DIPs) junto à borda que revela o Dock
+    private const double HideDelay = 0.35;     // segundos depois que o mouse sai
+    private bool _shown = true;                // estado desejado: visível ou escondido
+    private double _reveal = 1;                // animado: 1 = visível, 0 = fora da tela
+    private double _edgeSince = -1;            // desde quando o mouse está na borda
+    private double _leaveSince = -1;           // desde quando o mouse saiu do Dock
+    private readonly TranslateTransform _slide = new();
+
+    // ---- Arrastar ícones dentro do Dock ----
+    private const double DragThreshold = 6;    // DIPs antes de virar arraste (clique continua clique)
+    private Tile? _pressTile;                  // ícone com o botão apertado
+    private (double main, double cross) _pressPoint;
+    private Tile? _dragTile;                   // ícone sendo arrastado
+    private int _dragSlot;                     // posição entre os apps onde ele vai entrar
+    private bool _dragRemove;                  // solto aqui, sai do Dock
+    private int _externalSlot = -1;            // arquivo vindo de fora: onde vai entrar (-1 = nenhum)
+    private double _gapEnd;                    // espaço aberto depois do último app
+
+    // ---- Apps abertos não fixados ----
+    private sealed record UnpinnedApp(string Key, string Path, string Name);
+    private List<UnpinnedApp> _unpinned = new();
+    private static readonly string? OwnExe = Environment.ProcessPath?.ToLowerInvariant();
+    private static readonly Dictionary<string, string> ExeNames = new(StringComparer.OrdinalIgnoreCase);
+
+    // ---- Desfazer remoção ----
+    private readonly DispatcherTimer _undoTimer = new() { Interval = TimeSpan.FromSeconds(6) };
+
     private Appearance A => SettingsStore.Current.Appearance;
     private double BaseSize => A.IconSize;
-    private double MaxScale => A.Magnify ? A.Magnification : 1.0;
+    private double MaxScale => A.Magnify && !ReduceMotion ? A.Magnification : 1.0;
+    /// <summary>"Mostrar animações" desligado no Windows: sem ampliação, pulo nem deslizes.</summary>
+    private static bool ReduceMotion => !SystemParameters.ClientAreaAnimation;
     private double InfluenceRadius => BaseSize * 3.0;
     private bool Horizontal => A.Edge is DockEdge.Bottom or DockEdge.Top;
     private double BackgroundThickness => BaseSize + Pad * 2;
@@ -71,11 +106,21 @@ public partial class DockWindow : Window
     public DockWindow()
     {
         InitializeComponent();
+        DockCanvas.RenderTransform = _slide;
+        Panel.SetZIndex(_focusRing, 50);
+        DockCanvas.Children.Add(_focusRing);
+        AutomationProperties.SetName(this, "Dock");
+        PreviewKeyDown += OnKeyboard;
+        Deactivated += (_, _) => { if (!_menuOpen) ExitKeyboard(restoreFocus: false); };
         PositionWindow();
 
         // Parado: confere o mouse 20x por segundo. Com o mouse no Dock: anima a cada frame.
         _idleTimer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(50) };
-        _idleTimer.Tick += (_, _) => { if (IsMouseInDock()) StartAnimating(); };
+        _idleTimer.Tick += (_, _) =>
+        {
+            CheckFollowMouse();
+            if (ShouldWake()) StartAnimating();
+        };
 
         // Widgets e indicadores de apps abertos
         _slowTimer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromSeconds(1) };
@@ -92,19 +137,41 @@ public partial class DockWindow : Window
         SizeChanged += (_, _) => Layout();
 
         DragOver += OnDragOver;
+        DragLeave += (_, _) => { _externalSlot = -1; StartAnimating(); };
         Drop += OnDrop;
+        MouseMove += OnMouseMoveDrag;
+        MouseLeftButtonUp += OnMouseUpDrag;
+        LostMouseCapture += (_, _) => CancelPress();
         MouseRightButtonUp += OnRightClick;
 
         SettingsStore.Changed += ApplySettings;
+        RemovalHistory.Recorded += entry => Dispatcher.BeginInvoke(() => ShowUndoToast(entry));
+        _undoTimer.Tick += (_, _) => HideUndoToast();
+        UndoToast.MouseLeftButtonUp += (_, e) =>
+        {
+            e.Handled = true;
+            UndoRemoval();
+        };
         SystemParameters.StaticPropertyChanged += (_, e) =>
         {
             // Com a AppBar ativa, a reserva só é refeita se a borda ou a espessura mudaram (ver ReserveArea).
             if (e.PropertyName == nameof(SystemParameters.WorkArea)) Dispatcher.BeginInvoke(() => PositionWindow());
+            // Animações ou alto contraste ligados/desligados no Windows.
+            if (e.PropertyName is nameof(SystemParameters.ClientAreaAnimation) or nameof(SystemParameters.HighContrast))
+                Dispatcher.BeginInvoke(ApplySettings);
         };
-        Closed += (_, _) => ReleaseAppBar();
+        Closed += (_, _) =>
+        {
+            ReleaseAppBar();
+            var h = new WindowInteropHelper(this).Handle;
+            if (h != IntPtr.Zero) UnregisterHotKey(h, HotkeyId);
+        };
         // Se o processo cair, devolve a área de trabalho inteira.
         AppDomain.CurrentDomain.UnhandledException += (_, _) => ReleaseAppBar();
         AppDomain.CurrentDomain.ProcessExit += (_, _) => ReleaseAppBar();
+        Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (_, _) => OnDisplayChanged();
+        // Ao trocar de monitor com outra escala, o Windows redimensiona a janela; refaz a posição exata.
+        DpiChanged += (_, _) => OnDisplayChanged();
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += (_, _) =>
         {
             if (A.Theme == ThemeMode.Auto) Dispatcher.BeginInvoke(ApplyTheme);
@@ -121,10 +188,18 @@ public partial class DockWindow : Window
         HwndSource.FromHwnd(hwnd)?.AddHook(WndProc);
         _appBar = new AppBar(hwnd);
         PositionWindow();
+        RegisterShortcut();
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        if (msg == WM_DISPLAYCHANGE) OnDisplayChanged();
+        if (msg == WM_HOTKEY && wParam.ToInt64() == HotkeyId)
+        {
+            Dispatcher.BeginInvoke(ToggleKeyboard);
+            handled = true;
+            return IntPtr.Zero;
+        }
         if (msg == WM_MOUSEACTIVATE)
         {
             handled = true;
@@ -159,16 +234,28 @@ public partial class DockWindow : Window
         _positioning = true;
         try
         {
-            // Área onde a janela encosta, em DIPs. Com a AppBar, é a faixa reservada; sem ela, a área de trabalho.
-            Rect area = ReserveArea(force) ?? SystemParameters.WorkArea;
-            double t = WindowThickness;
-            switch (A.Edge)
+            var hwnd = new WindowInteropHelper(this).Handle;
+            _screens = Monitors.All();
+            // Ao ligar "Seguir o mouse", o Dock fica onde está até o mouse levá-lo.
+            if (A.Monitor == MonitorMode.FollowMouse && _followDevice == null) _followDevice = _screen?.Device;
+            var screen = Screens.Pick(_screens, A.Monitor, A.MonitorDevice, _followDevice);
+            if (hwnd == IntPtr.Zero || screen == null)
             {
-                case DockEdge.Bottom: Left = area.Left; Top = area.Bottom - t; Width = area.Width; Height = t; break;
-                case DockEdge.Top: Left = area.Left; Top = area.Top; Width = area.Width; Height = t; break;
-                case DockEdge.Left: Left = area.Left; Top = area.Top; Width = t; Height = area.Height; break;
-                case DockEdge.Right: Left = area.Right - t; Top = area.Top; Width = t; Height = area.Height; break;
+                PositionInDips(SystemParameters.WorkArea);
+                return;
             }
+            // Mudou de monitor: a reserva antiga precisa ir para o novo.
+            if (_screen?.Device != screen.Device) force = true;
+            _screen = screen;
+
+            // Tudo em pixels físicos do monitor do Dock, que pode ter outra escala que o principal.
+            RECT area = ReserveArea(force, screen) ?? screen.Work;
+            int t = (int)Math.Ceiling(WindowThickness * screen.Scale);
+            RECT r = AppBar.Strip(area, A.Edge, t);
+            SetWindowPos(hwnd, IntPtr.Zero, r.Left, r.Top, r.Right - r.Left, r.Bottom - r.Top, SWP_NOZORDER | SWP_NOACTIVATE);
+            // Mantém Width/Height (em DIPs) iguais ao tamanho real, porque o Layout usa esses valores.
+            Width = (r.Right - r.Left) / screen.Scale;
+            Height = (r.Bottom - r.Top) / screen.Scale;
             Layout();
         }
         finally
@@ -177,45 +264,110 @@ public partial class DockWindow : Window
         }
     }
 
+    /// <summary>Antes de a janela existir: posiciona em DIPs no monitor principal.</summary>
+    private void PositionInDips(Rect area)
+    {
+        double t = WindowThickness;
+        switch (A.Edge)
+        {
+            case DockEdge.Bottom: Left = area.Left; Top = area.Bottom - t; Width = area.Width; Height = t; break;
+            case DockEdge.Top: Left = area.Left; Top = area.Top; Width = area.Width; Height = t; break;
+            case DockEdge.Left: Left = area.Left; Top = area.Top; Width = t; Height = area.Height; break;
+            case DockEdge.Right: Left = area.Right - t; Top = area.Top; Width = t; Height = area.Height; break;
+        }
+        Layout();
+    }
+
     /// <summary>
-    /// Reserva (ou libera) a faixa do Dock na tela. Devolve a faixa em DIPs, ou null quando
-    /// não há reserva e a janela deve usar a área de trabalho normal.
+    /// Reserva (ou libera) a faixa do Dock no monitor. Devolve a faixa em pixels físicos, ou null quando
+    /// não há reserva e a janela deve usar a área de trabalho normal do monitor.
     /// </summary>
-    private Rect? ReserveArea(bool force)
+    private RECT? ReserveArea(bool force, ScreenInfo screen)
     {
         if (_appBar == null) return null;
-        if (!A.ReserveSpace)
+        // Com auto-ocultar, o Dock não reserva espaço (senão sobraria uma faixa vazia).
+        if (!A.ReserveSpace || A.AutoHide)
         {
             _appBar.Remove();
             return null;
         }
-
-        var toDevice = PresentationSource.FromVisual(this)?.CompositionTarget?.TransformToDevice;
-        if (toDevice is not Matrix m || m.M11 <= 0 || m.M22 <= 0) return null;
         if (!_appBar.Register()) return null;
 
-        int px = (int)Math.Ceiling(ReservedThickness * (Horizontal ? m.M22 : m.M11));
+        int px = (int)Math.Ceiling(ReservedThickness * screen.Scale);
         // Só chama o Windows quando algo mudou, para não entrar em ciclo com a mudança da área de trabalho.
-        if (force || _appBar.Edge != A.Edge || _appBar.Thickness != px)
-            _appBar.SetPos(A.Edge, px);
-
-        var rc = _appBar.Bounds;
-        return new Rect(rc.Left / m.M11, rc.Top / m.M22, (rc.Right - rc.Left) / m.M11, (rc.Bottom - rc.Top) / m.M22);
+        if (force || _appBar.Edge != A.Edge || _appBar.Thickness != px || !_appBar.Screen.Equals(screen.Bounds))
+            _appBar.SetPos(A.Edge, px, screen.Bounds);
+        return _appBar.Bounds;
     }
+
+    // ================= Vários monitores =================
+
+    private List<ScreenInfo> _screens = new();
+    private ScreenInfo? _screen;
+    /// <summary>Monitor para onde o mouse levou o Dock (modo "Seguir o mouse").</summary>
+    private string? _followDevice;
+    private string? _followCandidate;
+    private double _followSince = -1;
+    /// <summary>Segundos com o mouse parado na borda de outro monitor até o Dock ir para lá.</summary>
+    private const double FollowDelay = 0.5;
+
+    /// <summary>Modo "Seguir o mouse": leva o Dock para o monitor onde o mouse parou na borda.</summary>
+    private void CheckFollowMouse()
+    {
+        if (A.Monitor != MonitorMode.FollowMouse || _screens.Count < 2 || _dragTile != null)
+        {
+            _followSince = -1;
+            return;
+        }
+        if (!GetCursorPos(out POINT pt)) return;
+        var target = Screens.AtEdge(_screens, pt.X, pt.Y, A.Edge);
+        if (target == null || target.Device == _screen?.Device)
+        {
+            _followSince = -1;
+            return;
+        }
+
+        double now = _clock.Elapsed.TotalSeconds;
+        if (_followSince < 0 || _followCandidate != target.Device)
+        {
+            _followCandidate = target.Device;
+            _followSince = now;
+            return;
+        }
+        if (now - _followSince < FollowDelay) return;
+
+        _followSince = -1;
+        _followDevice = target.Device;
+        PositionWindow(force: true);
+        // O mouse já está na borda: com auto-ocultar, o Dock aparece direto.
+        if (A.AutoHide) _shown = true;
+        StartAnimating();
+    }
+
+    /// <summary>Monitor conectado/desconectado ou resolução/escala mudou.</summary>
+    private void OnDisplayChanged() => Dispatcher.BeginInvoke(() => PositionWindow(force: true));
 
     // ================= Configurações → Dock =================
 
+    private string _tilesSignature = "";
+
     private void ApplySettings()
     {
+        if (!A.AutoHide) _shown = true;
         ApplyTheme();
-        RebuildTiles();
+        // Mudança só de cor, opacidade ou cantos não precisa recriar os ícones.
+        string signature = TilesSignature();
+        if (signature != _tilesSignature || _tiles.Count == 0) RebuildTiles();
         PositionWindow();
+        RegisterShortcut();
         StartAnimating();
     }
 
     private void ApplyTheme()
     {
-        _theme = DockTheme.From(A);
+        _theme = DockTheme.Current(A);
+        _focusBrush = ColorUtil.Brush(_theme.Accent);
+        _focusRing.BorderBrush = _focusBrush;
         App.ApplyUiTheme(_theme);
 
         DockBackground.Background = _theme.Background;
@@ -243,8 +395,21 @@ public partial class DockWindow : Window
         foreach (var (w, _) in _widgetCache.Values) w.SetTheme(_theme);
     }
 
+    /// <summary>Tudo o que muda quais ícones existem; se não mudou, o Dock não recria os ícones.</summary>
+    private string TilesSignature()
+    {
+        var s = SettingsStore.Current;
+        var sb = new System.Text.StringBuilder();
+        foreach (var e in s.Items) sb.Append(e.Name).Append('\u0001').Append(e.Path).Append('\u0001').Append(e.Arguments).Append('\u0002');
+        foreach (var w in s.Widgets) sb.Append(w.Kind).Append(w.Enabled ? '+' : '-');
+        sb.Append(A.ShowSeparator).Append(A.ShowRunningUnpinned);
+        return sb.ToString();
+    }
+
     private void RebuildTiles()
     {
+        _tilesSignature = TilesSignature();
+        var kbOld = _kbTile;
         var runningKeys = new HashSet<string>(_tiles.Where(t => t.Running && t.ExeKey != null).Select(t => t.ExeKey!));
         foreach (var t in _tiles)
         {
@@ -257,6 +422,19 @@ public partial class DockWindow : Window
         foreach (var entry in s.Items)
             _tiles.Add(CreateAppTile(entry));
 
+        if (A.ShowRunningUnpinned && _unpinned.Count > 0)
+        {
+            if (_tiles.Count > 0) _tiles.Add(CreateSeparator());
+            foreach (var app in _unpinned)
+            {
+                var t = CreateAppTile(new DockEntry { Name = app.Name, Path = app.Path });
+                t.Kind = TileKind.Running;
+                t.ExeKey = app.Key;
+                t.Running = true;
+                _tiles.Add(t);
+            }
+        }
+
         var widgets = new List<Tile>();
         foreach (var cfg in s.Widgets.Where(w => w.Enabled))
         {
@@ -265,13 +443,7 @@ public partial class DockWindow : Window
         }
 
         if (widgets.Count > 0 && _tiles.Count > 0 && A.ShowSeparator)
-        {
-            _tiles.Add(new Tile
-            {
-                Kind = TileKind.Separator,
-                Visual = new Rectangle { Fill = _theme.Separator, IsHitTestVisible = false },
-            });
-        }
+            _tiles.Add(CreateSeparator());
         _tiles.AddRange(widgets);
 
         // Widgets desligados: libera recursos
@@ -288,8 +460,24 @@ public partial class DockWindow : Window
             DockCanvas.Children.Add(t.Visual);
             if (t.Dot != null) DockCanvas.Children.Add(t.Dot);
         }
+        UpdateAutomationNames();
+        if (kbOld != null)
+        {
+            // Mantém o foco do teclado no mesmo item (ou no primeiro, se ele saiu do Dock).
+            var same = _tiles.FirstOrDefault(t => t.Kind != TileKind.Separator &&
+                (t.Entry != null && kbOld.Entry != null && t.Entry.Path == kbOld.Entry.Path || t.Widget != null && t.Widget == kbOld.Widget));
+            var next = same ?? FocusableTiles().FirstOrDefault();
+            if (next != null) FocusTile(next);
+            else ExitKeyboard(restoreFocus: true);
+        }
         Layout();
     }
+
+    private Tile CreateSeparator() => new()
+    {
+        Kind = TileKind.Separator,
+        Visual = new Rectangle { Fill = _theme.Separator, IsHitTestVisible = false },
+    };
 
     private Tile CreateAppTile(DockEntry entry)
     {
@@ -299,7 +487,8 @@ public partial class DockWindow : Window
             _iconCache[entry.Path] = icon;
         }
 
-        var img = new Image { Source = icon, Stretch = Stretch.Uniform, Cursor = Cursors.Hand };
+        var img = new Image { Source = icon, Stretch = Stretch.Uniform, Cursor = Cursors.Hand, Focusable = true, FocusVisualStyle = null };
+        AutomationProperties.SetHelpText(img, "Enter abre. Shift+F10 abre o menu.");
         RenderOptions.SetBitmapScalingMode(img, BitmapScalingMode.HighQuality);
 
         var tile = new Tile
@@ -322,7 +511,8 @@ public partial class DockWindow : Window
             if (w == null) return null;
             w.SetTheme(_theme);
             w.AvailabilityChanged += () => Dispatcher.BeginInvoke(RebuildTiles);
-            var box = new Viewbox { Stretch = Stretch.Uniform, Child = w.Visual, Cursor = Cursors.Hand };
+            var box = new Viewbox { Stretch = Stretch.Uniform, Child = w.Visual, Cursor = Cursors.Hand, Focusable = true, FocusVisualStyle = null };
+            AutomationProperties.SetHelpText(box, "Enter abre. Shift+F10 abre o menu.");
             cached = (w, box);
             _widgetCache[kind] = cached;
         }
@@ -335,29 +525,179 @@ public partial class DockWindow : Window
     private void HookClicks(Tile tile)
     {
         var v = tile.Visual;
-        // Remove handlers antigos (o Viewbox de widget é reaproveitado entre reconstruções)
-        if (v.Tag is (MouseButtonEventHandler down, MouseButtonEventHandler up, MouseEventHandler leave))
+        // Remove o handler antigo (o Viewbox de widget é reaproveitado entre reconstruções)
+        if (v.Tag is MouseButtonEventHandler old) v.MouseLeftButtonDown -= old;
+
+        // O clique é decidido ao soltar (OnMouseUpDrag): se o mouse andou, vira arraste.
+        MouseButtonEventHandler down = (_, e) =>
         {
-            v.MouseLeftButtonDown -= down;
-            v.MouseLeftButtonUp -= up;
-            v.MouseLeave -= leave;
+            e.Handled = true;
+            if (GetMouseDock() is not (double m, double c)) return;
+            tile.Pressed = true;
+            _pressTile = tile;
+            _pressPoint = (m, c);
+            CaptureMouse();
+            StartAnimating();
+        };
+        v.MouseLeftButtonDown += down;
+        v.Tag = down;
+    }
+
+    // ================= Arrastar ícones no Dock =================
+
+    private double SlotSize => BaseSize + Gap;
+    private double _dragCross;
+
+    private int AppCount => _tiles.Count(t => t.Kind == TileKind.App);
+
+    /// <summary>Espaço que o ícone de índice <paramref name="index"/> deve abrir antes de si (índice = Count: depois do último).</summary>
+    private double TargetGap(int index)
+    {
+        int slot;
+        Tile? skip;
+        if (_dragTile != null && !_dragRemove) { slot = _dragSlot; skip = _dragTile; }
+        else if (_externalSlot >= 0) { slot = _externalSlot; skip = null; }
+        else return 0;
+        return GapIndex(slot, skip) == index ? SlotSize : 0;
+    }
+
+    /// <summary>Índice em _tiles antes do qual fica o espaço da posição <paramref name="slot"/> entre os apps.</summary>
+    private int GapIndex(int slot, Tile? skip)
+    {
+        int seen = 0;
+        for (int i = 0; i < _tiles.Count; i++)
+        {
+            var t = _tiles[i];
+            if (t == skip) continue;
+            if (t.Kind != TileKind.App || seen == slot) return i; // os apps vêm primeiro
+            seen++;
+        }
+        return _tiles.Count;
+    }
+
+    /// <summary>Em qual das <paramref name="slots"/> posições entre os apps fica o ponto <paramref name="main"/>.</summary>
+    private int SlotAt(double main, int slots, bool extraSlot)
+    {
+        double total = _tiles.Sum(TileRestLength) + Math.Max(0, _tiles.Count - 1) * Gap + Pad * 2 + (extraSlot ? SlotSize : 0);
+        double start = (MainLength - total) / 2 + Pad;
+        int k = (int)Math.Floor((main - start + Gap / 2) / SlotSize);
+        return Math.Clamp(k, 0, Math.Max(0, slots - 1));
+    }
+
+    private void OnMouseMoveDrag(object sender, MouseEventArgs e)
+    {
+        if (_pressTile == null || GetMouseDock() is not (double m, double c)) return;
+        if (_dragTile == null)
+        {
+            if (_pressTile.Kind != TileKind.App) return; // widgets ficam fixos
+            if (Math.Abs(m - _pressPoint.main) < DragThreshold && Math.Abs(c - _pressPoint.cross) < DragThreshold) return;
+            BeginDrag(_pressTile);
+        }
+        _dragRemove = c > EdgeMargin + BackgroundThickness + BaseSize * 0.9;
+        _dragSlot = SlotAt(m, AppCount, extraSlot: false);
+        StartAnimating();
+    }
+
+    private void BeginDrag(Tile t)
+    {
+        _dragTile = t;
+        t.Pressed = false;
+        Panel.SetZIndex(t.Visual, 50);
+        _dragSlot = _tiles.Where(x => x.Kind == TileKind.App).ToList().IndexOf(t);
+        // O espaço já nasce aberto onde o ícone estava, para nada pular.
+        int gi = GapIndex(_dragSlot, t);
+        if (gi < _tiles.Count) _tiles[gi].GapBefore = SlotSize;
+        else _gapEnd = SlotSize;
+    }
+
+    /// <summary>Desenha o ícone arrastado seguindo o mouse.</summary>
+    private void PlaceDragged(Tile t, double baseCross)
+    {
+        if (GetMouseDock() is not (double m, double c)) return;
+        double size = BaseSize;
+        double crossMax = Math.Max(baseCross, (Horizontal ? H : W) - size - 34); // deixa lugar para o rótulo
+        t.Main = m - size / 2;
+        t.Size = size;
+        _dragCross = Math.Clamp(c - size / 2, baseCross, crossMax);
+        PlaceRect(t.Visual, t.Main, _dragCross, size, size);
+        t.Visual.Opacity = _dragRemove ? 0.5 : 0.9;
+        if (t.Dot != null) t.Dot.Visibility = Visibility.Collapsed;
+    }
+
+    private void OnMouseUpDrag(object sender, MouseButtonEventArgs e)
+    {
+        var press = _pressTile;
+        if (press == null) return;
+        e.Handled = true;
+        var drag = _dragTile;
+        bool remove = _dragRemove;
+        int slot = _dragSlot;
+        var mouse = GetMouseDock();
+        EndPress();
+
+        if (drag == null)
+        {
+            // Não arrastou: é um clique, se soltou em cima do mesmo item.
+            if (mouse is (double m, double c) && TileAt(m) == press && IsInside(m, c, true)) OnTileClicked(press);
+            return;
         }
 
-        MouseButtonEventHandler d = (_, e) => { tile.Pressed = true; StartAnimating(); e.Handled = true; };
-        MouseButtonEventHandler u = (_, e) =>
+        var entry = drag.Entry!;
+        if (remove)
         {
-            bool was = tile.Pressed;
-            tile.Pressed = false;
-            StartAnimating();
-            e.Handled = true;
-            if (was) OnTileClicked(tile);
-        };
-        MouseEventHandler l = (_, _) => { tile.Pressed = false; StartAnimating(); };
+            Puff(mouse);
+            RemoveEntry(entry);
+            return;
+        }
+        var items = SettingsStore.Current.Items;
+        int from = items.IndexOf(entry);
+        if (from < 0 || from == slot) return;
+        items.RemoveAt(from);
+        items.Insert(Math.Clamp(slot, 0, items.Count), entry);
+        SettingsStore.Commit();
+    }
 
-        v.MouseLeftButtonDown += d;
-        v.MouseLeftButtonUp += u;
-        v.MouseLeave += l;
-        v.Tag = (d, u, l);
+    private void EndPress()
+    {
+        if (_dragTile != null) Panel.SetZIndex(_dragTile.Visual, 0);
+        if (_pressTile != null) _pressTile.Pressed = false;
+        _pressTile = null;
+        _dragTile = null;
+        _dragRemove = false;
+        if (IsMouseCaptured) ReleaseMouseCapture();
+        StartAnimating();
+    }
+
+    private void CancelPress()
+    {
+        if (_pressTile != null) EndPress();
+    }
+
+    /// <summary>Nuvem rápida que some, no lugar onde um item foi removido.</summary>
+    private void Puff((double main, double cross)? at)
+    {
+        if (at is not (double m, double c) || ReduceMotion) return;
+        double size = BaseSize;
+        var scale = new ScaleTransform(0.4, 0.4);
+        var puff = new Ellipse
+        {
+            Fill = new RadialGradientBrush(Color.FromArgb(220, 255, 255, 255), Color.FromArgb(0, 255, 255, 255)),
+            IsHitTestVisible = false,
+            RenderTransformOrigin = new Point(0.5, 0.5),
+            RenderTransform = scale,
+        };
+        double crossMax = Math.Max(0, (Horizontal ? H : W) - size);
+        PlaceRect(puff, m - size / 2, Math.Clamp(c - size / 2, 0, crossMax), size, size);
+        Panel.SetZIndex(puff, 60);
+        DockCanvas.Children.Add(puff);
+
+        var duration = TimeSpan.FromMilliseconds(280);
+        var grow = new DoubleAnimation(0.4, 1.5, duration) { EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut } };
+        scale.BeginAnimation(ScaleTransform.ScaleXProperty, grow);
+        scale.BeginAnimation(ScaleTransform.ScaleYProperty, grow);
+        var fade = new DoubleAnimation(0.9, 0, duration);
+        fade.Completed += (_, _) => DockCanvas.Children.Remove(puff);
+        puff.BeginAnimation(OpacityProperty, fade);
     }
 
     // ================= Ações =================
@@ -370,8 +710,13 @@ public partial class DockWindow : Window
                 bool newInstance = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
                 if (!newInstance && tile.ExeKey != null && tile.Running && RunningApps.ToggleWindows(tile.ExeKey))
                     return;
-                if (AppLauncher.Launch(tile.Entry!) && A.BounceOnLaunch && !tile.Running)
+                if (AppLauncher.Launch(tile.Entry!) && A.BounceOnLaunch && !ReduceMotion && !tile.Running)
                     Bounce(tile);
+                break;
+
+            case TileKind.Running:
+                if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) || tile.ExeKey == null || !RunningApps.ToggleWindows(tile.ExeKey))
+                    AppLauncher.Launch(tile.Entry!);
                 break;
 
             case TileKind.Widget:
@@ -388,8 +733,52 @@ public partial class DockWindow : Window
 
     private void RemoveEntry(DockEntry entry)
     {
-        SettingsStore.Current.Items.Remove(entry);
-        SettingsStore.Commit();
+        if (RemovalHistory.Remove(SettingsStore.Current.Items, entry)) SettingsStore.Commit();
+    }
+
+    // ================= Desfazer remoção =================
+
+    private void ShowUndoToast(DockEntry entry)
+    {
+        string name = entry.Name.Length > 32 ? entry.Name[..29] + "..." : entry.Name;
+        UndoText.Text = $"\u201C{name}\u201D removido";
+        UndoToast.Background = _theme.LabelBackground;
+        UndoToast.BorderBrush = _theme.LabelBorder;
+        UndoText.Foreground = _theme.LabelForeground;
+        UndoButton.Background = ColorUtil.Brush(_theme.Accent);
+        ((TextBlock)UndoButton.Child).Foreground = ColorUtil.Luminance(_theme.Accent) > 0.7 ? Brushes.Black : Brushes.White;
+        UndoToast.Visibility = Visibility.Visible;
+        _undoTimer.Stop();
+        _undoTimer.Start();
+        _shown = true; // com auto-ocultar, mostra o Dock junto com o aviso
+        Layout();
+        StartAnimating();
+    }
+
+    private void HideUndoToast()
+    {
+        _undoTimer.Stop();
+        UndoToast.Visibility = Visibility.Collapsed;
+        StartAnimating();
+    }
+
+    private void UndoRemoval()
+    {
+        HideUndoToast();
+        if (RemovalHistory.Undo(SettingsStore.Current.Items) != null) SettingsStore.Commit();
+    }
+
+    /// <summary>Coloca o aviso centralizado acima do Dock.</summary>
+    private void PlaceUndoToast()
+    {
+        if (UndoToast.Visibility != Visibility.Visible) return;
+        UndoToast.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        var sz = UndoToast.DesiredSize;
+        double mainLen = Horizontal ? sz.Width : sz.Height;
+        double crossLen = Horizontal ? sz.Height : sz.Width;
+        double main0 = Math.Clamp(_dockStart + _dockLength / 2 - mainLen / 2, 4, Math.Max(4, MainLength - mainLen - 4));
+        double cross = EdgeMargin + BackgroundThickness + 12;
+        PlacePos(UndoToast, Math.Round(main0), Math.Round(cross), mainLen, crossLen);
     }
 
     private void DisableWidget(string kind)
@@ -416,12 +805,13 @@ public partial class DockWindow : Window
                 SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
         }
 
-        // Indicadores de apps abertos
-        if (A.ShowRunning)
+        // Indicadores de apps abertos e apps abertos não fixados
+        if (A.ShowRunning || A.ShowRunningUnpinned)
         {
-            Dictionary<string, List<IntPtr>> snap;
-            try { snap = RunningApps.Snapshot(); }
-            catch { snap = new(); }
+            List<RunningApps.AppWindow> windows;
+            try { windows = RunningApps.Windows(); }
+            catch { windows = new(); }
+            var snap = RunningApps.Snapshot(windows);
             bool changed = false;
             foreach (var t in _tiles.Where(t => t.Kind == TileKind.App))
             {
@@ -429,6 +819,13 @@ public partial class DockWindow : Window
                 if (running != t.Running) { t.Running = running; changed = true; }
             }
             if (changed && !_animating) Layout();
+            UpdateUnpinned(windows);
+            if (changed) UpdateAutomationNames();
+        }
+        else if (_unpinned.Count > 0)
+        {
+            _unpinned = new();
+            RebuildTiles();
         }
 
         // Widgets
@@ -442,6 +839,7 @@ public partial class DockWindow : Window
             catch { /* um widget com erro não derruba o Dock */ }
         }
         if (_hovering) UpdateLabel(GetMouseDock());
+        UpdateAutomationNames();
     }
 
     // ================= Animação =================
@@ -469,12 +867,19 @@ public partial class DockWindow : Window
 
         var mouse = GetMouseDock();
         bool wasHovering = _hovering;
-        _hovering = !_menuOpen && mouse is (double mm, double mc) && IsInside(mm, mc, _hovering);
+        _hovering = !_menuOpen && _shown && mouse is (double mm, double mc) && IsInside(mm, mc, _hovering);
         if (_menuOpen) _hovering = wasHovering;
+        if (_dragTile != null || _pressTile != null) _hovering = true;
+        bool revealSettled = UpdateReveal(now, dt);
 
         // Distâncias medidas nas posições "em repouso" para o efeito não oscilar.
         var restCenters = RestCenters();
-        double k = 1 - Math.Exp(-dt * Smoothing);
+        double k = ReduceMotion ? 1 : 1 - Math.Exp(-dt * Smoothing);
+
+        // Centro da ampliação: o mouse, ou o item com foco do teclado.
+        double? focusMain = null;
+        if (_hovering && mouse is (double hm, double)) focusMain = hm;
+        else if (_kbTile != null && _tiles.IndexOf(_kbTile) is int ki && ki >= 0) focusMain = restCenters[ki];
         bool settled = true;
 
         for (int i = 0; i < _tiles.Count; i++)
@@ -483,7 +888,7 @@ public partial class DockWindow : Window
             if (t.Kind == TileKind.Separator) continue;
 
             double target = 1;
-            if (_hovering && mouse is (double main, double) && MaxScale > 1.001)
+            if (focusMain is double main && _dragTile == null && _externalSlot < 0 && MaxScale > 1.001)
             {
                 double d = Math.Abs(main - restCenters[i]) / InfluenceRadius;
                 if (d < 1) target = 1 + (MaxScale - 1) * (Math.Cos(Math.PI * d) + 1) / 2;
@@ -493,6 +898,11 @@ public partial class DockWindow : Window
             if (Math.Abs(target - t.Scale) > 0.002) settled = false;
             else t.Scale = target;
 
+            double gap = TargetGap(i);
+            t.GapBefore += (gap - t.GapBefore) * k;
+            if (Math.Abs(gap - t.GapBefore) > 0.3) settled = false;
+            else t.GapBefore = gap;
+
             if (t.BounceStart >= 0)
             {
                 if (now - t.BounceStart > BounceDuration) t.BounceStart = -1;
@@ -500,10 +910,135 @@ public partial class DockWindow : Window
             }
         }
 
+        double endGap = TargetGap(_tiles.Count);
+        _gapEnd += (endGap - _gapEnd) * k;
+        if (Math.Abs(endGap - _gapEnd) > 0.3) settled = false;
+        else _gapEnd = endGap;
+
         Layout();
         UpdateLabel(mouse);
 
-        if (settled && !_hovering) StopAnimating();
+        if (settled && revealSettled && !_hovering) StopAnimating();
+    }
+
+    // ================= Apps abertos não fixados =================
+
+    /// <summary>Atualiza a seção de apps abertos que não estão fixados; reconstrói o Dock só se mudou.</summary>
+    private void UpdateUnpinned(List<RunningApps.AppWindow> windows)
+    {
+        if (_pressTile != null || _menuOpen) return; // não mexe nos ícones durante arraste ou menu
+
+        var next = new List<UnpinnedApp>();
+        if (A.ShowRunningUnpinned)
+        {
+            var pinned = new HashSet<string>(_tiles.Where(t => t.Kind == TileKind.App && t.ExeKey != null).Select(t => t.ExeKey!));
+            var found = new Dictionary<string, UnpinnedApp>();
+            foreach (var w in windows)
+            {
+                if (w.Key is not string key || w.Exe == OwnExe) continue;
+                if (w.Keys.Any(pinned.Contains) || found.ContainsKey(key)) continue;
+                string path = w.Aumid != null ? @"shell:AppsFolder\" + w.Aumid : w.Exe!;
+                found[key] = new UnpinnedApp(key, path, AppName(w));
+            }
+            // Mantém a ordem de quem já estava e coloca os novos no fim, como no macOS.
+            next.AddRange(_unpinned.Where(u => found.ContainsKey(u.Key)).Select(u => found[u.Key]));
+            next.AddRange(found.Values.Where(f => !_unpinned.Any(u => u.Key == f.Key)));
+        }
+
+        if (next.Select(u => u.Key).SequenceEqual(_unpinned.Select(u => u.Key))) return;
+        _unpinned = next;
+        RebuildTiles();
+        StartAnimating();
+    }
+
+    /// <summary>Nome do app: descrição do executável (ex.: "Google Chrome") ou o título da janela, para apps da Store.</summary>
+    private static string AppName(RunningApps.AppWindow w)
+    {
+        if (w.Aumid != null || w.Exe == null)
+        {
+            var sb = new System.Text.StringBuilder(256);
+            GetWindowText(w.Handle, sb, sb.Capacity);
+            return sb.Length > 0 ? sb.ToString() : "App";
+        }
+        if (ExeNames.TryGetValue(w.Exe, out var cached)) return cached;
+        string name;
+        try
+        {
+            var info = FileVersionInfo.GetVersionInfo(w.Exe);
+            name = !string.IsNullOrWhiteSpace(info.FileDescription) ? info.FileDescription.Trim() : Path.GetFileNameWithoutExtension(w.Exe);
+        }
+        catch { name = Path.GetFileNameWithoutExtension(w.Exe); }
+        if (name.Length > 0) name = char.ToUpper(name[0]) + name[1..];
+        ExeNames[w.Exe] = name;
+        return name;
+    }
+
+    /// <summary>"Manter no Dock": fixa um app aberto, no fim dos fixados.</summary>
+    private void PinRunning(Tile tile)
+    {
+        var entry = tile.Entry!;
+        _unpinned.RemoveAll(u => u.Key == tile.ExeKey);
+        if (DockItems.FindDuplicate(SettingsStore.Current.Items, entry.Path) == null)
+            SettingsStore.Current.Items.Add(new DockEntry { Name = entry.Name, Path = entry.Path });
+        SettingsStore.Commit();
+    }
+
+    // ================= Auto-ocultar =================
+
+    /// <summary>Chamado pelo timer parado: acorda a animação quando o mouse chega ao Dock (ou à borda, se oculto).</summary>
+    private bool ShouldWake()
+    {
+        if (!A.AutoHide || _shown) return IsMouseInDock();
+
+        double now = _clock.Elapsed.TotalSeconds;
+        if (IsMouseAtEdge())
+        {
+            // Espera um pouco para não aparecer quando o mouse só passa pela borda.
+            if (_edgeSince < 0) _edgeSince = now;
+            if (now - _edgeSince >= A.AutoHideDelay)
+            {
+                _edgeSince = -1;
+                _shown = true;
+                return true;
+            }
+        }
+        else _edgeSince = -1;
+        return false;
+    }
+
+    private bool IsMouseAtEdge() =>
+        GetMouseDock() is (double m, double c)
+        && m >= _dockStart && m <= _dockStart + _dockLength
+        && c >= -2 && c <= EdgeTrigger;
+
+    /// <summary>Decide se o Dock deve sumir e anima o deslize. Devolve true quando não há nada a animar.</summary>
+    private bool UpdateReveal(double now, double dt)
+    {
+        bool waiting = false;
+        if (!A.AutoHide) _shown = true;
+        else if (_hovering || _menuOpen || _kbTile != null || UndoToast.Visibility == Visibility.Visible) _leaveSince = -1;
+        else if (_shown)
+        {
+            if (_leaveSince < 0) _leaveSince = now;
+            if (now - _leaveSince >= HideDelay) { _shown = false; _leaveSince = -1; }
+            else waiting = true;
+        }
+
+        double target = _shown ? 1 : 0;
+        _reveal += (target - _reveal) * (ReduceMotion ? 1 : 1 - Math.Exp(-dt * 14));
+        bool settled = Math.Abs(target - _reveal) < 0.003;
+        if (settled) _reveal = target;
+        ApplySlide();
+        return settled && !waiting;
+    }
+
+    /// <summary>Empurra todo o conteúdo do Dock para fora da tela conforme <see cref="_reveal"/>.</summary>
+    private void ApplySlide()
+    {
+        // Fundo + margem + sombra precisam sair inteiros.
+        double distance = (1 - _reveal) * (EdgeMargin + BackgroundThickness + 30);
+        _slide.X = A.Edge switch { DockEdge.Left => -distance, DockEdge.Right => distance, _ => 0 };
+        _slide.Y = A.Edge switch { DockEdge.Top => -distance, DockEdge.Bottom => distance, _ => 0 };
     }
 
     private const double BounceDuration = 1.4;
@@ -546,9 +1081,16 @@ public partial class DockWindow : Window
         double b = BaseSize;
 
         double content = 0;
-        foreach (var t in _tiles) content += t.Kind == TileKind.Separator ? SeparatorLength : b * t.Scale;
-        content += Math.Max(0, _tiles.Count - 1) * Gap;
-        if (_tiles.Count == 0) content = b;
+        int inFlow = 0;
+        foreach (var t in _tiles)
+        {
+            content += t.GapBefore;
+            if (t == _dragTile) continue; // o ícone arrastado segue o mouse, fora da fila
+            content += t.Kind == TileKind.Separator ? SeparatorLength : b * t.Scale;
+            inFlow++;
+        }
+        content += _gapEnd + Math.Max(0, inFlow - 1) * Gap;
+        if (inFlow == 0 && content <= 0) content = b;
 
         _dockLength = content + Pad * 2;
         _dockStart = Math.Round((MainLength - _dockLength) / 2);
@@ -563,6 +1105,12 @@ public partial class DockWindow : Window
         double baseCross = EdgeMargin + Pad;
         foreach (var t in _tiles)
         {
+            x += t.GapBefore;
+            if (t == _dragTile)
+            {
+                PlaceDragged(t, baseCross);
+                continue;
+            }
             if (t.Kind == TileKind.Separator)
             {
                 double len = b * 0.72;
@@ -586,8 +1134,12 @@ public partial class DockWindow : Window
                 t.Dot.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
                 if (show) PlaceRect(t.Dot, x + size / 2 - DotSize / 2, EdgeMargin + 1.5, DotSize, DotSize);
             }
+            if (t == _kbTile)
+                PlaceRect(_focusRing, x - 3, baseCross + lift - 3, size + 6, size + 6);
             x += size + Gap;
         }
+        _focusRing.Visibility = _kbTile != null && _tiles.Contains(_kbTile) ? Visibility.Visible : Visibility.Collapsed;
+        PlaceUndoToast();
     }
 
     /// <summary>
@@ -613,27 +1165,30 @@ public partial class DockWindow : Window
     }
 
     private Tile? TileAt(double main) =>
-        _tiles.FirstOrDefault(t => t.Kind != TileKind.Separator && main >= t.Main - Gap / 2 && main < t.Main + t.Size + Gap / 2);
+        _tiles.FirstOrDefault(t => t != _dragTile && t.Kind != TileKind.Separator && main >= t.Main - Gap / 2 && main < t.Main + t.Size + Gap / 2);
 
     private void UpdateLabel((double main, double cross)? mouse)
     {
         Tile? hot = null;
-        if (A.ShowLabels && _hovering && !_menuOpen && mouse is (double main, double)) hot = TileAt(main);
+        if (A.ShowLabels && _hovering && !_menuOpen && _pressTile == null && _externalSlot < 0 && mouse is (double main, double)) hot = TileAt(main);
+        if (hot == null && A.ShowLabels && _kbTile != null && !_hovering && !_menuOpen) hot = _kbTile;
+        if (_dragTile != null) hot = _dragTile;
+        string text = _dragTile != null && _dragRemove ? "Remover" : hot?.Label ?? "";
 
-        if (hot == null || string.IsNullOrEmpty(hot.Label))
+        if (hot == null || string.IsNullOrEmpty(text))
         {
             NameLabel.Visibility = Visibility.Collapsed;
             return;
         }
 
-        NameLabelText.Text = hot.Label;
+        NameLabelText.Text = text;
         NameLabel.Visibility = Visibility.Visible;
         NameLabel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         var sz = NameLabel.DesiredSize;
         double mainLen = Horizontal ? sz.Width : sz.Height;
         double crossLen = Horizontal ? sz.Height : sz.Width;
 
-        double cross = EdgeMargin + Pad + hot.Size + BounceOffset(hot) + 10;
+        double cross = hot == _dragTile ? _dragCross + hot.Size + 10 : EdgeMargin + Pad + hot.Size + BounceOffset(hot) + 10;
         double main0 = hot.Main + hot.Size / 2 - mainLen / 2;
         main0 = Math.Clamp(main0, 4, Math.Max(4, MainLength - mainLen - 4));
         PlacePos(NameLabel, Math.Round(main0), Math.Round(cross), mainLen, crossLen);
@@ -673,6 +1228,143 @@ public partial class DockWindow : Window
         return main >= _dockStart && main <= _dockStart + _dockLength && cross >= -2 && cross <= depth;
     }
 
+    // ================= Teclado e leitor de tela =================
+
+    private const int HotkeyId = 0xD0C;
+    private string? _shortcutRegistered;
+    /// <summary>Por que o atalho não pôde ser registrado (já usado por outro programa), ou null.</summary>
+    public static string? ShortcutError { get; private set; }
+    public static event Action? ShortcutStatusChanged;
+
+    private Tile? _kbTile;          // item com o foco do teclado; null = fora do modo teclado
+    private IntPtr _kbPrevious;     // janela que tinha o foco antes do atalho
+    private readonly Border _focusRing = new()
+    {
+        BorderThickness = new Thickness(2.5),
+        CornerRadius = new CornerRadius(12),
+        IsHitTestVisible = false,
+        Visibility = Visibility.Collapsed,
+    };
+
+    private void RegisterShortcut()
+    {
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero) return;
+        string want = A.KeyboardShortcut ?? "";
+        if (want == _shortcutRegistered) return;
+
+        UnregisterHotKey(hwnd, HotkeyId);
+        _shortcutRegistered = want;
+        ShortcutError = null;
+        if (Hotkey.Parse(want) is (uint mods, uint vk) && !RegisterHotKey(hwnd, HotkeyId, mods | MOD_NOREPEAT, vk))
+            ShortcutError = $"O atalho {Hotkey.Display(want)} já é usado por outro programa. Escolha outro.";
+        ShortcutStatusChanged?.Invoke();
+    }
+
+    private List<Tile> FocusableTiles() => _tiles.Where(t => t.Kind != TileKind.Separator).ToList();
+
+    /// <summary>Atalho global: entra no modo teclado, ou sai se já estiver nele.</summary>
+    private void ToggleKeyboard()
+    {
+        if (_kbTile != null)
+        {
+            ExitKeyboard(restoreFocus: true);
+            return;
+        }
+        var tiles = FocusableTiles();
+        if (tiles.Count == 0 || !IsVisible) return;
+
+        var hwnd = new WindowInteropHelper(this).Handle;
+        _kbPrevious = GetForegroundWindow();
+        _shown = true; // com auto-ocultar, o Dock aparece
+        // O atalho global dá a este processo o direito de pegar o foco.
+        SetForegroundWindow(hwnd);
+        FocusTile(tiles[0]);
+    }
+
+    private void FocusTile(Tile t)
+    {
+        _kbTile = t;
+        t.Visual.Focus();
+        Keyboard.Focus(t.Visual);
+        StartAnimating();
+    }
+
+    private void ExitKeyboard(bool restoreFocus)
+    {
+        if (_kbTile == null) return;
+        _kbTile = null;
+        _focusRing.Visibility = Visibility.Collapsed;
+        Keyboard.ClearFocus();
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (restoreFocus && _kbPrevious != IntPtr.Zero && GetForegroundWindow() == hwnd) SetForegroundWindow(_kbPrevious);
+        _kbPrevious = IntPtr.Zero;
+        StartAnimating();
+    }
+
+    /// <summary>Setas/Tab escolhem, Enter/Espaço abrem, Shift+F10 ou tecla de menu abrem o menu, Esc sai.</summary>
+    private void OnKeyboard(object sender, KeyEventArgs e)
+    {
+        if (_kbTile == null || _menuOpen) return;
+        var tiles = FocusableTiles();
+        if (tiles.Count == 0) { ExitKeyboard(restoreFocus: true); return; }
+        int i = Math.Max(0, tiles.IndexOf(_kbTile));
+        int n = tiles.Count;
+        Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+        bool shift = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+
+        switch (key)
+        {
+            case Key.Left or Key.Up:
+                FocusTile(tiles[(i - 1 + n) % n]);
+                break;
+            case Key.Right or Key.Down:
+                FocusTile(tiles[(i + 1) % n]);
+                break;
+            case Key.Tab:
+                FocusTile(tiles[shift ? (i - 1 + n) % n : (i + 1) % n]);
+                break;
+            case Key.Home:
+                FocusTile(tiles[0]);
+                break;
+            case Key.End:
+                FocusTile(tiles[n - 1]);
+                break;
+            case Key.Enter or Key.Space:
+                var t = tiles[i];
+                ExitKeyboard(restoreFocus: false);
+                OnTileClicked(t); // Ctrl+Enter abre nova janela, como Ctrl+clique
+                break;
+            case Key.Apps:
+            case Key.F10 when shift:
+                ShowMenu(BuildMenu(tiles[i]), tiles[i]);
+                break;
+            case Key.Escape:
+                ExitKeyboard(restoreFocus: true);
+                break;
+            default:
+                return;
+        }
+        e.Handled = true;
+    }
+
+    /// <summary>Nomes para o Narrador/NVDA: nome do app e se está aberto; widget e o que ele mostra.</summary>
+    private void UpdateAutomationNames()
+    {
+        foreach (var t in _tiles)
+        {
+            string name = t.Kind switch
+            {
+                TileKind.App => t.Entry!.Name + (t.Running ? ", aberto" : ""),
+                TileKind.Running => t.Entry!.Name + ", aberto, não fixado",
+                TileKind.Widget => string.IsNullOrEmpty(t.Widget!.Label) ? t.Widget.DisplayName : $"{t.Widget.DisplayName}: {t.Widget.Label}",
+                _ => "",
+            };
+            if (name.Length > 0 && AutomationProperties.GetName(t.Visual) != name)
+                AutomationProperties.SetName(t.Visual, name);
+        }
+    }
+
     // ================= Menus =================
 
     private void OnRightClick(object sender, MouseButtonEventArgs e)
@@ -680,31 +1372,89 @@ public partial class DockWindow : Window
         e.Handled = true;
         var mouse = GetMouseDock();
         var tile = mouse is (double main, double) ? TileAt(main) : null;
+        ShowMenu(BuildMenu(tile));
+    }
 
+    /// <summary>Menu do item (app, widget) ou, sem item, as opções gerais do Dock.</summary>
+    private ContextMenu BuildMenu(Tile? tile)
+    {
         var menu = new ContextMenu();
-        if (tile?.Kind == TileKind.App)
+        if (tile?.Kind is TileKind.App or TileKind.Running)
         {
-            var entry = tile.Entry!;
-            menu.Items.Add(Header(entry.Name));
-            menu.Items.Add(Item(tile.Running ? "Mostrar" : "Abrir", () => OnTileClicked(tile)));
-            if (tile.Running) menu.Items.Add(Item("Nova janela", () => AppLauncher.Launch(entry)));
-            menu.Items.Add(Item("Mostrar no Explorador", () => AppLauncher.ShowInExplorer(entry.Path)));
+            // Cada app tem o próprio menu; as opções gerais ficam num submenu.
+            AddAppItems(menu, tile);
             menu.Items.Add(new Separator());
-            menu.Items.Add(Item("Remover do Dock", () => RemoveEntry(entry)));
+            var options = new MenuItem { Header = "Opções do Dock" };
+            AddDockItems(options);
+            menu.Items.Add(options);
         }
-        else if (tile?.Kind == TileKind.Widget)
+        else
         {
-            var w = tile.Widget!;
-            menu.Items.Add(Header(w.DisplayName));
-            foreach (var (h, a) in w.MenuItems()) menu.Items.Add(Item(h, a));
-            menu.Items.Add(Item("Remover widget", () => DisableWidget(w.Kind)));
+            if (tile?.Kind == TileKind.Widget)
+            {
+                var w = tile.Widget!;
+                menu.Items.Add(Header(w.DisplayName));
+                foreach (var (h, a) in w.MenuItems()) menu.Items.Add(Item(h, a));
+                menu.Items.Add(Item("Remover widget", () => DisableWidget(w.Kind)));
+                menu.Items.Add(new Separator());
+            }
+            AddDockItems(menu);
+        }
+        return menu;
+    }
+
+    /// <summary>Menu de um app: janelas abertas, nova janela, Explorador, fechar e remover.</summary>
+    private void AddAppItems(ItemsControl menu, Tile tile)
+    {
+        var entry = tile.Entry!;
+        menu.Items.Add(Header(entry.Name));
+
+        var windows = tile.Running && tile.ExeKey != null ? RunningApps.WindowsOf(tile.ExeKey) : new();
+        if (windows.Count > 0)
+        {
+            foreach (var (hwnd, title, minimized) in windows.Take(12))
+            {
+                string text = title.Length > 60 ? title[..57] + "..." : title;
+                var mi = Item(minimized ? text + "  (minimizada)" : text, () => RunningApps.Activate(hwnd));
+                mi.Padding = new Thickness(18, mi.Padding.Top, mi.Padding.Right, mi.Padding.Bottom);
+                menu.Items.Add(mi);
+            }
+            menu.Items.Add(new Separator());
+            menu.Items.Add(Item("Nova janela", () => AppLauncher.Launch(entry)));
+        }
+        else
+        {
+            menu.Items.Add(Item("Abrir", () => OnTileClicked(tile)));
         }
 
-        if (menu.Items.Count > 0) menu.Items.Add(new Separator());
+        menu.Items.Add(Item(Directory.Exists(Environment.ExpandEnvironmentVariables(entry.Path)) ? "Mostrar a pasta no Explorador" : "Mostrar no Explorador",
+            () => AppLauncher.ShowInExplorer(entry.Path)));
+        menu.Items.Add(new Separator());
+        if (tile.Kind == TileKind.Running) menu.Items.Add(Item("Manter no Dock", () => PinRunning(tile)));
+        else menu.Items.Add(Item("Remover do Dock", () => RemoveEntry(entry)));
+
+        if (windows.Count > 0)
+        {
+            menu.Items.Add(new Separator());
+            menu.Items.Add(Item(windows.Count == 1 ? "Fechar" : $"Fechar todas as janelas ({windows.Count})", () =>
+            {
+                foreach (var (hwnd, _, _) in windows) RunningApps.Close(hwnd);
+            }));
+        }
+    }
+
+    /// <summary>Opções gerais do Dock (área vazia, separador, widgets e submenu dos apps).</summary>
+    private void AddDockItems(ItemsControl menu)
+    {
         menu.Items.Add(Item("Gerenciar Dock...", () => SettingsWindow.ShowSingle()));
         menu.Items.Add(Item(A.Magnify ? "Desligar ampliação" : "Ligar ampliação", () =>
         {
             A.Magnify = !A.Magnify;
+            SettingsStore.Commit();
+        }));
+        menu.Items.Add(Item(A.AutoHide ? "Desligar ocultação automática" : "Ligar ocultação automática", () =>
+        {
+            A.AutoHide = !A.AutoHide;
             SettingsStore.Commit();
         }));
         menu.Items.Add(new Separator());
@@ -718,11 +1468,51 @@ public partial class DockWindow : Window
         }
         menu.Items.Add(new Separator());
         menu.Items.Add(Item("Sair do Dockbox", Close));
+    }
 
-        menu.PlacementTarget = this;
-        menu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
-        menu.Opened += (_, _) => { _menuOpen = true; NameLabel.Visibility = Visibility.Collapsed; };
-        menu.Closed += (_, _) => { _menuOpen = false; StartAnimating(); };
+    private void ShowMenu(ContextMenu menu, Tile? at = null)
+    {
+        IntPtr previous = IntPtr.Zero;
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (at != null)
+        {
+            // Aberto pelo teclado: ao lado do item, do lado de dentro da tela.
+            menu.PlacementTarget = at.Visual;
+            menu.Placement = A.Edge switch
+            {
+                DockEdge.Top => System.Windows.Controls.Primitives.PlacementMode.Bottom,
+                DockEdge.Left => System.Windows.Controls.Primitives.PlacementMode.Right,
+                DockEdge.Right => System.Windows.Controls.Primitives.PlacementMode.Left,
+                _ => System.Windows.Controls.Primitives.PlacementMode.Top,
+            };
+        }
+        else
+        {
+            menu.PlacementTarget = this;
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+        }
+        menu.Opened += (_, _) =>
+        {
+            _menuOpen = true;
+            NameLabel.Visibility = Visibility.Collapsed;
+            // O Dock não pega foco; só durante o menu, para setas, Enter e Esc funcionarem.
+            previous = GetForegroundWindow();
+            SetForegroundWindow(hwnd);
+            menu.Focus();
+        };
+        menu.Closed += (_, _) =>
+        {
+            _menuOpen = false;
+            StartAnimating();
+            // Devolve o foco para quem tinha, a não ser que a ação do menu tenha ativado outra janela.
+            if (_kbTile != null && GetForegroundWindow() == hwnd)
+            {
+                // Continua no modo teclado: o foco volta para o item.
+                FocusTile(_kbTile);
+                return;
+            }
+            if (previous != IntPtr.Zero && GetForegroundWindow() == hwnd) SetForegroundWindow(previous);
+        };
         menu.IsOpen = true;
     }
 
@@ -763,14 +1553,19 @@ public partial class DockWindow : Window
             return;
         }
         StartAnimating();
-        var t = DropTarget(out _);
+        var t = DropTarget(out double main);
         if (t?.Widget is { AcceptsFiles: true }) e.Effects = DragDropEffects.Move;
-        else if (t?.Kind == TileKind.App && !files.All(IsPinnable)) e.Effects = DragDropEffects.Copy;
+        else if (t?.Kind is TileKind.App or TileKind.Running && !files.All(IsPinnable)) e.Effects = DragDropEffects.Copy;
         else e.Effects = DragDropEffects.Link;
+
+        // Ao fixar, abre espaço mostrando onde o item vai entrar.
+        _externalSlot = e.Effects == DragDropEffects.Link ? SlotAt(main, AppCount + 1, extraSlot: true) : -1;
     }
 
     private void OnDrop(object sender, DragEventArgs e)
     {
+        int slot = _externalSlot;
+        _externalSlot = -1;
         if (e.Data.GetData(DataFormats.FileDrop) is not string[] files || files.Length == 0) return;
         e.Handled = true;
         var t = DropTarget(out double main);
@@ -780,7 +1575,7 @@ public partial class DockWindow : Window
             w.OnFilesDropped(files);
             return;
         }
-        if (t?.Kind == TileKind.App && !files.All(IsPinnable))
+        if (t?.Kind is TileKind.App or TileKind.Running && !files.All(IsPinnable))
         {
             // Soltar arquivos num app abre os arquivos com ele (como no macOS)
             if (AppLauncher.Launch(t.Entry!, files) && A.BounceOnLaunch) Bounce(t);
@@ -789,12 +1584,27 @@ public partial class DockWindow : Window
 
         // Fixar no Dock, na posição em que foi solto
         var items = SettingsStore.Current.Items;
-        int index = _tiles.Count(x => x.Kind == TileKind.App && x.Main + x.Size / 2 < main);
+        int index = slot >= 0 ? slot : _tiles.Count(x => x.Kind == TileKind.App && x.Main + x.Size / 2 < main);
         index = Math.Clamp(index, 0, items.Count);
         foreach (var f in files)
         {
+            if (DockItems.FindDuplicate(items, f) is DockEntry existing)
+            {
+                // Já está no Dock: destaca o item em vez de duplicar.
+                if (_tiles.FirstOrDefault(x => x.Entry == existing) is Tile same) Bounce(same);
+                continue;
+            }
             string name = Directory.Exists(f) ? new DirectoryInfo(f).Name : Path.GetFileNameWithoutExtension(f);
-            items.Insert(index++, new DockEntry { Name = name, Path = f });
+            var entry = new DockEntry { Name = name, Path = f };
+            var risk = AppLauncher.Assess(f, null);
+            if (risk == LaunchRisk.Blocked) continue;
+            if (risk == LaunchRisk.Confirm)
+            {
+                // Fixar um script por arraste também avisa; quem confirmou aqui não é perguntado de novo ao abrir.
+                if (!AppLauncher.ConfirmRisky(name, f, null, pinning: true)) continue;
+                entry.Trusted = true;
+            }
+            items.Insert(index++, entry);
         }
         SettingsStore.Commit();
     }

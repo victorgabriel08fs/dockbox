@@ -25,7 +25,7 @@ public sealed class ItemVm : INotifyPropertyChanged
     public ItemVm(DockEntry entry)
     {
         Entry = entry;
-        _icon = IconLoader.Load(entry.Path, 64);
+        _icon = IconLoader.LoadForDisplay(entry.Path, 30);
     }
 
     public string Name => string.IsNullOrWhiteSpace(Entry.Name) ? "(sem nome)" : Entry.Name;
@@ -34,7 +34,7 @@ public sealed class ItemVm : INotifyPropertyChanged
 
     public void Refresh(bool reloadIcon)
     {
-        if (reloadIcon) _icon = IconLoader.Load(Entry.Path, 64);
+        if (reloadIcon) _icon = IconLoader.LoadForDisplay(Entry.Path, 30);
         OnChanged(nameof(Name));
         OnChanged(nameof(Path));
         if (reloadIcon) OnChanged(nameof(Icon));
@@ -86,11 +86,33 @@ public partial class SettingsWindow : Window
         };
 
         ItemsList.ItemsSource = _items;
+        PreviewKeyDown += (_, e) =>
+        {
+            // Ctrl+Z desfaz a última remoção (dentro de uma caixa de texto, fica o desfazer do texto).
+            if (e.Key == Key.Z && Keyboard.Modifiers == ModifierKeys.Control && Keyboard.FocusedElement is not TextBox)
+            {
+                e.Handled = true;
+                UndoRemoval();
+            }
+        };
         SourceInitialized += (_, _) => ApplyTitleBarTheme();
         SettingsStore.Changed += OnExternalChange;
+        Action<string> onFail = _ => Dispatcher.BeginInvoke(UpdateSaveBanner);
+        Action onRecover = () => Dispatcher.BeginInvoke(UpdateSaveBanner);
+        SettingsStore.SaveFailed += onFail;
+        SettingsStore.SaveRecovered += onRecover;
+        Loaded += (_, _) => UpdateSaveBanner();
+        Action onShortcut = () => Dispatcher.BeginInvoke(UpdateShortcutHint);
+        DockWindow.ShortcutStatusChanged += onShortcut;
+        EventHandler onDisplay = (_, _) => Dispatcher.BeginInvoke(UpdateMonitorControls);
+        Microsoft.Win32.SystemEvents.DisplaySettingsChanged += onDisplay;
         Closed += (_, _) =>
         {
+            Microsoft.Win32.SystemEvents.DisplaySettingsChanged -= onDisplay;
+            DockWindow.ShortcutStatusChanged -= onShortcut;
             SettingsStore.Changed -= OnExternalChange;
+            SettingsStore.SaveFailed -= onFail;
+            SettingsStore.SaveRecovered -= onRecover;
             if (_commitDebounce.IsEnabled) { _commitDebounce.Stop(); SettingsStore.Commit(); }
         };
 
@@ -103,10 +125,24 @@ public partial class SettingsWindow : Window
         try
         {
             var hwnd = new WindowInteropHelper(this).Handle;
-            int dark = DockTheme.From(A).IsLight ? 0 : 1;
+            int dark = DockTheme.Current(A).IsLight ? 0 : 1;
             DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref dark, sizeof(int));
         }
         catch { }
+    }
+
+    /// <summary>Mostra ou esconde a faixa de "não foi possível salvar".</summary>
+    private void UpdateSaveBanner()
+    {
+        string? error = SettingsStore.LastSaveError;
+        SaveErrorBanner.Visibility = error == null ? Visibility.Collapsed : Visibility.Visible;
+        SaveErrorText.Text = error?.Replace("\n\n", " ") ?? "";
+    }
+
+    private void RetrySave_Click(object sender, RoutedEventArgs e)
+    {
+        SettingsStore.Save();
+        UpdateSaveBanner();
     }
 
     private void OnExternalChange()
@@ -149,9 +185,13 @@ public partial class SettingsWindow : Window
         _loading = true;
         try
         {
-            // Itens
+            // Itens: reaproveita os já carregados para não ler os ícones do disco de novo
+            // a cada clique de cor ou mudança de estilo.
+            var loaded = new Dictionary<DockEntry, ItemVm>(ReferenceEqualityComparer.Instance);
+            foreach (var vm in _items) loaded[vm.Entry] = vm;
             _items.Clear();
-            foreach (var e in S.Items) _items.Add(new ItemVm(e));
+            foreach (var e in S.Items)
+                _items.Add(loaded.TryGetValue(e, out var vm) ? vm : new ItemVm(e));
 
             // Widgets
             BuildWidgetRows();
@@ -182,14 +222,24 @@ public partial class SettingsWindow : Window
             EdgeLeft.IsChecked = A.Edge == DockEdge.Left;
             EdgeRight.IsChecked = A.Edge == DockEdge.Right;
             EdgeTop.IsChecked = A.Edge == DockEdge.Top;
+            UpdateMoveTooltips();
+            MonitorPrimary.IsChecked = A.Monitor == MonitorMode.Primary;
+            MonitorChoose.IsChecked = A.Monitor == MonitorMode.Choose;
+            MonitorFollow.IsChecked = A.Monitor == MonitorMode.FollowMouse;
+            UpdateMonitorControls();
 
             // Comportamento
             LabelsToggle.IsChecked = A.ShowLabels;
             RunningToggle.IsChecked = A.ShowRunning;
+            UnpinnedToggle.IsChecked = A.ShowRunningUnpinned;
             BounceToggle.IsChecked = A.BounceOnLaunch;
             SeparatorToggle.IsChecked = A.ShowSeparator;
             ReserveToggle.IsChecked = A.ReserveSpace;
+            AutoHideToggle.IsChecked = A.AutoHide;
+            AutoHideDelaySlider.Value = A.AutoHideDelay;
+            UpdateAutoHideControls();
             AutostartToggle.IsChecked = Autostart.IsEnabled;
+            BuildShortcutChoices();
         }
         finally
         {
@@ -227,7 +277,9 @@ public partial class SettingsWindow : Window
     {
         if (_loading || Selected is not ItemVm vm) return;
         vm.Entry.Name = EditName.Text;
-        vm.Entry.Arguments = string.IsNullOrWhiteSpace(EditArgs.Text) ? null : EditArgs.Text;
+        string? args = string.IsNullOrWhiteSpace(EditArgs.Text) ? null : EditArgs.Text;
+        if (args != vm.Entry.Arguments) vm.Entry.Trusted = false; // comando mudou: pergunta de novo
+        vm.Entry.Arguments = args;
         vm.Refresh(false);
         Commit(debounce: true);
     }
@@ -240,6 +292,7 @@ public partial class SettingsWindow : Window
         if (path == vm.Entry.Path) return;
         if (string.IsNullOrWhiteSpace(path)) { EditPath.Text = vm.Entry.Path; return; }
         vm.Entry.Path = path;
+        vm.Entry.Trusted = false; // caminho mudou: pergunta de novo se for script
         bool isNetwork = path.StartsWith(@"\\", StringComparison.Ordinal);
         vm.Refresh(!isNetwork && (File.Exists(path) || Directory.Exists(path)));
         Commit();
@@ -253,14 +306,22 @@ public partial class SettingsWindow : Window
     private void AddEntries(IEnumerable<DockEntry> entries)
     {
         ItemVm? last = null;
+        bool added = false;
         foreach (var e in entries)
         {
+            // Já fixado (mesmo caminho ou atalho para o mesmo app): seleciona o existente em vez de duplicar.
+            if (DockItems.FindDuplicate(S.Items, e.Path, e.Arguments) is DockEntry existing)
+            {
+                last = _items.FirstOrDefault(i => i.Entry == existing) ?? last;
+                continue;
+            }
             S.Items.Add(e);
             last = new ItemVm(e);
             _items.Add(last);
+            added = true;
         }
         if (last == null) return;
-        Commit();
+        if (added) Commit();
         ItemsList.SelectedItem = last;
         ItemsList.ScrollIntoView(last);
     }
@@ -314,15 +375,40 @@ public partial class SettingsWindow : Window
         Commit();
     }
 
+    /// <summary>As setas falam de "antes/depois" no sentido do Dock: esquerda/direita ou acima/abaixo.</summary>
+    private void UpdateMoveTooltips()
+    {
+        bool horizontal = A.Edge is DockEdge.Bottom or DockEdge.Top;
+        MoveUpButton.ToolTip = horizontal ? "Mover para antes (mais à esquerda no Dock)" : "Mover para antes (mais acima no Dock)";
+        MoveDownButton.ToolTip = horizontal ? "Mover para depois (mais à direita no Dock)" : "Mover para depois (mais abaixo no Dock)";
+        System.Windows.Automation.AutomationProperties.SetName(MoveUpButton, (string)MoveUpButton.ToolTip);
+        System.Windows.Automation.AutomationProperties.SetName(MoveDownButton, (string)MoveDownButton.ToolTip);
+    }
+
     private void MoveUp_Click(object sender, RoutedEventArgs e) => Move(-1);
     private void MoveDown_Click(object sender, RoutedEventArgs e) => Move(+1);
+
+    private void UndoRemoval()
+    {
+        var entry = RemovalHistory.Undo(S.Items);
+        if (entry == null) return;
+        Commit();
+        LoadAll();
+        var vm = _items.FirstOrDefault(i => i.Entry == entry);
+        if (vm != null)
+        {
+            NavItems.IsChecked = true;
+            ItemsList.SelectedItem = vm;
+            ItemsList.ScrollIntoView(vm);
+        }
+    }
 
     private void Remove_Click(object sender, RoutedEventArgs e)
     {
         if (Selected is not ItemVm vm) return;
         int i = _items.IndexOf(vm);
         _items.Remove(vm);
-        S.Items.Remove(vm.Entry);
+        RemovalHistory.Remove(S.Items, vm.Entry);
         Commit();
         if (_items.Count > 0) ItemsList.SelectedIndex = Math.Min(i, _items.Count - 1);
     }
@@ -503,7 +589,114 @@ public partial class SettingsWindow : Window
                : EdgeRight.IsChecked == true ? DockEdge.Right
                : EdgeTop.IsChecked == true ? DockEdge.Top
                : DockEdge.Bottom;
+        UpdateMonitorControls();
         Commit();
+    }
+
+    private void BuildShortcutChoices()
+    {
+        ShortcutChoices.Children.Clear();
+        var style = (Style)FindResource("UiSegment");
+        foreach (var choice in Hotkey.Choices)
+        {
+            var rb = new RadioButton
+            {
+                Style = style,
+                GroupName = "shortcut",
+                Content = Hotkey.Display(choice),
+                IsChecked = string.Equals(choice, A.KeyboardShortcut, StringComparison.OrdinalIgnoreCase),
+            };
+            System.Windows.Automation.AutomationProperties.SetName(rb, "Atalho do teclado: " + Hotkey.Display(choice));
+            rb.Checked += (_, _) =>
+            {
+                if (_loading || A.KeyboardShortcut == choice) return;
+                A.KeyboardShortcut = choice;
+                Commit();
+            };
+            ShortcutChoices.Children.Add(rb);
+        }
+        UpdateShortcutHint();
+    }
+
+    private void UpdateShortcutHint()
+    {
+        ShortcutHint.Text = DockWindow.ShortcutError ?? "";
+        ShortcutHint.Visibility = ShortcutHint.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void MonitorMode_Checked(object sender, RoutedEventArgs e)
+    {
+        if (_loading) return;
+        A.Monitor = MonitorChoose.IsChecked == true ? MonitorMode.Choose
+                  : MonitorFollow.IsChecked == true ? MonitorMode.FollowMouse
+                  : MonitorMode.Primary;
+        // Ao escolher pela primeira vez, começa no monitor onde esta janela está.
+        if (A.Monitor == MonitorMode.Choose && Screens.Find(Monitors.All(), A.MonitorDevice) == null)
+            A.MonitorDevice = MonitorOfThisWindow() ?? "";
+        UpdateMonitorControls();
+        Commit();
+    }
+
+    private string? MonitorOfThisWindow()
+    {
+        var screens = Monitors.All();
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero || !GetWindowRect(hwnd, out RECT r)) return screens.FirstOrDefault(s => s.Primary)?.Device;
+        int cx = (r.Left + r.Right) / 2, cy = (r.Top + r.Bottom) / 2;
+        return screens.FirstOrDefault(s => cx >= s.Bounds.Left && cx < s.Bounds.Right && cy >= s.Bounds.Top && cy < s.Bounds.Bottom)?.Device
+               ?? screens.FirstOrDefault(s => s.Primary)?.Device;
+    }
+
+    /// <summary>Lista de monitores (modo Escolher) e a dica abaixo dela.</summary>
+    private void UpdateMonitorControls()
+    {
+        var screens = Monitors.All();
+        bool choose = A.Monitor == MonitorMode.Choose;
+        MonitorListBorder.Visibility = choose ? Visibility.Visible : Visibility.Collapsed;
+
+        MonitorList.Children.Clear();
+        if (choose)
+        {
+            var style = (Style)FindResource("UiSegment");
+            foreach (var screen in screens)
+            {
+                var rb = new RadioButton
+                {
+                    Style = style,
+                    GroupName = "monitorPick",
+                    Content = screen.Label,
+                    ToolTip = screen.Device,
+                    IsChecked = string.Equals(screen.Device, A.MonitorDevice, StringComparison.OrdinalIgnoreCase),
+                };
+                string device = screen.Device;
+                rb.Checked += (_, _) =>
+                {
+                    if (string.Equals(A.MonitorDevice, device, StringComparison.OrdinalIgnoreCase)) return;
+                    A.MonitorDevice = device;
+                    Commit();
+                };
+                MonitorList.Children.Add(rb);
+            }
+        }
+
+        string edge = A.Edge switch
+        {
+            DockEdge.Top => "de cima",
+            DockEdge.Left => "da esquerda",
+            DockEdge.Right => "da direita",
+            _ => "de baixo",
+        };
+        MonitorHint.Text = A.Monitor switch
+        {
+            MonitorMode.Choose when Screens.Find(screens, A.MonitorDevice) == null =>
+                "O monitor escolhido não está conectado. O Dock fica no principal até ele voltar.",
+            MonitorMode.FollowMouse when screens.Count < 2 =>
+                "Só há um monitor conectado agora.",
+            MonitorMode.FollowMouse =>
+                $"Pare o mouse na borda {edge} de outro monitor por meio segundo e o Dock vai para lá.",
+            _ => "",
+        };
+        MonitorHint.Visibility = MonitorHint.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void Slider_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -515,6 +708,7 @@ public partial class SettingsWindow : Window
         A.CornerRadius = Math.Round(RadiusSlider.Value);
         A.IconSize = Math.Round(SizeSlider.Value);
         A.Magnification = Math.Round(MagSlider.Value, 2);
+        A.AutoHideDelay = Math.Round(AutoHideDelaySlider.Value, 2);
         Commit(debounce: true);
     }
 
@@ -524,6 +718,7 @@ public partial class SettingsWindow : Window
         RadiusValue.Text = $"{RadiusSlider.Value:0} px";
         SizeValue.Text = $"{SizeSlider.Value:0} px";
         MagValue.Text = $"{MagSlider.Value:0.0}x";
+        AutoHideDelayValue.Text = $"{AutoHideDelaySlider.Value:0.0} s";
     }
 
     // ================= Comportamento =================
@@ -534,15 +729,64 @@ public partial class SettingsWindow : Window
         MagSlider.IsEnabled = A.Magnify;
         A.ShowLabels = LabelsToggle.IsChecked == true;
         A.ShowRunning = RunningToggle.IsChecked == true;
+        A.ShowRunningUnpinned = UnpinnedToggle.IsChecked == true;
         A.BounceOnLaunch = BounceToggle.IsChecked == true;
         A.ShowSeparator = SeparatorToggle.IsChecked == true;
         A.ReserveSpace = ReserveToggle.IsChecked == true;
+        A.AutoHide = AutoHideToggle.IsChecked == true;
+        UpdateAutoHideControls();
         Commit();
+    }
+
+    /// <summary>Com auto-ocultar, o tempo fica ativo e a reserva de espaço não se aplica.</summary>
+    private void UpdateAutoHideControls()
+    {
+        bool on = AutoHideToggle.IsChecked == true;
+        AutoHideDelaySlider.IsEnabled = on;
+        AutoHideDelayRow.Opacity = on ? 1 : 0.5;
+        ReserveToggle.IsEnabled = !on;
+        ReserveToggle.ToolTip = on ? "Com o auto-ocultar ligado o Dock não reserva espaço na tela." : null;
     }
 
     private void Autostart_Click(object sender, RoutedEventArgs e)
     {
-        Autostart.Set(AutostartToggle.IsChecked == true);
+        bool enable = AutostartToggle.IsChecked == true;
+        string? exe = Environment.ProcessPath;
+        if (enable && exe != null && Autostart.IsInFolders(exe, Autostart.VolatileFolders()))
+        {
+            // Rodando de Downloads, Temp ou Área de Trabalho: o arquivo pode sumir ou ser trocado.
+            string folder = System.IO.Path.GetDirectoryName(exe) ?? exe;
+            if (Autostart.IsSingleFile(exe))
+            {
+                var answer = MessageBox.Show(this,
+                    $"O Dockbox está rodando de\n{folder}\n\nSe o arquivo for movido ou apagado dali, ele deixa de abrir com o Windows, " +
+                    $"e qualquer programa pode trocar arquivos nessa pasta.\n\nCopiar o Dockbox para\n{System.IO.Path.GetDirectoryName(Autostart.InstallPath)}\n" +
+                    "e iniciar de lá?\n\nSim: copia, liga o início automático e reabre o Dockbox de lá.\nNão: liga assim mesmo, usando a pasta atual.",
+                    "Dockbox", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning, MessageBoxResult.Yes);
+                if (answer == MessageBoxResult.Cancel) { AutostartToggle.IsChecked = Autostart.IsEnabled; return; }
+                if (answer == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        if (_commitDebounce.IsEnabled) { _commitDebounce.Stop(); SettingsStore.Commit(); }
+                        Autostart.InstallAndRelaunch(exe);
+                        Application.Current.Shutdown();
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(this, $"Não foi possível copiar o Dockbox: {ex.Message}\nO início automático vai usar a pasta atual.",
+                            "Dockbox", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show(this, $"O Dockbox está rodando de\n{folder}\n\nSe a pasta for movida ou apagada, ele deixa de abrir com o Windows. " +
+                    "Considere mover a pasta do Dockbox para um lugar fixo antes.", "Dockbox", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        Autostart.Set(enable);
         AutostartToggle.IsChecked = Autostart.IsEnabled;
     }
 

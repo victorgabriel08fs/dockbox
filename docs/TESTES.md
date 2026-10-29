@@ -36,6 +36,7 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] O aviso do SmartScreen aparece e **Executar assim mesmo** funciona.
 - [ ] O Dock aparece embaixo, centralizado, com apps padrão e relógio, calendário, clima e lixeira.
 - [ ] `settings.json` foi criado. Com um `pinned.json` antigo na pasta, os apps dele foram importados.
+- [ ] O item padrão "Terminal" abre o Windows Terminal (se instalado); sem ele, o PowerShell.
 - [ ] Abrir o `Dockbox.exe` de novo não cria um segundo Dock.
 - [ ] O `Dockbox.exe` mostra o ícone do Dockbox no Explorador (ícones pequenos, médios e grandes).
 
@@ -71,10 +72,37 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Solte arquivos na Lixeira: aparece a pergunta "Mover ... para a Lixeira?"; **Não** mantém o arquivo, **Sim** apaga.
 - [ ] Arraste texto ou imagem de um navegador: nada acontece, sem erro.
 - [ ] Arraste vários arquivos de uma vez: todos entram, na ordem.
+- [ ] Ao arrastar um arquivo de fora, os ícones abrem espaço mostrando onde ele vai entrar; sair do Dock fecha o espaço.
+- [ ] Arraste um ícone do Dock para o lado: os vizinhos abrem espaço e a nova ordem fica salva (feche e abra o Dockbox).
+- [ ] Arraste um ícone para longe do Dock: aparece "Remover"; soltar remove com uma nuvenzinha. Voltar antes de soltar cancela.
+- [ ] Clique rápido (sem mover) continua abrindo o app; apertar, sair do ícone e soltar fora não abre nada.
+- [ ] Widgets não arrastam, mas o clique neles continua funcionando.
+
+### 5a. Desfazer e duplicados
+- [ ] Remova um item pelo menu: aparece "… removido · Desfazer"; clicar devolve na mesma posição. Sem clicar, o aviso some em 6 s.
+- [ ] Remova arrastando para fora e pelo Gerenciar Dock: o mesmo aviso aparece.
+- [ ] No Gerenciar Dock, remova dois itens e aperte Ctrl+Z duas vezes: voltam na ordem certa. Ctrl+Z dentro de um campo de texto desfaz o texto.
+- [ ] Arraste para o Dock o `.exe` de um app já fixado por atalho: não duplica, o ícone existente pula.
+- [ ] Adicione pelo seletor um app já fixado: não duplica e o existente fica selecionado.
+- [ ] Com auto-ocultar ligado, remover mostra o Dock com o aviso até ele sumir.
+
+### 5b. Apps abertos não fixados e apps da Store
+- [ ] Abra um app que não está no Dock: ganha um ícone depois dos fixados (com separador) e ponto; fechar remove o ícone.
+- [ ] Clique nesse ícone: traz/minimiza a janela. Botão direito → **Manter no Dock**: passa para os fixados e continua depois de reiniciar.
+- [ ] As janelas do próprio Dockbox (Gerenciar Dock) não aparecem como app aberto.
+- [ ] Gerenciar Dock → Adicionar apps: a Calculadora e outros apps da Store aparecem com ícone; fixe a Calculadora.
+- [ ] Abra a Calculadora fixada: o ponto aparece e ela não ganha ícone duplicado; clique traz/minimiza.
+- [ ] Desligue **Mostrar apps abertos que não estão fixados** em Comportamento: a seção some.
+- [ ] Janelas de ferramenta e invisíveis (ex.: bandeja, popups) não viram ícone.
+- [ ] Reordenar funciona com o Dock embaixo, em cima e nas laterais.
 
 ### 6. Menus
-- [ ] Botão direito num app: cabeçalho com o nome, Abrir/Mostrar, Nova janela (só se aberto),
-      Mostrar no Explorador (seleciona o arquivo), Remover do Dock.
+- [ ] Botão direito num app fechado: cabeçalho com o nome, Abrir, Mostrar no Explorador (seleciona o arquivo),
+      Remover do Dock e o submenu Opções do Dock.
+- [ ] Botão direito num app aberto com 2+ janelas: lista as janelas pelo título (minimizadas marcadas); clicar traz aquela janela.
+      Nova janela abre outra instância; **Fechar todas as janelas (N)** fecha (o app pode perguntar se quer salvar).
+- [ ] Numa pasta fixada: "Mostrar a pasta no Explorador".
+- [ ] Menus pelo teclado: setas, Enter e Esc funcionam; ao fechar com Esc o foco volta para o app que estava ativo.
 - [ ] Botão direito num widget: opções do widget e Remover widget.
 - [ ] Botão direito no fundo: Gerenciar Dock, ampliação, posição (marca a atual), Sair.
 - [ ] Com o menu aberto, o rótulo some e os ícones não ficam ampliados presos.
@@ -92,6 +120,8 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] O caminho só é aplicado ao sair do campo ou apertar Enter. Digitar um caminho de rede (`\\algum-servidor\x`): nada trava.
 - [ ] Argumentos: em um item `notepad.exe` coloque um caminho de arquivo entre aspas; ao clicar, abre o arquivo.
 - [ ] Remover um item pelo Dock com o Gerenciar aberto: a lista atualiza.
+- [ ] Com o Dock nas laterais, a dica das setas diz "mais acima/abaixo no Dock"; embaixo/em cima, "mais à esquerda/direita".
+- [ ] Clicar várias cores seguidas no Estilo é instantâneo, mesmo com muitos itens (os ícones não piscam nem recarregam).
 - [ ] Navegação só com teclado (Tab, setas, Espaço, Enter): anote o que não dá para alcançar.
 
 ### 8. Estilo e posição
@@ -114,6 +144,15 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Encerre o `Dockbox.exe` pelo Gerenciador de Tarefas e anote se a área volta sozinha (pode precisar abrir e fechar de novo).
 - [ ] Vídeo em tela cheia: o Dock some e não aparece faixa vazia.
 
+### 8c. Ocultar automaticamente
+- [ ] Ligue em Comportamento (ou pelo botão direito no Dock): o Dock desliza para fora e a reserva de espaço é liberada.
+- [ ] Encoste o mouse na borda, na altura do Dock: ele aparece depois do tempo configurado; tirar o mouse esconde de novo.
+- [ ] Passar o mouse rápido pela borda não faz o Dock piscar.
+- [ ] Funciona nas 4 posições; com a barra de tarefas na mesma borda, a faixa de ativação fica logo acima dela.
+- [ ] Com o menu do botão direito aberto, o Dock não some.
+- [ ] Arraste um arquivo do Explorador até a borda: o Dock aparece e dá para soltar num app ou na Lixeira.
+- [ ] Desligar: o Dock volta a ficar fixo e a reserva de espaço volta (se estiver ligada).
+
 ### 9. Widgets
 - [ ] Relógio: ponteiros na hora certa; rótulo com dia da semana; opção 24 h muda o formato.
 - [ ] Calendário: dia certo; clique abre o mês; clique fora fecha; vira o dia à meia-noite.
@@ -130,11 +169,58 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Feche o Dockbox, coloque um erro de digitação no `settings.json` e abra:
       aparece um aviso com o local da cópia, o Dock abre com padrões e o `settings.json.corrompido-...` tem o conteúdo antigo.
 - [ ] Faça duas mudanças: `settings.json.bak` tem a penúltima versão.
-- [ ] Deixe `settings.json` somente leitura e mude algo: o Dock não fecha (anote se avisa que não salvou).
+- [ ] Deixe `settings.json` somente leitura e mude algo: o Dock não fecha, aparece o aviso "Não foi possível salvar" com o motivo
+      e o caminho (uma vez só), e o Gerenciar Dock mostra uma faixa vermelha com **Tentar salvar de novo**.
+- [ ] Tire o somente leitura e clique em **Tentar salvar de novo**: a faixa some e a mudança está no arquivo.
+- [ ] Com o arquivo ainda somente leitura, feche o Dockbox: nada trava (a mudança se perde, como avisado).
 - [ ] Iniciar com o Windows: ligue, reinicie, o Dock abre sozinho; desligue, reinicie, não abre.
+- [ ] Com o `Dockbox.exe` em Downloads, ligue a opção: aparece o aviso. **Sim** copia para `%LOCALAPPDATA%\Programs\Dockbox`,
+      o Dock reabre de lá (sem ficar dois Docks) e o registro (`HKCU\...\Run\Dockbox`) aponta para a cópia, entre aspas.
+      **Não** liga usando Downloads; **Cancelar** não liga.
+- [ ] Ligue a opção com o exe numa pasta fixa, feche, mova o exe para outra pasta e abra: o registro passa a apontar para o novo lugar.
 - [ ] Deixe aberto por 1 h trocando de apps: memória do Dockbox no Gerenciador de Tarefas estável.
-- [ ] Após algum erro, existe `erros.log` com detalhes.
+- [ ] Após algum erro, existe `erros.log` com detalhes, data/hora e versão em cada registro.
+- [ ] Encha o `erros.log` até passar de 1 MB e provoque outro erro: o antigo vira `erros.1.log` e um novo começa.
+
+### 10b. Segurança dos itens
+- [ ] Apps, pastas, arquivos comuns e um `.url` de site abrem sem pergunta.
+- [ ] Fixe um `.bat` arrastando: aparece o aviso; **Não** não fixa, **Sim** fixa e o primeiro clique já abre sem perguntar.
+- [ ] Adicione um `.bat` pelo Gerenciar Dock → Arquivos: o primeiro clique pergunta; depois de **Sim**, não pergunta mais.
+- [ ] Mude o caminho ou os argumentos desse item no Gerenciar Dock: pergunta de novo.
+- [ ] Item `cmd.exe` com argumentos `/k echo oi`: pergunta. Sem argumentos: abre direto.
+- [ ] No `settings.json`, um item com caminho `ms-msdt:/id PCWDiagnostic`: clicar mostra "bloqueado" e nada abre.
+- [ ] Item `steam://open/games` (com a Steam instalada): pergunta uma vez.
+
+### 10c. Acessibilidade
+- [ ] **Win+Shift+D** com outro app em foco: o Dock ganha foco, o primeiro item fica com contorno e o nome aparece.
+- [ ] Setas, Tab/Shift+Tab, Home e End movem o contorno (em qualquer borda); a ampliação acompanha.
+- [ ] Enter abre o app; Ctrl+Enter abre nova janela; Enter num app aberto traz a janela para frente.
+- [ ] Shift+F10 (e a tecla de menu) abre o menu do item ao lado dele; setas e Enter funcionam no menu; Esc fecha e o contorno continua no item.
+- [ ] Esc sai e o foco volta para o app de antes. Apertar o atalho de novo também sai.
+- [ ] Com ocultar automaticamente: o atalho mostra o Dock, que só some depois de sair com Esc.
+- [ ] Clicar em outra janela durante o modo teclado sai dele.
+- [ ] Comportamento → Teclado: trocar para Ctrl+Shift+F12 funciona na hora; Desligado desativa. Com um atalho usado por outro programa aparece o aviso.
+- [ ] Narrador (Ctrl+Win+Enter): ao andar com as setas, lê o nome do app e "aberto" quando o app está aberto; widgets leem o que mostram (ex.: hora).
+- [ ] No Gerenciar Dock, com Narrador, os controles deslizantes, campos e botões de mover/remover têm nome.
+- [ ] Configurações → Acessibilidade → Efeitos visuais → Efeitos de animação desligado: o Dock não amplia, não pula e o auto-ocultar não desliza (aparece/some direto).
+- [ ] Alto contraste ligado (Alt+Shift esquerdo+Print Screen): o Dock fica com fundo e texto do tema de contraste, sem transparência.
 
 ### 11. Monitores
-- [ ] Com dois monitores, o Dock fica no principal (limitação conhecida).
-- [ ] Trocar qual é o monitor principal ou desconectar um: anote o comportamento.
+Precisa de dois monitores (dá para usar uma TV ou um monitor emprestado).
+- [ ] Padrão: o Dock fica no principal.
+- [ ] Aparência → Monitor → **Escolher**: aparece a lista com número e resolução; clicar no secundário leva o Dock para lá.
+- [ ] Feche e abra o Dockbox: o Dock continua no secundário.
+- [ ] Com o Dock no secundário, desconecte o cabo: o Dock vai para o principal e a dica avisa que o monitor não está conectado. Reconecte: o Dock volta.
+- [ ] Monitores com escalas diferentes (ex.: 100% e 150%): o Dock fica com o tamanho certo nos dois, sem cortar ícones.
+- [ ] Mude a resolução do monitor do Dock: ele se ajusta sem reiniciar.
+- [ ] **Seguir o mouse**: pare o mouse meio segundo na borda de baixo do outro monitor: o Dock vai para lá. Passar rápido pela borda não muda nada. A borda entre os dois monitores não conta.
+- [ ] Com **Reservar espaço** ligado, no secundário: janelas maximizadas nele param antes do Dock, e o principal volta a usar a tela toda.
+- [ ] Com **Ocultar automaticamente** no secundário: o Dock some e volta ao encostar na borda dele.
+- [ ] Dock em outra borda (ex.: esquerda) com Seguir o mouse: a dica fala da borda certa e funciona do mesmo jeito.
+
+### 11b. Escala da tela (DPI)
+Em Configurações do Windows → Sistema → Tela → Escala. Dá para testar com um monitor só.
+- [ ] A 100%, 125%, 150% e 200%: ícones do Dock nítidos, também ampliados ao passar o mouse.
+- [ ] Nas mesmas escalas: ícones da lista do Gerenciar Dock e da janela "Adicionar apps" nítidos, sem borrão.
+- [ ] Mudar a escala com o Dockbox aberto: o Dock se ajusta sem reiniciar (os ícones do Gerenciar Dock ficam nítidos ao reabrir a janela).
+- [ ] Com dois monitores de escalas diferentes: o Dock tem o mesmo tamanho visual nos dois ao trocar.

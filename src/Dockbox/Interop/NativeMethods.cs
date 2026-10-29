@@ -137,6 +137,18 @@ internal static class NativeMethods
     public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes,
         ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
 
+    // Ícone 48 px da lista de imagens do sistema (reserva quando a fábrica de imagens do Shell falha).
+    public const uint SHGFI_SYSICONINDEX = 0x000004000;
+    public const int SHIL_EXTRALARGE = 2;
+    public const uint ILD_TRANSPARENT = 0x00000001;
+    public static Guid IID_IImageList = new("46EB5926-582E-4017-9FDF-E8998DAA0950");
+
+    [DllImport("shell32.dll")]
+    public static extern int SHGetImageList(int iImageList, ref Guid riid, out IntPtr ppv);
+
+    [DllImport("comctl32.dll")]
+    public static extern IntPtr ImageList_GetIcon(IntPtr himl, int i, uint flags);
+
     // ---- Janelas em execução ----
 
     public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -370,4 +382,96 @@ internal static class NativeMethods
 
     [DllImport("user32.dll")]
     public static extern int GetSystemMetrics(int nIndex);
+
+    // ---- Menu por item: listar e fechar janelas ----
+    public const uint WM_CLOSE = 0x0010;
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder lpString, int nMaxCount);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+    // ---- AppUserModelID da janela (apps da Store / UWP) ----
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    public struct PROPERTYKEY
+    {
+        public Guid fmtid;
+        public uint pid;
+    }
+
+    [StructLayout(LayoutKind.Explicit, Size = 24)]
+    public struct PROPVARIANT
+    {
+        [FieldOffset(0)] public ushort vt;
+        [FieldOffset(8)] public IntPtr pointer;
+    }
+
+    public const ushort VT_LPWSTR = 31;
+
+    public static readonly PROPERTYKEY PKEY_AppUserModel_ID = new() { fmtid = new Guid("9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3"), pid = 5 };
+    public static readonly Guid IID_IPropertyStore = new("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99");
+
+    [ComImport, Guid("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IPropertyStore
+    {
+        void GetCount(out uint cProps);
+        void GetAt(uint iProp, out PROPERTYKEY pkey);
+        void GetValue(ref PROPERTYKEY key, out PROPVARIANT pv);
+        void SetValue(ref PROPERTYKEY key, ref PROPVARIANT propvar);
+        void Commit();
+    }
+
+    [DllImport("shell32.dll", PreserveSig = false)]
+    public static extern void SHGetPropertyStoreForWindow(IntPtr hwnd, ref Guid riid, out IPropertyStore propertyStore);
+
+    [DllImport("ole32.dll")]
+    public static extern int PropVariantClear(ref PROPVARIANT pvar);
+
+    // ---- Atalho global (teclado) ----
+    public const int WM_HOTKEY = 0x0312;
+    public const uint MOD_NOREPEAT = 0x4000;
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+    // ---- Vários monitores ----
+    public const int WM_DISPLAYCHANGE = 0x007E;
+    public const uint SWP_NOZORDER = 0x0004;
+    public const uint MONITORINFOF_PRIMARY = 1;
+    public const int MDT_EFFECTIVE_DPI = 0;
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct MONITORINFOEX
+    {
+        public int cbSize;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public uint dwFlags;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string szDevice;
+    }
+
+    public delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdc, IntPtr lprcMonitor, IntPtr data);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumProc proc, IntPtr data);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX info);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
+    [DllImport("shcore.dll")]
+    public static extern int GetDpiForMonitor(IntPtr hMonitor, int dpiType, out uint dpiX, out uint dpiY);
 }
