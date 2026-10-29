@@ -174,6 +174,10 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Tire o somente leitura e clique em **Tentar salvar de novo**: a faixa some e a mudança está no arquivo.
 - [ ] Com o arquivo ainda somente leitura, feche o Dockbox: nada trava (a mudança se perde, como avisado).
 - [ ] Iniciar com o Windows: ligue, reinicie, o Dock abre sozinho; desligue, reinicie, não abre.
+- [ ] Com o `Dockbox.exe` em Downloads, ligue a opção: aparece o aviso. **Sim** copia para `%LOCALAPPDATA%\Programs\Dockbox`,
+      o Dock reabre de lá (sem ficar dois Docks) e o registro (`HKCU\...\Run\Dockbox`) aponta para a cópia, entre aspas.
+      **Não** liga usando Downloads; **Cancelar** não liga.
+- [ ] Ligue a opção com o exe numa pasta fixa, feche, mova o exe para outra pasta e abra: o registro passa a apontar para o novo lugar.
 - [ ] Deixe aberto por 1 h trocando de apps: memória do Dockbox no Gerenciador de Tarefas estável.
 - [ ] Após algum erro, existe `erros.log` com detalhes.
 

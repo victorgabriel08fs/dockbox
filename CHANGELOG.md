@@ -33,6 +33,7 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 ### Segurança
 
 - Scripts, protocolos desconhecidos e interpretadores com argumentos pedem confirmação antes de abrir (uma vez por item); protocolos usados em ataques, como `ms-msdt:` e `search-ms:`, são bloqueados (#13).
+- Iniciar com o Windows a partir de Downloads, Temp ou Área de Trabalho oferece copiar o Dockbox para `%LOCALAPPDATA%\Programs\Dockbox`; se o exe foi movido, o início automático é corrigido ao abrir (#14).
 
 ### Alterado
 

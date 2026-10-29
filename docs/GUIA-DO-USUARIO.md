@@ -13,7 +13,10 @@ mostra seus apps favoritos, indica quais estão abertos e tem widgets (relógio,
 Só roda um Dockbox por vez: abrir de novo não cria um segundo Dock.
 
 Para abrir junto com o Windows: botão direito no Dock → **Gerenciar Dock...** → **Comportamento** →
-**Iniciar o Dockbox junto com o Windows**. Se você mover o `Dockbox.exe` de pasta depois, ligue a opção de novo.
+**Iniciar o Dockbox junto com o Windows**. Se o Dockbox estiver rodando da pasta Downloads, Temp ou da Área
+de Trabalho, ele oferece copiar o `Dockbox.exe` para `%LOCALAPPDATA%\Programs\Dockbox` e reabrir de lá, para o
+início automático não quebrar se o arquivo sumir. Se você mover o exe depois e abrir de novo, o início automático
+passa a usar o novo lugar sozinho.
 
 Para fechar: botão direito no Dock → **Sair do Dockbox**. O Dockbox também fica na área de notificação
 (perto do relógio do Windows): clique no ícone para abrir o **Gerenciar Dock** ou use o botão direito para sair.
