@@ -37,6 +37,9 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Configurações agora ficam em `%APPDATA%\Dockbox\settings.json`; o `pinned.json` antigo é importado.
 - Gravação atômica das configurações; um arquivo corrompido é copiado com data antes de voltar aos padrões.
 - Requer Windows 10 versão 1809 ou mais recente.
+- Item padrão "Terminal" abre o Windows Terminal quando instalado (senão PowerShell, por último cmd) (#11).
+- Setas de reordenar no Gerenciar Dock falam "antes/depois" conforme a posição do Dock (#11).
+- Mudar cor, opacidade ou cantos não recarrega mais os ícones no Gerenciar Dock nem recria os ícones do Dock (#11).
 
 ## [0.1.0] - 2026-10-29
 

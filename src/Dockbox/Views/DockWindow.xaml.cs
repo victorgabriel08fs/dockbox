@@ -249,11 +249,15 @@ public partial class DockWindow : Window
 
     // ================= Configurações → Dock =================
 
+    private string _tilesSignature = "";
+
     private void ApplySettings()
     {
         if (!A.AutoHide) _shown = true;
         ApplyTheme();
-        RebuildTiles();
+        // Mudança só de cor, opacidade ou cantos não precisa recriar os ícones.
+        string signature = TilesSignature();
+        if (signature != _tilesSignature || _tiles.Count == 0) RebuildTiles();
         PositionWindow();
         StartAnimating();
     }
@@ -288,8 +292,20 @@ public partial class DockWindow : Window
         foreach (var (w, _) in _widgetCache.Values) w.SetTheme(_theme);
     }
 
+    /// <summary>Tudo o que muda quais ícones existem; se não mudou, o Dock não recria os ícones.</summary>
+    private string TilesSignature()
+    {
+        var s = SettingsStore.Current;
+        var sb = new System.Text.StringBuilder();
+        foreach (var e in s.Items) sb.Append(e.Name).Append('\u0001').Append(e.Path).Append('\u0001').Append(e.Arguments).Append('\u0002');
+        foreach (var w in s.Widgets) sb.Append(w.Kind).Append(w.Enabled ? '+' : '-');
+        sb.Append(A.ShowSeparator).Append(A.ShowRunningUnpinned);
+        return sb.ToString();
+    }
+
     private void RebuildTiles()
     {
+        _tilesSignature = TilesSignature();
         var runningKeys = new HashSet<string>(_tiles.Where(t => t.Running && t.ExeKey != null).Select(t => t.ExeKey!));
         foreach (var t in _tiles)
         {

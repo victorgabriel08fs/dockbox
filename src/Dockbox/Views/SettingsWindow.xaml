@@ -121,8 +121,8 @@
                                 </ListBox.ItemTemplate>
                             </ListBox>
                             <StackPanel Grid.Column="1" Margin="8,4,4,4">
-                                <Button Style="{StaticResource UiIconButton}" Content="&#xE70E;" ToolTip="Mover para cima (esquerda no Dock)" Click="MoveUp_Click" Margin="0,0,0,6"/>
-                                <Button Style="{StaticResource UiIconButton}" Content="&#xE70D;" ToolTip="Mover para baixo (direita no Dock)" Click="MoveDown_Click" Margin="0,0,0,6"/>
+                                <Button x:Name="MoveUpButton" Style="{StaticResource UiIconButton}" Content="&#xE70E;" Click="MoveUp_Click" Margin="0,0,0,6"/>
+                                <Button x:Name="MoveDownButton" Style="{StaticResource UiIconButton}" Content="&#xE70D;" Click="MoveDown_Click" Margin="0,0,0,6"/>
                                 <Button Style="{StaticResource UiIconButton}" Content="&#xE74D;" ToolTip="Remover do Dock" Click="Remove_Click"/>
                             </StackPanel>
                         </Grid>
