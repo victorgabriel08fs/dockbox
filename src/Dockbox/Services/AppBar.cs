@@ -20,6 +20,8 @@ internal sealed class AppBar : IDisposable
     public RECT Bounds { get; private set; }
     public DockEdge? Edge { get; private set; }
     public int Thickness { get; private set; }
+    /// <summary>Monitor onde está a reserva.</summary>
+    public RECT Screen { get; private set; }
 
     public AppBar(IntPtr hwnd)
     {
@@ -39,10 +41,10 @@ internal sealed class AppBar : IDisposable
     }
 
     /// <summary>
-    /// Reserva uma faixa de <paramref name="thickness"/> pixels na borda do monitor principal.
+    /// Reserva uma faixa de <paramref name="thickness"/> pixels na borda de <paramref name="screen"/> (o monitor inteiro).
     /// O Windows ajusta a faixa para não ficar em cima de outras AppBars (ex.: barra de tarefas).
     /// </summary>
-    public RECT SetPos(DockEdge edge, int thickness)
+    public RECT SetPos(DockEdge edge, int thickness, RECT screen)
     {
         var d = Data();
         d.uEdge = edge switch
@@ -52,8 +54,6 @@ internal sealed class AppBar : IDisposable
             DockEdge.Right => ABE_RIGHT,
             _ => ABE_BOTTOM,
         };
-        // O monitor principal sempre começa em (0, 0).
-        var screen = new RECT { Left = 0, Top = 0, Right = GetSystemMetrics(SM_CXSCREEN), Bottom = GetSystemMetrics(SM_CYSCREEN) };
         d.rc = Strip(screen, edge, thickness);
         SHAppBarMessage(ABM_QUERYPOS, ref d);
         // QUERYPOS pode ter empurrado a faixa (para cima da barra de tarefas, por exemplo); refaz a espessura.
@@ -63,6 +63,7 @@ internal sealed class AppBar : IDisposable
         Bounds = d.rc;
         Edge = edge;
         Thickness = thickness;
+        Screen = screen;
         return d.rc;
     }
 

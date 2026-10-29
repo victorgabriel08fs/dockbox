@@ -257,6 +257,18 @@
                                     <RadioButton x:Name="EdgeTop" Style="{StaticResource UiSegment}" GroupName="edge" Content="Em cima" Checked="Edge_Checked"/>
                                 </StackPanel>
                             </Border>
+                            <TextBlock Text="Monitor" Foreground="{DynamicResource UiSubFg}" Margin="0,16,0,6"/>
+                            <Border Background="{DynamicResource UiInputBg}" CornerRadius="8" HorizontalAlignment="Left" Padding="2">
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton x:Name="MonitorPrimary" Style="{StaticResource UiSegment}" GroupName="monitorMode" Content="Principal" Checked="MonitorMode_Checked"/>
+                                    <RadioButton x:Name="MonitorChoose" Style="{StaticResource UiSegment}" GroupName="monitorMode" Content="Escolher" Checked="MonitorMode_Checked"/>
+                                    <RadioButton x:Name="MonitorFollow" Style="{StaticResource UiSegment}" GroupName="monitorMode" Content="Seguir o mouse" Checked="MonitorMode_Checked"/>
+                                </StackPanel>
+                            </Border>
+                            <Border x:Name="MonitorListBorder" Background="{DynamicResource UiInputBg}" CornerRadius="8" HorizontalAlignment="Left" Padding="2" Margin="0,8,0,0">
+                                <WrapPanel x:Name="MonitorList"/>
+                            </Border>
+                            <TextBlock x:Name="MonitorHint" Style="{StaticResource UiSub}" TextWrapping="Wrap" Margin="0,8,0,0"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>

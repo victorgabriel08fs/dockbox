@@ -85,6 +85,13 @@ localização pelo endereço IP usando o serviço `ipwho.is` (seu IP é enviado 
 **Estilo**: tema (automático, claro, escuro ou personalizado), cor do fundo, cor de destaque, opacidade,
 cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).
 
+**Monitor** (em Aparência, abaixo de Posição na tela):
+- **Principal**: o Dock fica no monitor principal do Windows.
+- **Escolher**: aparece a lista de monitores (número e resolução); clique no que quiser. A escolha fica salva.
+  Se esse monitor for desconectado, o Dock vai para o principal e volta sozinho quando ele for reconectado.
+- **Seguir o mouse**: como no macOS, pare o mouse por meio segundo na borda do Dock (por exemplo, a de baixo)
+  de outro monitor e o Dock vai para lá. Bordas encostadas em outro monitor não contam.
+
 **Comportamento**: mostrar nome, ponto de app aberto, animação de pulo, separador, ocultar automaticamente
 (com o tempo até aparecer), reservar espaço na tela (janelas maximizadas param antes do Dock) e iniciar com o Windows.
 
@@ -130,7 +137,7 @@ uma cópia `.corrompido-...` e volta aos padrões; para recuperar, corrija a có
 | Aviso "Não foi possível salvar as configurações" | Veja o motivo no aviso: tire o somente leitura do `settings.json`, libere espaço ou pause o OneDrive/antivírus, e clique em **Tentar salvar de novo** no Gerenciar Dock |
 | O Dock cobre a parte de baixo de janelas maximizadas | Ligue **Reservar espaço na tela** em Gerenciar Dock → Comportamento |
 | A área de trabalho ficou menor depois que o Dockbox fechou | Abra e feche o Dockbox de novo, ou reinicie o Explorador; isso só acontece se o processo for encerrado à força |
-| Só aparece no monitor principal | Limitação atual (suporte a vários monitores está previsto) |
+| O Dock não aparece no monitor que eu quero | Em Gerenciar Dock → Aparência → Monitor, escolha **Escolher** e clique no monitor, ou use **Seguir o mouse** |
 | Clima pede para definir a cidade | Digite a cidade no Gerenciar Dock → Widgets, ou ligue a detecção pela internet |
 | Clima mostra "indisponível" | Sem internet ou cidade não encontrada. Tente o nome da cidade sem estado/país |
 | Ícone em branco | O caminho do item não existe mais. Edite o caminho no Gerenciar Dock |

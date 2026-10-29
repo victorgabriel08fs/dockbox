@@ -192,5 +192,14 @@ Marque cada item. Antes de começar, faça uma cópia da pasta `%APPDATA%\Dockbo
 - [ ] Item `steam://open/games` (com a Steam instalada): pergunta uma vez.
 
 ### 11. Monitores
-- [ ] Com dois monitores, o Dock fica no principal (limitação conhecida).
-- [ ] Trocar qual é o monitor principal ou desconectar um: anote o comportamento.
+Precisa de dois monitores (dá para usar uma TV ou um monitor emprestado).
+- [ ] Padrão: o Dock fica no principal.
+- [ ] Aparência → Monitor → **Escolher**: aparece a lista com número e resolução; clicar no secundário leva o Dock para lá.
+- [ ] Feche e abra o Dockbox: o Dock continua no secundário.
+- [ ] Com o Dock no secundário, desconecte o cabo: o Dock vai para o principal e a dica avisa que o monitor não está conectado. Reconecte: o Dock volta.
+- [ ] Monitores com escalas diferentes (ex.: 100% e 150%): o Dock fica com o tamanho certo nos dois, sem cortar ícones.
+- [ ] Mude a resolução do monitor do Dock: ele se ajusta sem reiniciar.
+- [ ] **Seguir o mouse**: pare o mouse meio segundo na borda de baixo do outro monitor: o Dock vai para lá. Passar rápido pela borda não muda nada. A borda entre os dois monitores não conta.
+- [ ] Com **Reservar espaço** ligado, no secundário: janelas maximizadas nele param antes do Dock, e o principal volta a usar a tela toda.
+- [ ] Com **Ocultar automaticamente** no secundário: o Dock some e volta ao encostar na borda dele.
+- [ ] Dock em outra borda (ex.: esquerda) com Seguir o mouse: a dica fala da borda certa e funciona do mesmo jeito.

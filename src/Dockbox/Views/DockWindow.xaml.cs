@@ -107,7 +107,11 @@ public partial class DockWindow : Window
 
         // Parado: confere o mouse 20x por segundo. Com o mouse no Dock: anima a cada frame.
         _idleTimer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(50) };
-        _idleTimer.Tick += (_, _) => { if (ShouldWake()) StartAnimating(); };
+        _idleTimer.Tick += (_, _) =>
+        {
+            CheckFollowMouse();
+            if (ShouldWake()) StartAnimating();
+        };
 
         // Widgets e indicadores de apps abertos
         _slowTimer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromSeconds(1) };
@@ -148,6 +152,9 @@ public partial class DockWindow : Window
         // Se o processo cair, devolve a área de trabalho inteira.
         AppDomain.CurrentDomain.UnhandledException += (_, _) => ReleaseAppBar();
         AppDomain.CurrentDomain.ProcessExit += (_, _) => ReleaseAppBar();
+        Microsoft.Win32.SystemEvents.DisplaySettingsChanged += (_, _) => OnDisplayChanged();
+        // Ao trocar de monitor com outra escala, o Windows redimensiona a janela; refaz a posição exata.
+        DpiChanged += (_, _) => OnDisplayChanged();
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += (_, _) =>
         {
             if (A.Theme == ThemeMode.Auto) Dispatcher.BeginInvoke(ApplyTheme);
@@ -168,6 +175,7 @@ public partial class DockWindow : Window
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        if (msg == WM_DISPLAYCHANGE) OnDisplayChanged();
         if (msg == WM_MOUSEACTIVATE)
         {
             handled = true;
@@ -202,16 +210,28 @@ public partial class DockWindow : Window
         _positioning = true;
         try
         {
-            // Área onde a janela encosta, em DIPs. Com a AppBar, é a faixa reservada; sem ela, a área de trabalho.
-            Rect area = ReserveArea(force) ?? SystemParameters.WorkArea;
-            double t = WindowThickness;
-            switch (A.Edge)
+            var hwnd = new WindowInteropHelper(this).Handle;
+            _screens = Monitors.All();
+            // Ao ligar "Seguir o mouse", o Dock fica onde está até o mouse levá-lo.
+            if (A.Monitor == MonitorMode.FollowMouse && _followDevice == null) _followDevice = _screen?.Device;
+            var screen = Screens.Pick(_screens, A.Monitor, A.MonitorDevice, _followDevice);
+            if (hwnd == IntPtr.Zero || screen == null)
             {
-                case DockEdge.Bottom: Left = area.Left; Top = area.Bottom - t; Width = area.Width; Height = t; break;
-                case DockEdge.Top: Left = area.Left; Top = area.Top; Width = area.Width; Height = t; break;
-                case DockEdge.Left: Left = area.Left; Top = area.Top; Width = t; Height = area.Height; break;
-                case DockEdge.Right: Left = area.Right - t; Top = area.Top; Width = t; Height = area.Height; break;
+                PositionInDips(SystemParameters.WorkArea);
+                return;
             }
+            // Mudou de monitor: a reserva antiga precisa ir para o novo.
+            if (_screen?.Device != screen.Device) force = true;
+            _screen = screen;
+
+            // Tudo em pixels físicos do monitor do Dock, que pode ter outra escala que o principal.
+            RECT area = ReserveArea(force, screen) ?? screen.Work;
+            int t = (int)Math.Ceiling(WindowThickness * screen.Scale);
+            RECT r = AppBar.Strip(area, A.Edge, t);
+            SetWindowPos(hwnd, IntPtr.Zero, r.Left, r.Top, r.Right - r.Left, r.Bottom - r.Top, SWP_NOZORDER | SWP_NOACTIVATE);
+            // Mantém Width/Height (em DIPs) iguais ao tamanho real, porque o Layout usa esses valores.
+            Width = (r.Right - r.Left) / screen.Scale;
+            Height = (r.Bottom - r.Top) / screen.Scale;
             Layout();
         }
         finally
@@ -220,11 +240,25 @@ public partial class DockWindow : Window
         }
     }
 
+    /// <summary>Antes de a janela existir: posiciona em DIPs no monitor principal.</summary>
+    private void PositionInDips(Rect area)
+    {
+        double t = WindowThickness;
+        switch (A.Edge)
+        {
+            case DockEdge.Bottom: Left = area.Left; Top = area.Bottom - t; Width = area.Width; Height = t; break;
+            case DockEdge.Top: Left = area.Left; Top = area.Top; Width = area.Width; Height = t; break;
+            case DockEdge.Left: Left = area.Left; Top = area.Top; Width = t; Height = area.Height; break;
+            case DockEdge.Right: Left = area.Right - t; Top = area.Top; Width = t; Height = area.Height; break;
+        }
+        Layout();
+    }
+
     /// <summary>
-    /// Reserva (ou libera) a faixa do Dock na tela. Devolve a faixa em DIPs, ou null quando
-    /// não há reserva e a janela deve usar a área de trabalho normal.
+    /// Reserva (ou libera) a faixa do Dock no monitor. Devolve a faixa em pixels físicos, ou null quando
+    /// não há reserva e a janela deve usar a área de trabalho normal do monitor.
     /// </summary>
-    private Rect? ReserveArea(bool force)
+    private RECT? ReserveArea(bool force, ScreenInfo screen)
     {
         if (_appBar == null) return null;
         // Com auto-ocultar, o Dock não reserva espaço (senão sobraria uma faixa vazia).
@@ -233,19 +267,61 @@ public partial class DockWindow : Window
             _appBar.Remove();
             return null;
         }
-
-        var toDevice = PresentationSource.FromVisual(this)?.CompositionTarget?.TransformToDevice;
-        if (toDevice is not Matrix m || m.M11 <= 0 || m.M22 <= 0) return null;
         if (!_appBar.Register()) return null;
 
-        int px = (int)Math.Ceiling(ReservedThickness * (Horizontal ? m.M22 : m.M11));
+        int px = (int)Math.Ceiling(ReservedThickness * screen.Scale);
         // Só chama o Windows quando algo mudou, para não entrar em ciclo com a mudança da área de trabalho.
-        if (force || _appBar.Edge != A.Edge || _appBar.Thickness != px)
-            _appBar.SetPos(A.Edge, px);
-
-        var rc = _appBar.Bounds;
-        return new Rect(rc.Left / m.M11, rc.Top / m.M22, (rc.Right - rc.Left) / m.M11, (rc.Bottom - rc.Top) / m.M22);
+        if (force || _appBar.Edge != A.Edge || _appBar.Thickness != px || !_appBar.Screen.Equals(screen.Bounds))
+            _appBar.SetPos(A.Edge, px, screen.Bounds);
+        return _appBar.Bounds;
     }
+
+    // ================= Vários monitores =================
+
+    private List<ScreenInfo> _screens = new();
+    private ScreenInfo? _screen;
+    /// <summary>Monitor para onde o mouse levou o Dock (modo "Seguir o mouse").</summary>
+    private string? _followDevice;
+    private string? _followCandidate;
+    private double _followSince = -1;
+    /// <summary>Segundos com o mouse parado na borda de outro monitor até o Dock ir para lá.</summary>
+    private const double FollowDelay = 0.5;
+
+    /// <summary>Modo "Seguir o mouse": leva o Dock para o monitor onde o mouse parou na borda.</summary>
+    private void CheckFollowMouse()
+    {
+        if (A.Monitor != MonitorMode.FollowMouse || _screens.Count < 2 || _dragTile != null)
+        {
+            _followSince = -1;
+            return;
+        }
+        if (!GetCursorPos(out POINT pt)) return;
+        var target = Screens.AtEdge(_screens, pt.X, pt.Y, A.Edge);
+        if (target == null || target.Device == _screen?.Device)
+        {
+            _followSince = -1;
+            return;
+        }
+
+        double now = _clock.Elapsed.TotalSeconds;
+        if (_followSince < 0 || _followCandidate != target.Device)
+        {
+            _followCandidate = target.Device;
+            _followSince = now;
+            return;
+        }
+        if (now - _followSince < FollowDelay) return;
+
+        _followSince = -1;
+        _followDevice = target.Device;
+        PositionWindow(force: true);
+        // O mouse já está na borda: com auto-ocultar, o Dock aparece direto.
+        if (A.AutoHide) _shown = true;
+        StartAnimating();
+    }
+
+    /// <summary>Monitor conectado/desconectado ou resolução/escala mudou.</summary>
+    private void OnDisplayChanged() => Dispatcher.BeginInvoke(() => PositionWindow(force: true));
 
     // ================= Configurações → Dock =================
 

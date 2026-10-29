@@ -39,8 +39,12 @@ O Dock escuta `Changed` e se redesenha (`ApplyTheme` + `RebuildTiles` + `Positio
 
 - **Sem foco**: `WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW` e resposta `MA_NOACTIVATE` a `WM_MOUSEACTIVATE`.
   Clicar no Dock não tira o foco do app atual e o Dock não aparece no Alt+Tab.
-- **Tamanho**: a janela ocupa a largura (ou altura) inteira da área de trabalho do monitor principal, com
+- **Tamanho**: a janela ocupa a largura (ou altura) inteira da área de trabalho do monitor do Dock, com
   espessura suficiente para o ícone ampliado, o pulo e o rótulo. As partes transparentes deixam o clique passar.
+- **Monitores**: `Monitors.All()` lista os monitores (`EnumDisplayMonitors`, `GetDpiForMonitor`) e `Screens.Pick`
+  escolhe o do Dock (principal, escolhido ou o último para onde o mouse levou), voltando ao principal se o
+  monitor sumir. A janela é posicionada em pixels físicos com `SetWindowPos`, porque cada monitor pode ter
+  outra escala; em `DpiChanged`, `WM_DISPLAYCHANGE` e `DisplaySettingsChanged` a posição é refeita.
 - **Hover**: `HitArea` ganha alfa 1 enquanto o mouse está no Dock, para o mouse não "cair" entre ícones ampliados.
 - **Animação**: parado, um `DispatcherTimer` de 50 ms só verifica o mouse. Com o mouse no Dock, a animação
   roda em `CompositionTarget.Rendering` e para sozinha quando tudo assenta.
