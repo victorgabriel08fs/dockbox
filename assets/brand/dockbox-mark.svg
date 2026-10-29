@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 724 324" width="724" height="324">
+  <title>Dockbox (símbolo)</title>
+  <!-- Só o símbolo, sem fundo, numa cor. Troque o fill para usar sobre fundos escuros (#FFFFFF). -->
+  <defs>
+    <mask id="gap">
+      <rect width="724" height="324" fill="#FFFFFF"/>
+      <rect x="31" y="82" width="196" height="196" rx="60" fill="#000000"/>
+      <rect x="214" y="-18" width="296" height="296" rx="86" fill="#000000"/>
+      <rect x="497" y="82" width="196" height="196" rx="60" fill="#000000"/>
+    </mask>
+  </defs>
+  <g fill="#2F6BF5">
+    <path mask="url(#gap)" fill-rule="evenodd" d="M64 134h596a64 64 0 0 1 64 64v62a64 64 0 0 1-64 64H64a64 64 0 0 1-64-64v-62a64 64 0 0 1 64-64zm0 24a40 40 0 0 0-40 40v62a40 40 0 0 0 40 40h596a40 40 0 0 0 40-40v-62a40 40 0 0 0-40-40z"/>
+    <rect x="49" y="100" width="160" height="160" rx="44"/>
+    <rect x="232" y="0" width="260" height="260" rx="70"/>
+    <rect x="515" y="100" width="160" height="160" rx="44"/>
+    <circle cx="362" cy="282" r="12"/>
+  </g>
+</svg>
