@@ -111,6 +111,21 @@ da ampliação, onde o Dock deixa de segurar o mouse, para não haver vão no ca
 quantas miniaturas cabem na tela (encolhe até 60% antes de esconder as que sobram) e o encaixe de cada uma, sem
 chamadas ao Windows, para os testes.
 
+## Pilhas de pastas
+
+Clicar num item fixado que é uma pasta abre `Views/StackWindow` (em vez do Explorador). É uma janela WPF
+transparente, ativada (para Esc e teclado) e fechada ao perder o foco. `Core/StackContent` lista a pasta (sem
+ocultos e arquivos de sistema), ordena, escolhe o jeito de mostrar (leque só com o Dock embaixo e até 10 itens)
+e decide mover ou copiar ao soltar. Os ícones carregam aos poucos com prioridade baixa no Dispatcher, para a
+pilha abrir na hora; mostra até 400 itens. Um `FileSystemWatcher` recarrega o conteúdo (com 300 ms de espera).
+Abrir um item passa pelo `AppLauncher` (mesmas confirmações dos itens fixados). Arrastar usa
+`DragDrop.DoDragDrop` com `FileDrop`.
+
+As opções ficam no próprio `DockEntry` (`StackView`, `StackSort`, `StackShowsLatest`). Com
+`StackShowsLatest`, o tile mostra o ícone do item mais recente e `DockWindow.Stacks.cs` acompanha a pasta com
+um `FileSystemWatcher` para trocar o ícone. Soltar arquivos numa pasta do Dock usa
+`Microsoft.VisualBasic.FileIO.FileSystem` com as janelas de progresso e conflito do Windows.
+
 ## Animação ao minimizar
 
 `DockWindow.Minimize.cs` registra `SetWinEventHook(EVENT_SYSTEM_MINIMIZESTART)` (fora do processo, sem as
