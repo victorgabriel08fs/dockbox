@@ -27,6 +27,10 @@ Enquanto a versão for `0.x`, qualquer versão nova pode mudar o comportamento.
 - Ícone na área de notificação com atalhos para Gerenciar Dock e Sair (#40).
 >>>>>>> origin/main
 
+### Segurança
+
+- GitHub Actions fixadas por hash do commit e Dependabot semanal para Actions e NuGet; o build não guarda mais a credencial do checkout (#17).
+
 ### Alterado
 
 - Configurações agora ficam em `%APPDATA%\Dockbox\settings.json`; o `pinned.json` antigo é importado.
