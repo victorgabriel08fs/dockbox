@@ -16,4 +16,8 @@
     <Version>0.1.0</Version>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Dockbox.Tests" />
+  </ItemGroup>
+
 </Project>

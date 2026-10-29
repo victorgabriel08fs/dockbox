@@ -70,7 +70,8 @@ localização pelo endereço IP usando o serviço `ipwho.is` (seu IP é enviado 
 **Estilo**: tema (automático, claro, escuro ou personalizado), cor do fundo, cor de destaque, opacidade,
 cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).
 
-**Comportamento**: mostrar nome, ponto de app aberto, animação de pulo, separador e iniciar com o Windows.
+**Comportamento**: mostrar nome, ponto de app aberto, animação de pulo, separador, reservar espaço na tela
+(janelas maximizadas param antes do Dock) e iniciar com o Windows.
 **Restaurar padrões** volta estilo, widgets e comportamento ao original, mas mantém seus apps.
 
 ## Onde ficam as configurações
@@ -92,7 +93,8 @@ uma cópia `.corrompido-...` e volta aos padrões; para recuperar, corrija a có
 
 | Problema | O que fazer |
 |---|---|
-| O Dock cobre a parte de baixo de janelas maximizadas | Limitação atual. Mude a posição para a esquerda/direita ou diminua o tamanho dos ícones |
+| O Dock cobre a parte de baixo de janelas maximizadas | Ligue **Reservar espaço na tela** em Gerenciar Dock → Comportamento |
+| A área de trabalho ficou menor depois que o Dockbox fechou | Abra e feche o Dockbox de novo, ou reinicie o Explorador; isso só acontece se o processo for encerrado à força |
 | Só aparece no monitor principal | Limitação atual (suporte a vários monitores está previsto) |
 | Clima pede para definir a cidade | Digite a cidade no Gerenciar Dock → Widgets, ou ligue a detecção pela internet |
 | Clima mostra "indisponível" | Sem internet ou cidade não encontrada. Tente o nome da cidade sem estado/país |

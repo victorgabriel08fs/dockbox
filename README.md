@@ -14,6 +14,7 @@ Um clone do Dock do macOS para Windows, feito em C# + WPF (.NET 8).
 - **Widgets**: relógio, calendário, clima (Open-Meteo), CPU/RAM, bateria, mídia tocando agora e Lixeira.
 - **Estilo**: tema automático/claro/escuro/personalizado, cor de fundo, cor de destaque, opacidade,
   cantos arredondados, tamanho dos ícones, intensidade da ampliação e posição (embaixo, em cima, esquerda, direita).
+- Reserva espaço na tela: janelas maximizadas param antes do Dock, como na barra de tarefas (dá para desligar).
 - Iniciar junto com o Windows (opcional).
 
 ## Como rodar no Windows
@@ -50,7 +51,7 @@ Um `pinned.json` da versão anterior é importado automaticamente.
 ## Limitações conhecidas do MVP
 
 - Só aparece no monitor principal.
-- Fica por cima das janelas maximizadas (ainda não reserva espaço na tela) e não tem auto-ocultar.
+- Ainda não tem auto-ocultar.
 - A barra de tarefas do Windows continua visível.
 - O fundo imita vidro, mas não desfoca o que está atrás.
 

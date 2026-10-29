@@ -39,6 +39,8 @@ public sealed class Appearance
     public bool ShowRunning { get; set; } = true;
     public bool BounceOnLaunch { get; set; } = true;
     public bool ShowSeparator { get; set; } = true;
+    /// <summary>Reserva a faixa do Dock na tela para as janelas maximizadas pararem antes dele.</summary>
+    public bool ReserveSpace { get; set; } = true;
 }
 
 public sealed class DockSettings

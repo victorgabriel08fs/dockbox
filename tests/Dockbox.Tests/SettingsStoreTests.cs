@@ -203,6 +203,16 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.Equal("Novo", Assert.Single(SettingsStore.Current.Items).Name);
     }
 
+    [Fact]
+    public void SettingsAntigoSemReserveSpace_ReservaEspacoPorPadrao()
+    {
+        WriteSettings("""
+        { "Appearance": { "IconSize": 48 } }
+        """);
+        SettingsStore.Load();
+        Assert.True(SettingsStore.Current.Appearance.ReserveSpace);
+    }
+
     // ---------- Normalização de valores editados à mão ----------
 
     [Fact]
