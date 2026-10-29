@@ -85,6 +85,15 @@ escala junto com a ampliação) e pode sobrescrever:
 Para criar um widget novo: crie a classe em `Widgets/`, registre o nome em `WidgetFactory.Create`,
 `DisplayName`, `Description` e `Glyph`, e acrescente o nome em `SettingsStore.AllWidgetKinds`.
 
+## Desfoque
+
+`Views/BlurBackdrop` é uma janela vazia, sempre logo abaixo do Dock e do tamanho do fundo, com
+`SetWindowCompositionAttribute(ACCENT_ENABLE_BLURBEHIND)` e uma região de cantos arredondados (`SetWindowRgn`).
+O Dock continua com a janela transparente e desenha a cor e a borda por cima (com a cor 30% mais transparente
+enquanto o desfoque está ativo). `DockWindow.PlaceBlur` reposiciona o desfoque a cada `Layout` e no deslize do
+auto-ocultar; `UpdateBlur` liga/desliga conforme a opção, "Efeitos de transparência", economia de bateria e alto
+contraste (conferidos também no timer lento).
+
 ## Barra de tarefas do Windows
 
 `Services/Taskbar` esconde `Shell_TrayWnd` e `Shell_SecondaryTrayWnd` (`ShowWindow`) e liga a ocultação

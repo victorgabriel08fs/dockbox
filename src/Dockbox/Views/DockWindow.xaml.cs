@@ -161,8 +161,10 @@ public partial class DockWindow : Window
             if (e.PropertyName is nameof(SystemParameters.ClientAreaAnimation) or nameof(SystemParameters.HighContrast))
                 Dispatcher.BeginInvoke(ApplySettings);
         };
+        IsVisibleChanged += (_, _) => UpdateBlur(); // escondido em tela cheia: o desfoque some junto
         Closed += (_, _) =>
         {
+            _blur?.Close();
             ReleaseAppBar();
             var h = new WindowInteropHelper(this).Handle;
             if (h != IntPtr.Zero) UnregisterHotKey(h, HotkeyId);
@@ -393,6 +395,56 @@ public partial class DockWindow : Window
         UpdateAutomationNames();
     }
 
+    private BlurBackdrop? _blur;
+    private bool BlurActive => _blur is { IsVisible: true };
+
+    /// <summary>Cria, mostra ou esconde o desfoque atrás do fundo conforme a opção e o Windows.</summary>
+    private void UpdateBlur()
+    {
+        bool want = A.Blur && IsVisible && _reveal > 0.02 && BlurBackdrop.SystemAllows();
+        bool was = BlurActive;
+        try
+        {
+            if (want)
+            {
+                _blur ??= new BlurBackdrop();
+                if (!_blur.IsVisible) _blur.Show();
+                PlaceBlur();
+            }
+            else _blur?.Hide();
+        }
+        catch (Exception ex)
+        {
+            ErrorLog.Write("Desfoque", ex);
+            _blur = null;
+        }
+        if (was != BlurActive) DockBackground.Background = BackgroundBrush();
+    }
+
+    /// <summary>Com desfoque, a cor do fundo fica mais transparente para o desfoque aparecer.</summary>
+    private Brush BackgroundBrush()
+    {
+        if (!BlurActive) return _theme.Background;
+        var b = _theme.Background.CloneCurrentValue();
+        b.Opacity *= 0.7;
+        b.Freeze();
+        return b;
+    }
+
+    /// <summary>Leva o desfoque para baixo do fundo do Dock (inclusive durante a ampliação e o deslize).</summary>
+    private void PlaceBlur()
+    {
+        if (!BlurActive || PresentationSource.FromVisual(this) is not { CompositionTarget: { } target }) return;
+        double left = Canvas.GetLeft(DockBackground), top = Canvas.GetTop(DockBackground);
+        if (double.IsNaN(left) || double.IsNaN(top) || double.IsNaN(DockBackground.Width)) return;
+        var m = target.TransformToDevice;
+        var p = DockCanvas.PointToScreen(new Point(left, top));
+        _blur!.Place(new WindowInteropHelper(this).Handle,
+            (int)Math.Round(p.X), (int)Math.Round(p.Y),
+            (int)Math.Round(DockBackground.Width * m.M11), (int)Math.Round(DockBackground.Height * m.M22),
+            (int)Math.Round(A.CornerRadius * m.M11));
+    }
+
     private void ApplyTheme()
     {
         _theme = DockTheme.Current(A);
@@ -400,7 +452,8 @@ public partial class DockWindow : Window
         _focusRing.BorderBrush = _focusBrush;
         App.ApplyUiTheme(_theme);
 
-        DockBackground.Background = _theme.Background;
+        UpdateBlur();
+        DockBackground.Background = BackgroundBrush();
         DockBackground.BorderBrush = _theme.Border;
         DockBackground.CornerRadius = new CornerRadius(A.CornerRadius);
         DockRim.BorderBrush = _theme.InnerHighlight;
@@ -833,6 +886,9 @@ public partial class DockWindow : Window
             var hwnd = new WindowInteropHelper(this).Handle;
             if (hwnd != IntPtr.Zero)
                 SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
+            if (hwnd != IntPtr.Zero && BlurActive) _blur!.StayBelow(hwnd);
+            // Efeitos de transparência ou economia de bateria podem ter mudado.
+            if (A.Blur) UpdateBlur();
         }
 
         // A barra de tarefas pode voltar sozinha (monitor novo, tecla Windows): esconde de novo.
@@ -1076,6 +1132,8 @@ public partial class DockWindow : Window
         double distance = (1 - _reveal) * (EdgeMargin + BackgroundThickness + 30);
         _slide.X = A.Edge switch { DockEdge.Left => -distance, DockEdge.Right => distance, _ => 0 };
         _slide.Y = A.Edge switch { DockEdge.Top => -distance, DockEdge.Bottom => distance, _ => 0 };
+        if (A.Blur && (_reveal > 0.02) != BlurActive) UpdateBlur();
+        else PlaceBlur();
     }
 
     private const double BounceDuration = 1.4;
@@ -1133,6 +1191,7 @@ public partial class DockWindow : Window
         _dockStart = Math.Round((MainLength - _dockLength) / 2);
 
         PlaceRect(DockBackground, _dockStart, EdgeMargin, _dockLength, BackgroundThickness);
+        PlaceBlur();
 
         double stayDepth = EdgeMargin + Pad * 2 + b * MaxScale + 10;
         PlaceRect(HitArea, _dockStart, 0, _dockLength, stayDepth);

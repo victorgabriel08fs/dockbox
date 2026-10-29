@@ -213,6 +213,7 @@ public partial class SettingsWindow : Window
             AccentHex.Text = A.AccentColor;
 
             OpacitySlider.Value = A.Opacity;
+            BlurToggle.IsChecked = A.Blur;
             RadiusSlider.Value = A.CornerRadius;
             SizeSlider.Value = A.IconSize;
             MagSlider.Value = Math.Max(1.1, A.Magnification);
@@ -784,6 +785,7 @@ public partial class SettingsWindow : Window
         A.ReserveSpace = ReserveToggle.IsChecked == true;
         A.AutoHide = AutoHideToggle.IsChecked == true;
         A.HideTaskbar = HideTaskbarToggle.IsChecked == true;
+        A.Blur = BlurToggle.IsChecked == true;
         UpdateAutoHideControls();
         Commit();
     }
