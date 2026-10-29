@@ -13,8 +13,10 @@ Um clone do Dock do macOS para Windows, feito em C# + WPF (.NET 8).
 
 ## Como rodar no Windows
 
-Opção A, sem instalar nada: baixe o `Dockbox.exe` gerado pelo GitHub Actions
-(aba **Actions** → execução mais recente do workflow *build* → artefato `Dockbox-win-x64`).
+Opção A, sem instalar nada: baixe o zip da versão mais recente na pasta
+[`releases/`](releases/) ou na página
+[Releases](https://github.com/victorgabriel08fs/dockbox/releases), extraia e abra o `Dockbox.exe`.
+Builds de desenvolvimento ficam na aba **Actions** (workflow *build*, artefato `Dockbox-win-x64`).
 
 Opção B, compilando:
 
@@ -54,6 +56,13 @@ Depois de editar, use **Recarregar** no menu do botão direito.
 - A barra de tarefas do Windows continua visível.
 
 Esses pontos estão previstos nas fases 2 e 3.
+
+## Versões
+
+O Dockbox usa [Versionamento Semântico](https://semver.org/lang/pt-BR/) com tags `vX.Y.Z`.
+A versão atual fica em `src/Dockbox/Dockbox.csproj` (`<Version>`), o histórico no
+[CHANGELOG.md](CHANGELOG.md) e os executáveis de cada versão em [`releases/`](releases/),
+onde também está o passo a passo para lançar uma versão nova.
 
 ## Estrutura
 

@@ -1,0 +1,85 @@
+name: release
+
+# Roda ao enviar uma tag de versão, por exemplo: git tag v0.2.0 && git push origin v0.2.0
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Ler versão da tag
+        id: ver
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar executável único
+        run: dotnet publish src/Dockbox/Dockbox.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=${{ steps.ver.outputs.version }} -o out
+
+      - name: Empacotar zip
+        shell: bash
+        run: |
+          tag="${{ steps.ver.outputs.tag }}"
+          mkdir -p "releases/$tag"
+          zip="Dockbox-$tag-win-x64.zip"
+          (cd out && 7z a -tzip -mx=9 "../releases/$tag/$zip" Dockbox.exe)
+          (cd "releases/$tag" && sha256sum "$zip" > SHA256SUMS.txt)
+
+      - name: Notas da versão a partir do CHANGELOG
+        shell: bash
+        run: |
+          v="${{ steps.ver.outputs.version }}"
+          awk -v v="$v" '
+            $0 ~ "^## \\[" v "\\]" {on=1; next}
+            on && /^## \[/ {exit}
+            on && /^\[.*\]: / {exit}
+            on {print}
+          ' CHANGELOG.md > notes.md
+          [ -s notes.md ] || echo "Veja o CHANGELOG.md." > notes.md
+
+      - name: Criar release no GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="${{ steps.ver.outputs.tag }}"
+          gh release create "$tag" "releases/$tag/Dockbox-$tag-win-x64.zip" "releases/$tag/SHA256SUMS.txt" \
+            --title "Dockbox $tag" --notes-file notes.md
+
+      # Precisa da opção "Allow GitHub Actions to create and approve pull requests"
+      # em Settings > Actions > General. Sem ela, a release é criada mesmo assim.
+      - name: Abrir PR com o zip na pasta releases/
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="${{ steps.ver.outputs.tag }}"
+          git fetch origin main
+          if git ls-tree -d --name-only origin/main "releases/$tag" | grep -q .; then
+            echo "releases/$tag já está na main"; exit 0
+          fi
+          branch="release-files/$tag"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch" origin/main
+          git add "releases/$tag"
+          git commit -m "Adiciona executável da $tag em releases/"
+          git push -f origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "Adiciona executável da $tag em releases/" \
+            --body "Zip gerado pelo workflow release a partir da tag $tag. Lembre de atualizar a tabela em releases/README.md."
