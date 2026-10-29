@@ -228,6 +228,20 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.Equal(2, SettingsStore.Current.Appearance.AutoHideDelay);
     }
 
+    [Fact]
+    public void Miniaturas_VemLigadasEOAtrasoELimitado()
+    {
+        WriteSettings("{ \"Appearance\": { \"IconSize\": 48 } }");
+        SettingsStore.Load();
+        Assert.True(SettingsStore.Current.Appearance.WindowPreviews);
+        Assert.Equal(0.5, SettingsStore.Current.Appearance.PreviewDelay);
+
+        WriteSettings("{ \"Appearance\": { \"WindowPreviews\": false, \"PreviewDelay\": 30 } }");
+        SettingsStore.Load();
+        Assert.False(SettingsStore.Current.Appearance.WindowPreviews);
+        Assert.Equal(2, SettingsStore.Current.Appearance.PreviewDelay);
+    }
+
     // ---------- Falha ao salvar ----------
 
     [Fact]

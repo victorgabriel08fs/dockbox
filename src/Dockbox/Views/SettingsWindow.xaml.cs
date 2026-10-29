@@ -235,6 +235,8 @@ public partial class SettingsWindow : Window
             LabelsToggle.IsChecked = A.ShowLabels;
             RunningToggle.IsChecked = A.ShowRunning;
             UnpinnedToggle.IsChecked = A.ShowRunningUnpinned;
+            PreviewsToggle.IsChecked = A.WindowPreviews;
+            PreviewDelaySlider.Value = A.PreviewDelay;
             BounceToggle.IsChecked = A.BounceOnLaunch;
             SeparatorToggle.IsChecked = A.ShowSeparator;
             ReserveToggle.IsChecked = A.ReserveSpace;
@@ -761,6 +763,7 @@ public partial class SettingsWindow : Window
         A.IconSize = Math.Round(SizeSlider.Value);
         A.Magnification = Math.Round(MagSlider.Value, 2);
         A.AutoHideDelay = Math.Round(AutoHideDelaySlider.Value, 2);
+        A.PreviewDelay = Math.Round(PreviewDelaySlider.Value, 2);
         Commit(debounce: true);
     }
 
@@ -771,6 +774,7 @@ public partial class SettingsWindow : Window
         SizeValue.Text = $"{SizeSlider.Value:0} px";
         MagValue.Text = $"{MagSlider.Value:0.0}x";
         AutoHideDelayValue.Text = $"{AutoHideDelaySlider.Value:0.0} s";
+        PreviewDelayValue.Text = $"{PreviewDelaySlider.Value:0.0} s";
     }
 
     // ================= Comportamento =================
@@ -782,6 +786,7 @@ public partial class SettingsWindow : Window
         A.ShowLabels = LabelsToggle.IsChecked == true;
         A.ShowRunning = RunningToggle.IsChecked == true;
         A.ShowRunningUnpinned = UnpinnedToggle.IsChecked == true;
+        A.WindowPreviews = PreviewsToggle.IsChecked == true;
         A.BounceOnLaunch = BounceToggle.IsChecked == true;
         A.ShowSeparator = SeparatorToggle.IsChecked == true;
         A.ReserveSpace = ReserveToggle.IsChecked == true;
@@ -800,6 +805,9 @@ public partial class SettingsWindow : Window
         AutoHideDelayRow.Opacity = on ? 1 : 0.5;
         ReserveToggle.IsEnabled = !on;
         ReserveToggle.ToolTip = on ? Loc.T("Reserve_AutoHideTip") : null;
+        bool previews = PreviewsToggle.IsChecked == true;
+        PreviewDelaySlider.IsEnabled = previews;
+        PreviewDelayRow.Opacity = previews ? 1 : 0.5;
     }
 
     private void Autostart_Click(object sender, RoutedEventArgs e)

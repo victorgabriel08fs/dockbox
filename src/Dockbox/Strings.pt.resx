@@ -103,6 +103,10 @@ Depois abra este de novo.</value></data>
   <data name="A11y_OpenUnpinned" xml:space="preserve"><value>{0}, aberto, não fixado</value></data>
   <data name="Menu_DockOptions" xml:space="preserve"><value>Opções do Dock</value></data>
   <data name="Menu_RemoveWidget" xml:space="preserve"><value>Remover widget</value></data>
+  <data name="Preview_Name" xml:space="preserve"><value>Janelas abertas</value></data>
+  <data name="Preview_Close" xml:space="preserve"><value>Fechar janela</value></data>
+  <data name="Preview_CloseA11y" xml:space="preserve"><value>Fechar {0}</value></data>
+  <data name="Preview_CardHelp" xml:space="preserve"><value>Clique para trazer esta janela</value></data>
   <data name="Menu_Minimized" xml:space="preserve"><value>{0}  (minimizada)</value></data>
   <data name="Menu_NewWindow" xml:space="preserve"><value>Nova janela</value></data>
   <data name="Menu_Open" xml:space="preserve"><value>Abrir</value></data>
@@ -229,6 +233,10 @@ Seus apps fixados serão mantidos.</value></data>
   <data name="S_Separator" xml:space="preserve"><value>Separador entre apps e widgets</value></data>
   <data name="S_AutoHide" xml:space="preserve"><value>Ocultar e mostrar o Dock automaticamente</value></data>
   <data name="S_AutoHideDelay" xml:space="preserve"><value>Tempo com o mouse na borda até aparecer</value></data>
+  <data name="S_Previews" xml:space="preserve"><value>Mostrar miniaturas das janelas ao passar o mouse</value></data>
+  <data name="S_PreviewsHint" xml:space="preserve"><value>Aparece em apps com mais de uma janela aberta. Clique numa miniatura para trazer a janela.</value></data>
+  <data name="S_PreviewDelay" xml:space="preserve"><value>Tempo com o mouse no ícone até aparecer</value></data>
+  <data name="S_PreviewDelayA11y" xml:space="preserve"><value>Tempo até as miniaturas aparecerem</value></data>
   <data name="S_AutoHideDelayA11y" xml:space="preserve"><value>Tempo até o Dock aparecer</value></data>
   <data name="S_Reserve" xml:space="preserve"><value>Reservar espaço na tela (janelas maximizadas param antes do Dock)</value></data>
   <data name="S_HideTaskbar" xml:space="preserve"><value>Ocultar a barra de tarefas do Windows</value></data>

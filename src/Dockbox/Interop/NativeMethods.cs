@@ -254,6 +254,32 @@ internal static class NativeMethods
     [DllImport("dwmapi.dll")]
     public static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
 
+    // ---- Miniaturas ao vivo das janelas ----
+    public const int DWM_TNP_RECTDESTINATION = 0x1, DWM_TNP_OPACITY = 0x4, DWM_TNP_VISIBLE = 0x8, DWM_TNP_SOURCECLIENTAREAONLY = 0x10;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct DWM_THUMBNAIL_PROPERTIES
+    {
+        public int dwFlags;
+        public RECT rcDestination;
+        public RECT rcSource;
+        public byte opacity;
+        [MarshalAs(UnmanagedType.Bool)] public bool fVisible;
+        [MarshalAs(UnmanagedType.Bool)] public bool fSourceClientAreaOnly;
+    }
+
+    [DllImport("dwmapi.dll")]
+    public static extern int DwmRegisterThumbnail(IntPtr dest, IntPtr src, out IntPtr thumb);
+
+    [DllImport("dwmapi.dll")]
+    public static extern int DwmUnregisterThumbnail(IntPtr thumb);
+
+    [DllImport("dwmapi.dll")]
+    public static extern int DwmUpdateThumbnailProperties(IntPtr thumb, ref DWM_THUMBNAIL_PROPERTIES props);
+
+    [DllImport("dwmapi.dll")]
+    public static extern int DwmQueryThumbnailSourceSize(IntPtr thumb, out SIZE size);
+
     // ---- Sistema ----
 
     [StructLayout(LayoutKind.Sequential)]

@@ -165,6 +165,7 @@ public partial class DockWindow : Window
         Closed += (_, _) =>
         {
             _blur?.Close();
+            _preview?.Close();
             ReleaseAppBar();
             var h = new WindowInteropHelper(this).Handle;
             if (h != IntPtr.Zero) UnregisterHotKey(h, HotkeyId);
@@ -366,6 +367,7 @@ public partial class DockWindow : Window
     private void ApplySettings()
     {
         if (!A.AutoHide) _shown = true;
+        ClosePreview(); // tema, tamanho ou borda podem ter mudado
         ApplyTheme();
         // Mudança só de cor, opacidade ou cantos não precisa recriar os ícones.
         string signature = TilesSignature();
@@ -553,6 +555,7 @@ public partial class DockWindow : Window
             if (next != null) FocusTile(next);
             else ExitKeyboard(restoreFocus: true);
         }
+        RemapPreview();
         Layout();
     }
 
@@ -787,6 +790,7 @@ public partial class DockWindow : Window
 
     private void OnTileClicked(Tile tile)
     {
+        ClosePreview();
         switch (tile.Kind)
         {
             case TileKind.App:
@@ -877,7 +881,11 @@ public partial class DockWindow : Window
     {
         // Some quando um vídeo, jogo ou apresentação está em tela cheia.
         bool fullscreen = SHQueryUserNotificationState(out int qs) == 0 && qs is 2 or 3 or 4;
-        if (fullscreen && IsVisible && !_hovering && !_menuOpen) Hide();
+        if (fullscreen && IsVisible && !_hovering && !_menuOpen)
+        {
+            ClosePreview();
+            Hide();
+        }
         else if (!fullscreen && !IsVisible) Show();
 
         // De vez em quando reafirma "sempre no topo" (a barra de tarefas às vezes passa por cima).
@@ -1010,6 +1018,7 @@ public partial class DockWindow : Window
 
         Layout();
         UpdateLabel(mouse);
+        UpdatePreview(mouse);
 
         if (settled && revealSettled && !_hovering) StopAnimating();
     }
@@ -1109,7 +1118,7 @@ public partial class DockWindow : Window
     {
         bool waiting = false;
         if (!A.AutoHide) _shown = true;
-        else if (_hovering || _menuOpen || _kbTile != null || UndoToast.Visibility == Visibility.Visible) _leaveSince = -1;
+        else if (_hovering || _menuOpen || _kbTile != null || PreviewOpen || UndoToast.Visibility == Visibility.Visible) _leaveSince = -1;
         else if (_shown)
         {
             if (_leaveSince < 0) _leaveSince = now;
@@ -1269,6 +1278,7 @@ public partial class DockWindow : Window
         if (A.ShowLabels && _hovering && !_menuOpen && _pressTile == null && _externalSlot < 0 && mouse is (double main, double)) hot = TileAt(main);
         if (hot == null && A.ShowLabels && _kbTile != null && !_hovering && !_menuOpen) hot = _kbTile;
         if (_dragTile != null) hot = _dragTile;
+        else if (PreviewOpen) hot = null; // o painel de miniaturas já mostra os títulos
         string text = _dragTile != null && _dragRemove ? Loc.T("Drag_Remove") : hot?.Label ?? "";
 
         if (hot == null || string.IsNullOrEmpty(text))
@@ -1597,6 +1607,7 @@ public partial class DockWindow : Window
         menu.Opened += (_, _) =>
         {
             _menuOpen = true;
+            ClosePreview();
             NameLabel.Visibility = Visibility.Collapsed;
             // O Dock não pega foco; só durante o menu, para setas, Enter e Esc funcionarem.
             previous = GetForegroundWindow();
